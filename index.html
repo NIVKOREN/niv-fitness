@@ -9,6 +9,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
 <link rel="manifest" href="manifest.json">
+<script>/* Restore saved backup once, without overwriting existing data */
+(function(){const backup={"nivFitnessExtraWorkoutsW1": "[{\"id\":\"1791393357964\",\"date\":\"2026-10-07\",\"time\":\"בוקר\",\"type\":\"הליכה\",\"minutes\":50,\"intensity\":\"light\",\"distance\":0,\"notes\":\"\"}]", "nivFitnessW1": "{\"w1-0-0\":false,\"w1-0-1\":false,\"w1-0-2\":false,\"w1-0-3\":false,\"w1-0-4\":false,\"w1-1-0\":false,\"w1-1-1\":false,\"w1-1-2\":false,\"w1-1-3\":false,\"w1-1-4\":false,\"w1-1-5\":false,\"w1-1-6\":false,\"w1-1-7\":false,\"w1-1-8\":false,\"w1-2-0\":false,\"w1-2-1\":false,\"w1-2-2\":false,\"w1-3-0\":false,\"w1-3-1\":false,\"w1-3-2\":false,\"w1-3-3\":false,\"w1-3-4\":false,\"w1-4-0\":false,\"w1-4-1\":false,\"w1-4-2\":false,\"w1-5-0\":false,\"w1-5-1\":false,\"w1-5-2\":false,\"w1-5-3\":false,\"w1-5-4\":false,\"w1-5-5\":false,\"w1-5-6\":false,\"w1-5-7\":false,\"w1-5-8\":false,\"w1-6-0\":false,\"w1-6-1\":false,\"w1-6-2\":false}"};for(const [key,value] of Object.entries(backup)){if(localStorage.getItem(key)===null)localStorage.setItem(key,value);}})();
+</script>
 <style>
 :root{--bg:#f5f7f6;--card:#fff;--ink:#17211d;--muted:#68756f;--accent:#3c8d68;--accent2:#dff1e7;--line:#e4e9e6;--shadow:0 8px 30px #1c2d2412}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
@@ -46,7 +49,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 07.10.2026 • v11 • הצגת אימון</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 10.10.2026 • שחזור גיבוי + שקילות</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -65,7 +68,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 <div class="reward-box"><b>בנק הפרסים</b><div class="small">פרסים קטנים ובינוניים אינם מורידים נקודות. פתיחת כספת הזהב עולה 10,000 נק׳.</div><button type="button" class="reward-choose" style="margin-top:10px" onclick="openRewardCatalog()">🎁 הצג את בנק הפרסים</button>
 <div class="reward-bank" id="reward-bank"></div>
 <div style="margin-top:12px"><b>היסטוריית פרסים: <span id="reward-count">0</span></b><div id="reward-history" class="reward-history">עוד לא מומש פרס — ממשיכים לצבור 💪</div></div>
-</div></div><div class="daynav"><button class="today-btn" id="today-btn" type="button">📅 היום</button><div class="tabs" id="tabs"></div></div><div id="days"></div>
+</div></div><section class="card" id="weight-tracker" style="margin:15px 0;border:2px solid #b7dfc9"><h3>⚖️ מעקב משקל</h3><div style="font-size:14px">משקל התחלתי: <b>105.5 ק״ג</b> • יעד: <b>85 ק״ג</b></div><div style="font-size:26px;font-weight:900;margin:12px 0" id="weight-current">105.5 ק״ג</div><div id="weight-progress" class="small"></div><div style="margin-top:12px"><b>📅 שקילה בכל יום שישי</b><p class="small">השקילה הראשונה בתוכנית: 16.10.2026. אפשר להזין גם שקילות קודמות.</p><label>תאריך <input id="weight-date" type="date" style="padding:9px;max-width:160px"></label> <label>משקל בק״ג <input id="weight-value" type="number" min="30" max="350" step="0.1" style="padding:9px;max-width:100px"></label> <button id="weight-save" type="button" style="background:#2b7655;color:white;border:0;border-radius:9px;padding:11px">שמור שקילה</button></div><div id="weight-history" style="margin-top:14px"></div></section><div class="daynav"><button class="today-btn" id="today-btn" type="button">📅 היום</button><div class="tabs" id="tabs"></div></div><div id="days"></div>
 <div class="footer"><button class="reset" onclick="resetAll()">איפוס סימונים לשבוע</button><p>הסימונים נשמרים במכשיר הזה. כשמסיימים פעולה — מסמנים ✓ ומקבלים קונפטי 🎉</p></div>
 </main>
 <div id="view-extra-modal" class="modal"><div class="modal-card"><h2>👁️ פרטי האימון</h2><div id="view-extra-content"></div><div class="modal-actions"><button class="save-extra" id="close-view-extra" type="button">סגור</button></div></div></div><div id="extra-modal" class="modal"><div class="modal-card"><h2>➕ הוסף אימון</h2><div class="form-grid">
@@ -383,4 +386,16 @@ function nivExportBackup(){
  }catch(e){document.getElementById('niv-backup-status').textContent='שגיאה ביצירת הגיבוי: '+e.message}
 }
 </script>
-</body></html>
+<script>
+(function(){
+const KEY='nivFitnessWeighInsV1',START=105.5,TARGET=85;
+const $=id=>document.getElementById(id);
+function read(){try{let a=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+function draw(){let a=read().sort((x,y)=>x.date.localeCompare(y.date));let last=a.length?a[a.length-1].weight:START,change=last-START;
+$('weight-current').textContent=last.toFixed(1)+' ק״ג';$('weight-progress').textContent=(change===0?'ללא שינוי':(change<0?'ירידה של ':'עלייה של ')+Math.abs(change).toFixed(1)+' ק״ג')+' ('+(change/START*100).toFixed(2)+'%) • נותרו '+Math.max(0,last-TARGET).toFixed(1)+' ק״ג ליעד';
+$('weight-history').innerHTML=a.length?'<b>היסטוריית שקילות</b>'+a.map(x=>'<div style="padding:7px 0;border-bottom:1px solid #ddd">'+x.date.split('-').reverse().join('.')+' — '+Number(x.weight).toFixed(1)+' ק״ג <button type="button" data-del="'+x.date+'">מחק</button></div>').join(''):'<span class="small">טרם נשמרו שקילות.</span>';
+$('weight-history').querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>{if(confirm('למחוק את השקילה?')){localStorage.setItem(KEY,JSON.stringify(read().filter(x=>x.date!==btn.dataset.del)));draw()}});
+}
+$('weight-date').value='2026-10-16';$('weight-save').onclick=()=>{let date=$('weight-date').value,weight=Number($('weight-value').value);if(!date||!Number.isFinite(weight)||weight<30||weight>350){alert('יש להזין תאריך ומשקל תקין');return}let a=read().filter(x=>x.date!==date);a.push({date,weight});localStorage.setItem(KEY,JSON.stringify(a));$('weight-value').value='';draw()};draw();
+})();
+</script></body></html>
