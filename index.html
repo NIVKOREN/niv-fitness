@@ -361,4 +361,26 @@ loadBonuses();
 loadTimes();
 updateWeeklyScore();
 </script>
+
+<!-- Safe backup addition: does not alter existing app state -->
+<div id="niv-backup-panel" style="position:relative;margin:22px auto;padding:18px;max-width:720px;border:2px solid #16a34a;border-radius:16px;background:#effdf3;color:#123c24;direction:rtl;text-align:center;font-family:Arial,sans-serif">
+  <h2 style="margin:0 0 10px">💾 גיבוי הנתונים שלי</h2>
+  <p>לפני עדכון האפליקציה, שמור את כל האימונים, הנקודות והפרסים בקובץ.</p>
+  <button type="button" onclick="nivExportBackup()" style="background:#15803d;color:white;border:0;border-radius:12px;padding:14px 22px;font-size:18px;font-weight:bold;cursor:pointer">⬇️ ייצוא גיבוי עכשיו</button>
+  <p id="niv-backup-status" style="font-size:13px"></p>
+</div>
+<script>
+function nivExportBackup(){
+ try {
+  const data={format:'niv-fitness-localstorage-backup',version:1,exportedAt:new Date().toISOString(),origin:location.origin,items:{}};
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data.items[k]=localStorage.getItem(k)}
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='Niv_Fitness_Backup_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  document.getElementById('niv-backup-status').textContent='הגיבוי הוכן ('+Object.keys(data.items).length+' פריטי אחסון). שמור אותו באפליקציית קבצים.';
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+ }catch(e){document.getElementById('niv-backup-status').textContent='שגיאה ביצירת הגיבוי: '+e.message}
+}
+</script>
 </body></html>
