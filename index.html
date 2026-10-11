@@ -586,4 +586,37 @@ window.addEventListener('load',()=>{refreshToday();setTimeout(focusDay,350)});
 refreshToday();
 })();
 </script>
+<style>
+/* Exercise guide: reliable top-layer sheet on iOS Safari and installed web apps. */
+#exercise-guide.guide-overlay.show{display:flex!important;position:fixed!important;inset:0!important;z-index:2147483646!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+#exercise-guide .guide-sheet{position:relative;z-index:1;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+.exercise-help{position:relative;z-index:1;touch-action:manipulation}
+</style>
+<script>
+/* Dedicated capture listener avoids interference from other dynamic day handlers. */
+(function(){
+ document.addEventListener('click',function(e){
+   const btn=e.target.closest('.exercise-help');
+   if(!btn)return;
+   e.preventDefault();e.stopImmediatePropagation();
+   const row=btn.closest('.item');
+   const title=row?.querySelector('.ititle')?.textContent||'';
+   const key=Object.keys(exerciseGuides).find(k=>title.includes(k));
+   if(!key){alert('לא נמצא מדריך לתרגיל הזה');return;}
+   try{
+     openExerciseGuide(key,title);
+     const modal=document.getElementById('exercise-guide');
+     modal.style.setProperty('display','flex','important');
+     modal.style.setProperty('z-index','2147483646','important');
+     document.body.appendChild(modal);
+   }catch(err){alert('שגיאה בפתיחת ההסבר: '+err.message)}
+ },true);
+ document.addEventListener('click',function(e){
+   if(e.target.closest('.guide-close')){
+     const modal=document.getElementById('exercise-guide');
+     modal.classList.remove('show');modal.style.removeProperty('display');
+   }
+ },true);
+})();
+</script>
 </body></html>
