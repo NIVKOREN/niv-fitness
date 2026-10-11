@@ -460,4 +460,80 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 decorate();new MutationObserver(decorate).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+
+<style>
+#future-fitness{max-width:850px;margin:18px auto;padding:0 18px;direction:rtl;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#17211d}
+.ff-card{background:white;border:1px solid #dfe9e3;border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 5px 18px #17211d10}
+.ff-card h2,.ff-card h3{margin:0 0 10px}.ff-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.ff-btn{border:0;background:#2b7655;color:white;padding:11px 14px;border-radius:11px;font-weight:850;cursor:pointer}.ff-btn:disabled{opacity:.4}
+.ff-input{width:100%;padding:10px;border:1px solid #cbd9d0;border-radius:10px;font:inherit;background:white}
+.ff-row{padding:12px 0;border-top:1px solid #e5ebe7}.ff-row label{display:flex;align-items:center;gap:10px;font-weight:700}.ff-row input[type=checkbox]{width:23px;height:23px;accent-color:#2b7655}
+.ff-small{font-size:13px;color:#5b7064;line-height:1.6}.ff-warning{background:#fff5e2;border-radius:12px;padding:12px;line-height:1.7}
+@media(max-width:500px){.ff-grid{grid-template-columns:1fr}}
+</style>
+<div id="future-fitness"><div class="ff-card"><h2>📅 תוכנית מתפתחת — 52 שבועות</h2><p class="ff-small">כל השבועות נוצרים במכשיר לפי התאריך והמשוב שלך. שבוע 1 נשאר כפי שהוא. שבועות 2–52 נפתחים אוטומטית, והנקודות מצטברות.</p><div class="ff-grid"><div><label for="ff-week">בחר שבוע</label><select id="ff-week" class="ff-input"></select></div><div><label for="ff-status">מצב התוכנית</label><div id="ff-status" style="font-weight:850;margin-top:10px"></div></div></div><div class="ff-warning" style="margin-top:12px">⚠️ יעד המרתון הוא ארוך טווח, לא התחייבות לרוץ מרתון בתוך שנה. לפני התחלת ריצה או הגדלת עומס, ובמיוחד אם עדיין יש כאב בחזה/בטן בנשימה עמוקה, יש להיבדק רפואית. כאב חדש, סחרחורת או קוצר נשימה חריג = מפסיקים ולא מתקדמים.</div></div><div id="ff-content"></div></div>
+<script>
+(function(){
+'use strict';
+const START=new Date(2026,9,11), STORE='nivFitness52WeeksV1', CHECK='nivFitness52ChecksV1';
+const $=id=>document.getElementById(id);
+const get=(k,def)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??def}catch(e){return def}};
+const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const dateFor=(w,d=0)=>{const a=new Date(START);a.setDate(a.getDate()+7*(w-1)+d);return a};
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const fmt=d=>d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'});
+const currentWeek=()=>Math.min(52,Math.max(1,Math.floor((new Date().setHours(12,0,0,0)-START.getTime())/604800000)+1));
+const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+const exercisesA=[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10'],['Plank','3×20–30 שנ׳']];
+const exercisesB=[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Lat Pulldown','3×10'],['Leg Extension','2×12'],['Seated Cable Row','2×10'],['Dead Bug','3×8 לכל צד']];
+function feedback(w){return get(STORE,{})[w]||{}}
+function pace(w){
+ let base=0;for(let k=2;k<=w;k++){
+  const prev=feedback(k-1);const cycle=((k-2)%4===3);
+  if(prev.pain==='yes'||prev.effort==='hard'||prev.completion==='low')base=Math.max(0,base-1);
+  else if(prev.completion==='high'&&prev.effort==='easy'&&prev.pain==='no')base=Math.min(24,base+1);
+  else if(prev.completion==='high'&&prev.effort==='ok'&&prev.pain==='no'&&!cycle&&k>3)base=Math.min(24,base+0.5);
+  // Without explicit feedback, never increase automatically.
+ }
+ return base;
+}
+function plan(w){
+ const level=pace(w),cutback=(w%4===0),baseLong=Math.min(105,35+level*4),long=Math.round((cutback?baseLong*.8:baseLong)/5)*5;
+ const runApproved=feedback(w-1).runReady==='yes';
+ const runMinutes=runApproved?Math.min(35,8+Math.floor(level)*2):0;
+ const strength=(list)=>['חימום קל 8 דקות',...list.map(([n,r])=>`${n} — ${r}; בחר משקל לפי טכניקה, השאר 2–3 חזרות ברזרבה`),'שחרור 5 דקות'];
+ return [
+ ['הליכה/ריצה קלה בחוץ', [`חימום הליכה 5 דקות`,runMinutes?`הליכה–ריצה לסירוגין ${25+Math.min(15,level*2)} דקות; ריצה מצטברת עד ${runMinutes} דקות, בקצב דיבור`:'הליכה 30–40 דקות; מעבר לריצה רק לאחר אישור כשירות אישי', 'שחרור 5 דקות'],'סיבולת'],
+ ['כוח A — גוף מלא',strength(exercisesA),'כוח'],
+ ['התאוששות פעילה', ['הליכה נוחה 20–30 דקות','מוביליטי 5–10 דקות'],'התאוששות'],
+ ['סיבולת בבריכה / הליכה', [`שחייה קלה או הליכה ${Math.min(55,30+level*2)} דקות`, 'שחרור 5 דקות'],'סיבולת'],
+ ['מנוחה', ['שתייה, שינה והתאוששות; אין צורך לפצות על יום מנוחה'],'מנוחה'],
+ ['כוח B — גוף מלא',strength(exercisesB),'כוח'],
+ ['אימון סיבולת ארוך', [`${runMinutes?'הליכה–ריצה נינוחה':'הליכה נינוחה'} עד ${long} דקות; קצב שיחה, בלי מאמץ מקסימלי`, 'אם יש כאב או עייפות חריגה, לקצר או להחליף בהליכה', 'שחרור 5 דקות'],'סיבולת']
+ ];
+}
+function saveFeedback(w){const all=get(STORE,{});all[w]={completion:$('ff-completion').value,effort:$('ff-effort').value,pain:$('ff-pain').value,runReady:$('ff-runready').value,notes:$('ff-notes').value,updated:iso(new Date())};set(STORE,all);render();updateWeeklyScore();}
+function render(){
+ const w=Number($('ff-week').value),now=currentWeek(),content=$('ff-content');$('ff-status').textContent=w>now?'🔒 שבוע עתידי — תצוגה מקדימה':w===now?'🟢 השבוע הנוכחי':'📚 שבוע שהסתיים';
+ if(w===1){content.innerHTML='<div class="ff-card"><h3>שבוע 1 — 11–17.10.2026</h3><p>תוכנית השבוע הראשון נמצאת בחלק העליון של האפליקציה, כולל הסימונים, הניקוד וההסברים המקוריים.</p></div>';return}
+ const tasks=plan(w),checks=get(CHECK,{}),saved=feedback(w),locked=w>now;
+ let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">שני אימוני כוח + שלושה אימוני סיבולת, התאוששות ומנוחה. בכל יום ראשון: הקאנטרי רק אחרי 15:00. זמן ביצוע גמיש. שבוע רביעי בכל מחזור הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, אין העלאה אוטומטית של העומס.'}</div></div>`;
+ tasks.forEach(([title,steps,kind],d)=>{
+ html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'להישאר בקצב שמאפשר לדבר.':''}</div>`;
+ steps.forEach((step,j)=>{const id=`${w}-${d}-${j}`;html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${step}</span></label></div>`});html+='</div>';
+ });
+ const options=(items,v)=>items.map(([key,label])=>`<option value="${key}" ${v===key?'selected':''}>${label}</option>`).join('');
+ html+=`<div class="ff-card"><h2>📊 סיכום והתאמה לשבוע הבא</h2><p class="ff-small">מלא בסוף השבוע. המערכת תעלה עומס רק כשהדיווח מצביע על ביצוע טוב, מאמץ נסבל וללא כאב. משקלים בפועל כדאי לתעד בהערות.</p><div class="ff-grid"><div><label>כמה מהתוכנית בוצע?</label><select id="ff-completion" class="ff-input">${options([['','בחר'],['low','פחות מ־70%'],['high','70% ומעלה']],saved.completion)}</select></div><div><label>איך הרגיש העומס?</label><select id="ff-effort" class="ff-input">${options([['','בחר'],['easy','קל יחסית'],['ok','מתאים'],['hard','קשה מדי']],saved.effort)}</select></div><div><label>היה כאב חריג?</label><select id="ff-pain" class="ff-input">${options([['','בחר'],['no','לא'],['yes','כן']],saved.pain)}</select></div><div><label>קיבלתי אישור רפואי לחזור לריצה?</label><select id="ff-runready" class="ff-input">${options([['','בחר'],['no','לא / עדיין לא'],['yes','כן']],saved.runReady)}</select></div></div><label style="display:block;margin-top:12px">הערות: מרחקים, זמנים, משקלים ותחושות</label><textarea id="ff-notes" class="ff-input" rows="3" placeholder="לדוגמה: 4 ק״מ הליכה, 40 ק״ג Leg Press...">${(saved.notes||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea><button id="ff-save" class="ff-btn" style="margin-top:12px" ${locked?'disabled':''}>💾 שמור משוב והכן את השבוע הבא</button></div>`;
+ content.innerHTML=html;
+ content.querySelectorAll('[data-ff-check]').forEach(box=>box.addEventListener('change',()=>{const all=get(CHECK,{});all[box.dataset.ffCheck]=box.checked;set(CHECK,all);updateWeeklyScore();if(box.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(10)}));
+ $('ff-save').addEventListener('click',()=>saveFeedback(w));
+}
+const sel=$('ff-week');for(let w=1;w<=52;w++){const opt=document.createElement('option');opt.value=w;opt.textContent=`שבוע ${w} • ${fmt(dateFor(w))}`;sel.appendChild(opt)}sel.value=currentWeek();sel.addEventListener('change',render);
+// Add the new weeks' task points to the existing permanent points bank, without changing week 1.
+const previousEarned=earnedPoints;
+earnedPoints=function(){return previousEarned()+Object.values(get(CHECK,{})).filter(Boolean).length*10};
+render();updateWeeklyScore();
+window.addEventListener('focus',()=>{const w=currentWeek();if(Number(sel.value)<w){sel.value=w;render()}});
+})();
+</script>
 </body></html>
