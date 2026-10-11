@@ -536,4 +536,86 @@ render();updateWeeklyScore();
 window.addEventListener('focus',()=>{const w=currentWeek();if(Number(sel.value)<w){sel.value=w;render()}});
 })();
 </script>
+
+<style>
+/* Daily-first layout: existing app logic and storage keys remain untouched. */
+#niv-daily-nav{position:relative;z-index:6;max-width:850px;margin:12px auto;padding:0 18px;direction:rtl}
+.niv-nav-card{background:#fff;border:1px solid #dce9e1;border-radius:17px;padding:12px;box-shadow:0 5px 18px #17211d10}
+.niv-nav-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;justify-content:center}
+.niv-nav-row button{border:0;border-radius:11px;padding:10px 12px;background:#e6f2ea;color:#185a3c;font-weight:850;font-size:14px}
+.niv-nav-row button.primary{background:#287650;color:white}
+#niv-date-label{font-size:18px;font-weight:900;text-align:center;margin-bottom:9px}
+#niv-backup-panel{max-width:850px!important;margin:12px auto 24px!important;padding:0 18px!important;border:0!important;background:transparent!important}
+#niv-backup-panel details{border:1px solid #e1e9e4;border-radius:12px;background:#fff;padding:9px 13px;text-align:right}
+#niv-backup-panel summary{font-size:13px;color:#53665b;font-weight:750;cursor:pointer}
+#niv-backup-panel .backup-inner{padding:12px 0 4px;text-align:center}
+#niv-backup-panel .backup-inner button{font-size:14px!important;padding:10px 14px!important}
+#niv-dashboard-content[hidden],#niv-future-container[hidden]{display:none!important}
+#niv-daily-nav .niv-note{font-size:12px;color:#64746b;text-align:center;margin-top:7px}
+#future-fitness.niv-daily-future #ff-content>.ff-card[data-niv-day]{display:none}
+#future-fitness.niv-daily-future #ff-content>.ff-card[data-niv-day].niv-current-day{display:block}
+#future-fitness.niv-daily-future #ff-content>.ff-card.niv-week-summary{display:none}
+#future-fitness.niv-daily-future.niv-show-summary #ff-content>.ff-card.niv-week-summary{display:block}
+</style>
+<div id="niv-daily-nav"><div class="niv-nav-card"><div id="niv-date-label">📅 היום שלי</div><div class="niv-nav-row"><button type="button" id="niv-prev">◀ יום קודם</button><button type="button" id="niv-today" class="primary">🏠 היום</button><button type="button" id="niv-next">יום הבא ▶</button></div><div class="niv-nav-row" style="margin-top:8px"><button type="button" id="niv-dashboard-toggle">🏆 ניקוד, משקל ופרסים</button><button type="button" id="niv-weeks-toggle">📅 תוכנית 52 השבועות</button><button type="button" id="niv-feedback-toggle">📊 משוב שבועי</button></div><div class="niv-note">האימון של התאריך שבחרת מוצג מיד. כל הנתונים והסימונים נשמרים.</div></div></div>
+<script>
+(function(){
+'use strict';
+const start=new Date(2026,9,11,12), end=new Date(2027,9,9,12);
+const $=id=>document.getElementById(id);
+const dateAt=offset=>{const d=new Date(start);d.setDate(d.getDate()+offset);return d};
+const dayIndex=d=>Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate(),12)-start)/86400000);
+const clamp=n=>Math.max(0,Math.min(363,n));
+let selected=clamp(dayIndex(new Date()));
+const main=document.querySelector('main.wrap');
+const dashboard=document.createElement('div');dashboard.id='niv-dashboard-content';dashboard.hidden=true;
+// Move only the summary widgets; keep the week-one tabs and daily tasks in place.
+['add-workout-btn','extra-summary'].forEach(id=>{const el=$(id);if(el)dashboard.appendChild(el)});
+const score=main.querySelector('.scoreboard');if(score)dashboard.appendChild(score);
+const weight=$('weight-tracker');if(weight)dashboard.appendChild(weight);
+main.insertBefore(dashboard,main.firstChild);
+const future=$('future-fitness');
+const futureWrap=document.createElement('div');futureWrap.id='niv-future-container';futureWrap.hidden=false;
+future.parentNode.insertBefore(futureWrap,future);futureWrap.appendChild(future);
+const backup=$('niv-backup-panel');
+const inner=document.createElement('div');inner.className='backup-inner';
+while(backup.firstChild)inner.appendChild(backup.firstChild);
+const details=document.createElement('details');details.innerHTML='<summary>💾 גיבוי נתונים</summary>';details.appendChild(inner);backup.appendChild(details);
+// Move the backup after all program content, at the very bottom.
+document.body.appendChild(backup);
+const nav=$('niv-daily-nav');document.querySelector('header').after(nav);
+const weekOneTabs=$('tabs').closest('.daynav');
+weekOneTabs.style.display='none';
+const weekOneExtras=$('extra-summary');
+function updateFutureCards(day){
+ const cards=[...document.querySelectorAll('#ff-content > .ff-card')];
+ cards.forEach((c,i)=>{c.classList.remove('niv-current-day','niv-week-summary');c.removeAttribute('data-niv-day');
+  if(i>=1&&i<=7){c.dataset.nivDay=String(i-1);if(i-1===day)c.classList.add('niv-current-day')}
+  else if(i>=8)c.classList.add('niv-week-summary');
+ });
+}
+function draw(){
+ const d=dateAt(selected),w=Math.floor(selected/7)+1,di=selected%7;
+ $('niv-date-label').textContent='📅 '+d.toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const w1=w===1;
+ $('days').style.display=w1?'':'none';
+ if(w1){show(di);futureWrap.hidden=true}
+ else {futureWrap.hidden=false;const sel=$('ff-week');if(sel&&Number(sel.value)!==w){sel.value=w;sel.dispatchEvent(new Event('change'))}future.classList.add('niv-daily-future');updateFutureCards(di)}
+ $('niv-prev').disabled=selected===0;$('niv-next').disabled=selected===363;
+ $('niv-prev').style.opacity=selected===0?'.4':'1';$('niv-next').style.opacity=selected===363?'.4':'1';
+}
+$('niv-prev').onclick=()=>{selected=clamp(selected-1);draw()};
+$('niv-next').onclick=()=>{selected=clamp(selected+1);draw()};
+$('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw()};
+$('niv-dashboard-toggle').onclick=()=>{dashboard.hidden=!dashboard.hidden;if(!dashboard.hidden)dashboard.scrollIntoView({behavior:'smooth',block:'start'})};
+$('niv-weeks-toggle').onclick=()=>{futureWrap.hidden=!futureWrap.hidden;if(!futureWrap.hidden){future.classList.remove('niv-daily-future');futureWrap.scrollIntoView({behavior:'smooth',block:'start'})}else future.classList.add('niv-daily-future')};
+$('niv-feedback-toggle').onclick=()=>{const w=Math.floor(selected/7)+1;if(w===1){alert('משוב שבוע 1 אינו מופיע בטופס השבועות העתידיים. אפשר לתעד את השבוע הראשון באימונים ובדירוגים שלו.');return}futureWrap.hidden=false;future.classList.add('niv-daily-future','niv-show-summary');updateFutureCards(selected%7);const summary=document.querySelector('.niv-week-summary');if(summary)summary.scrollIntoView({behavior:'smooth',block:'start'})};
+const observer=new MutationObserver(()=>{if(!futureWrap.hidden&&future.classList.contains('niv-daily-future'))updateFutureCards(selected%7)});
+observer.observe($('ff-content'),{childList:true});
+// If user selects a week in the full 52-week browser, show the complete selected week.
+$('ff-week').addEventListener('change',()=>{if(!future.classList.contains('niv-daily-future'))futureWrap.hidden=false});
+// Start on the current day, with no scrolling through past days.
+draw();window.scrollTo(0,0);
+})();
+</script>
 </body></html>
