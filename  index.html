@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Niv Fitness — שבוע 1</title>
+<meta name="theme-color" content="#2b7655">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Niv Fitness">
+<link rel="manifest" href="manifest.json">
+<script>/* Restore saved backup once, without overwriting existing data */
+(function(){const backup={"nivFitnessExtraWorkoutsW1": "[{\"id\":\"1791393357964\",\"date\":\"2026-10-07\",\"time\":\"בוקר\",\"type\":\"הליכה\",\"minutes\":50,\"intensity\":\"light\",\"distance\":0,\"notes\":\"\"}]", "nivFitnessW1": "{\"w1-0-0\":false,\"w1-0-1\":false,\"w1-0-2\":false,\"w1-0-3\":false,\"w1-0-4\":false,\"w1-1-0\":false,\"w1-1-1\":false,\"w1-1-2\":false,\"w1-1-3\":false,\"w1-1-4\":false,\"w1-1-5\":false,\"w1-1-6\":false,\"w1-1-7\":false,\"w1-1-8\":false,\"w1-2-0\":false,\"w1-2-1\":false,\"w1-2-2\":false,\"w1-3-0\":false,\"w1-3-1\":false,\"w1-3-2\":false,\"w1-3-3\":false,\"w1-3-4\":false,\"w1-4-0\":false,\"w1-4-1\":false,\"w1-4-2\":false,\"w1-5-0\":false,\"w1-5-1\":false,\"w1-5-2\":false,\"w1-5-3\":false,\"w1-5-4\":false,\"w1-5-5\":false,\"w1-5-6\":false,\"w1-5-7\":false,\"w1-5-8\":false,\"w1-6-0\":false,\"w1-6-1\":false,\"w1-6-2\":false}"};for(const [key,value] of Object.entries(backup)){if(localStorage.getItem(key)===null)localStorage.setItem(key,value);}})();
+</script>
+<style>
+:root{--bg:#f5f7f6;--card:#fff;--ink:#17211d;--muted:#68756f;--accent:#3c8d68;--accent2:#dff1e7;--line:#e4e9e6;--shadow:0 8px 30px #1c2d2412}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+header{background:linear-gradient(135deg,#1f5e43,#4aa477);color:#fff;padding:28px 18px 22px;position:relative;z-index:5}
+.wrap{max-width:850px;margin:auto}.eyebrow{opacity:.85;font-size:13px;font-weight:700}.title{font-size:30px;font-weight:850;margin:5px 0}.sub{opacity:.9}
+.progressbox{margin-top:16px;background:#ffffff22;border:1px solid #ffffff33;border-radius:16px;padding:12px}.bar{height:9px;background:#ffffff30;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#fff;border-radius:20px;transition:.3s}.progline{display:flex;justify-content:space-between;font-size:13px;margin-top:7px}
+main{padding:18px}.daynav{display:flex;align-items:center;gap:10px;margin-bottom:15px}.tabs{display:flex;gap:8px;overflow:auto;flex:1;margin-bottom:0}.today-btn{border:0;background:var(--accent2);color:#246044;padding:10px 14px;border-radius:999px;white-space:nowrap;font-weight:900;box-shadow:0 2px 10px #00000008}.tab{border:0;background:#fff;color:var(--ink);padding:10px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 2px 10px #00000008;font-weight:700}.tab.active{background:var(--accent);color:#fff}.tab.today{outline:2px solid var(--accent2);outline-offset:2px}.add-workout-btn{width:100%;border:0;background:linear-gradient(135deg,#17211d,#3c8d68);color:#fff;border-radius:18px;padding:16px;font-size:19px;font-weight:950;box-shadow:var(--shadow);margin:0 0 15px}.extra-summary{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:0 0 15px;box-shadow:var(--shadow)}.extra-list{margin-top:9px}.extra-item{border-top:1px solid var(--line);padding:10px 0}.extra-item:first-child{border-top:0}.extra-actions{display:flex;gap:8px;margin-top:7px}.extra-actions button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 9px;font-weight:750}.modal{position:fixed;inset:0;background:#0009;z-index:80;display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}.modal-card{background:#fff;width:100%;max-width:600px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px}.modal-card h2{margin:0 0 14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:850}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;font:inherit;background:#fff}.modal-actions{display:flex;gap:9px;margin-top:16px}.save-extra{flex:1;border:0;background:var(--accent);color:#fff;border-radius:13px;padding:12px;font-weight:900}.cancel-extra{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;font-weight:850}.points-preview{background:var(--accent2);border-radius:12px;padding:10px;margin-top:10px;font-weight:850}.today-badge{display:inline-block;margin-inline-start:8px;background:var(--accent2);color:#246044;font-size:13px;font-weight:900;padding:4px 8px;border-radius:999px;vertical-align:middle}
+.day{display:none}.day.active{display:block}.date{font-size:25px;font-weight:850}.focus{color:var(--accent);font-weight:750;margin:3px 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}.card h3{margin:0 0 8px;font-size:18px}.meta{font-size:13px;color:var(--muted);line-height:1.6}.note{background:var(--accent2);padding:12px;border-radius:13px;margin:12px 0;font-size:14px}
+.item{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-top:1px solid var(--line)}.item:first-of-type{border-top:0}.check{width:27px;height:27px;min-width:27px;border-radius:8px;border:2px solid #9bb4a7;background:#fff;appearance:none;position:relative;margin-top:1px}.check:checked{background:var(--accent);border-color:var(--accent)}.check:checked:after{content:"✓";position:absolute;color:#fff;font-weight:900;font-size:19px;left:4px;top:-1px}.item.done .ititle{text-decoration:line-through;color:#7b8882}.ititle{font-weight:800}.idesc{font-size:14px;line-height:1.55;color:#53615b;margin-top:3px}.tag{display:inline-block;font-size:11px;background:#eef2f0;border-radius:999px;padding:3px 8px;margin-right:4px;color:#526159}
+.footer{color:var(--muted);font-size:12px;text-align:center;padding:25px 10px 40px}
+.reset{border:0;background:#fff;border:1px solid var(--line);padding:10px 13px;border-radius:12px;color:#59655f;font-weight:700}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:#17211d;color:#fff;padding:12px 17px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:20}#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
+.small{font-size:13px;color:var(--muted)}
+.rating{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.rating-title{font-weight:850;margin-bottom:8px}.stars{display:flex;direction:ltr;gap:3px;flex-wrap:wrap}
+.star{border:0;background:transparent;font-size:28px;line-height:1;padding:2px;color:#c9d1cc;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.star.on{color:#e0a928}.rating-reset{margin-top:8px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 11px;font-weight:750;color:var(--muted);cursor:pointer}.rating-value{margin-top:7px;font-size:13px;color:var(--muted);min-height:18px}
+.scoreboard{background:linear-gradient(135deg,#17211d,#2b7655);color:#fff;border-radius:20px;padding:16px;margin:0 0 15px;box-shadow:var(--shadow)}.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.score-big{font-size:29px;font-weight:950}.score-small{font-size:12px;opacity:.85}.reward-progress{height:9px;background:#ffffff30;border-radius:20px;overflow:hidden;margin-top:12px}.reward-progress i{display:block;height:100%;background:#fff;border-radius:20px;transition:.3s}.reward-box{margin-top:12px;background:#ffffff18;border:1px solid #ffffff28;border-radius:14px;padding:12px}.reward-history{font-size:12px;line-height:1.7;margin-top:8px;opacity:.92}.reward-pop{position:fixed;inset:0;background:#0009;z-index:60;display:none;align-items:center;justify-content:center;padding:20px}.reward-pop.show{display:flex}.reward-card{background:#fff;color:#17211d;max-width:380px;width:100%;border-radius:24px;padding:28px 20px;text-align:center;box-shadow:0 20px 80px #0006}.reward-emoji{font-size:62px}.reward-name{font-size:27px;font-weight:950;margin:8px 0}.reward-close{border:0;background:var(--accent);color:#fff;padding:12px 20px;border-radius:14px;font-weight:900;font-size:16px}
+
+.daily-bonus{margin-top:18px;border:2px solid #dcebe3;background:linear-gradient(180deg,#fff,#f7fbf9)}
+.timebox{border:2px solid #e4ece8;background:#fbfdfc}.time-title{font-weight:900;margin-bottom:6px}.time-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.time-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 12px;font-weight:800;color:var(--ink)}.time-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.bonus-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.bonus-title{font-size:19px;font-weight:900}.day-points{font-weight:900;background:var(--accent2);color:#246044;padding:7px 11px;border-radius:999px;white-space:nowrap}
+.bonus-block{padding:14px 0;border-top:1px solid var(--line)}.bonus-block:first-of-type{border-top:0}.bonus-label{font-weight:850;margin-bottom:5px}.bonus-explain{font-size:12px;color:var(--muted);margin-bottom:9px}.nutrition-stars{display:flex;direction:ltr;gap:2px;flex-wrap:wrap}.nutrition-star{border:0;background:transparent;font-size:27px;padding:2px;color:#c9d1cc}.nutrition-star.on{color:#e0a928}.nutrition-reset{margin-top:8px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 11px;font-weight:750;color:var(--muted);cursor:pointer}
+.stepper{display:flex;align-items:center;gap:12px}.stepper button,.water-btn{border:0;background:var(--accent);color:#fff;font-weight:900;border-radius:14px;-webkit-tap-highlight-color:transparent}.stepper button{width:42px;height:42px;font-size:24px}.stepper-value{font-size:22px;font-weight:900;min-width:74px;text-align:center}.water-row{display:flex;align-items:center;gap:14px}.water-btn{width:74px;height:74px;font-size:35px;box-shadow:0 7px 18px #3c8d6830}.water-count{font-size:23px;font-weight:900}.water-sub{font-size:12px;color:var(--muted);margin-top:3px}.fallback{border:2px solid #eadfc5;background:#fffdf8}.fallback-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.fallback-btn{border:0;border-radius:12px;padding:10px 12px;font-weight:850;background:#17211d;color:#fff}.fallback-btn.alt{background:#c88427}.fallback-plan{display:none;margin-top:12px;padding:12px;border-radius:13px;background:#fff;border:1px solid #eadfc5}.fallback-plan.show{display:block}.fallback-plan h4{margin:0 0 8px}.fallback-plan ul{margin:7px 0;padding-right:20px;line-height:1.7}.bonus-total{margin-top:12px;background:#17211d;color:#fff;border-radius:15px;padding:13px;text-align:center;font-size:18px;font-weight:900}
+#praise{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:45;pointer-events:none;opacity:0;transform:scale(.65);font-size:clamp(48px,12vw,100px);font-weight:1000;text-align:center;padding:20px;text-shadow:0 5px 24px #0004}.praise-show{animation:praisePop 1s ease forwards}@keyframes praisePop{0%{opacity:0;transform:scale(.5) rotate(-4deg)}18%{opacity:1;transform:scale(1.12) rotate(2deg)}35%,70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.85) translateY(-40px)}}
+
+.reward-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.reward-tier{background:#ffffff16;border:1px solid #ffffff25;border-radius:13px;padding:9px;text-align:center}.reward-tier b{display:block;font-size:14px}.reward-tier span{font-size:11px;opacity:.88}.reward-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.reward-actions button{border:0;border-radius:11px;padding:9px 11px;font-weight:900;cursor:pointer}.reward-choose{background:#fff;color:#173126}.reward-random{background:#f1d86b;color:#17211d}.reward-disabled{opacity:.45!important;cursor:not-allowed!important}.reward-bank{margin-top:10px;font-size:12px;line-height:1.65}.reward-bank details{background:#ffffff10;border-radius:10px;padding:7px 9px;margin-top:6px}.reward-bank summary{font-weight:900;cursor:pointer}.reward-option{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #ffffff1f}.reward-option:last-child{border-bottom:0}.reward-option button{border:0;border-radius:9px;padding:6px 9px;font-weight:900}.reward-history-item{padding:5px 0;border-bottom:1px solid #ffffff1a}.reward-history-item:last-child{border-bottom:0}@media(max-width:520px){.reward-tiers{grid-template-columns:1fr}.reward-actions button{flex:1}}
+.gold-open{width:100%;border:0;background:linear-gradient(135deg,#8d6b00,#f3cf58,#9b7600);color:#201900;border-radius:14px;padding:12px 14px;font-weight:1000;font-size:16px;box-shadow:0 6px 20px #0003;margin-top:10px}.gold-open:disabled{opacity:.4;filter:grayscale(.5)}
+.gold-vault{position:fixed;inset:0;background:radial-gradient(circle at center,#4d3b12 0,#15130d 55%,#000c 100%);z-index:95;display:none;align-items:center;justify-content:center;padding:18px}.gold-vault.show{display:flex}.gold-panel{width:min(620px,100%);background:linear-gradient(180deg,#fffdf2,#f8edbd);border:3px solid #d4ad2d;border-radius:28px;padding:22px;text-align:center;box-shadow:0 24px 90px #0009}.gold-title{font-size:30px;font-weight:1000;margin-bottom:5px}.gold-sub{font-size:14px;margin-bottom:16px}.gold-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.gold-card{min-height:170px;border:2px solid #d4ad2d;border-radius:18px;background:linear-gradient(145deg,#6b5210,#d6ad31);color:#fff;display:flex;align-items:center;justify-content:center;padding:12px;font-weight:950;cursor:pointer;position:relative;transform-style:preserve-3d;transition:.5s}.gold-card.hidden-prize{font-size:42px}.gold-card.revealed{background:#fff;color:#201900;transform:rotateY(360deg);font-size:15px}.gold-card.selected{outline:4px solid #7e6413;transform:scale(1.04)}.gold-confirm{width:100%;border:0;background:#17211d;color:#fff;border-radius:14px;padding:12px;font-weight:950;margin-top:14px}.gold-confirm:disabled{opacity:.35}.gold-cancel{border:0;background:transparent;text-decoration:underline;margin-top:10px;font-weight:800}@media(max-width:520px){.gold-cards{grid-template-columns:1fr}.gold-card{min-height:95px}}
+#points-fly{position:fixed;top:58%;left:50%;transform:translate(-50%,30px) scale(.5);z-index:46;pointer-events:none;opacity:0;font-size:clamp(40px,11vw,82px);font-weight:1000;color:#f8c948;text-shadow:0 4px 3px #163d2a,0 10px 28px #0008;white-space:nowrap;direction:rtl}#points-fly.points-show{animation:pointsFly 1.5s ease-out forwards}@keyframes pointsFly{0%{opacity:0;transform:translate(-50%,30px) scale(.5)}22%{opacity:1;transform:translate(-50%,0) scale(1.22)}65%{opacity:1;transform:translate(-50%,-16px) scale(1)}100%{opacity:0;transform:translate(-50%,-95px) scale(.85)}}
+</style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>
+.exercise-help{margin-top:8px;border:1px solid #b6dcc7;background:#edf8f1;color:#185b3b;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:850;cursor:pointer}.guide-overlay{position:fixed;inset:0;background:#071b13b8;z-index:110;display:none;align-items:flex-end;justify-content:center}.guide-overlay.show{display:flex}.guide-sheet{width:100%;max-width:650px;max-height:94dvh;overflow-y:auto;background:white;border-radius:22px 22px 0 0;padding:20px 18px 35px}.guide-sheet h2{font-size:24px;margin:6px 0}.guide-sheet h3{font-size:16px;margin:18px 0 5px;color:#216a49}.guide-sheet p{line-height:1.75;margin:5px 0}.guide-photo{width:100%;max-height:270px;object-fit:contain;background:#f0f4f1;border-radius:14px;margin:12px 0}.guide-photo-wrap{min-height:80px}.guide-photo-note{font-size:12px;color:#65736a}.guide-close{border:0;border-radius:12px;padding:11px 18px;background:#276c4b;color:white;font-weight:900;float:left}.guide-search{display:inline-block;margin-top:10px;padding:10px 13px;border-radius:10px;background:#e7f2eb;color:#205b3f;font-weight:800;text-decoration:none}
+</style>
+<style>header{position:relative!important;top:auto!important}html{scroll-behavior:auto!important}#niv-daily-nav{scroll-margin-top:0!important}</style></head>
+<body>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 11.10.2026 • פתיחה ישירה להיום</div>
+<header><div class="wrap">
+<div class="eyebrow">NIV FITNESS • WEEK 1</div>
+<div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
+<div class="sub">11.10.2026–17.10.2026 • יעד: עקביות, טכניקה ובניית בסיס</div>
+<div class="progressbox"><div class="bar"><i id="bar"></i></div><div class="progline"><span id="pct">0%</span><span id="count">0 מתוך 0 פעולות</span></div></div>
+</div></header>
+<main class="wrap">
+<button class="add-workout-btn" id="add-workout-btn" type="button">➕ הוסף אימון</button><div class="extra-summary" id="extra-summary"><b>⭐ אימונים נוספים השבוע</b><div id="extra-summary-text" class="small">עדיין לא נוספו אימונים.</div><div id="extra-list" class="extra-list"></div></div><div class="scoreboard">
+<div class="score-grid"><div><div class="score-small">🏆 נקודות מצטברות</div><div class="score-big"><span id="week-points">0</span> נק׳</div></div><div><div class="score-small">🎁 אבן הדרך הקרובה</div><div class="score-big"><span id="to-next">200</span> נק׳</div></div></div>
+<div class="reward-progress"><i id="reward-bar"></i></div>
+<div class="reward-tiers">
+ <div class="reward-tier"><b>🎁 קטן • כל 200</b><span id="small-status">0 זמינים</span></div>
+ <div class="reward-tier"><b>🎁 בינוני • כל 1,000</b><span id="medium-status">0 זמינים</span></div>
+ <div class="reward-tier"><b>🏆 גדול • כל 10,000</b><span id="large-status">0 זמינים</span></div>
+</div>
+<div class="reward-box"><b>בנק הפרסים</b><div class="small">פרסים קטנים ובינוניים אינם מורידים נקודות. פתיחת כספת הזהב עולה 10,000 נק׳.</div><button type="button" class="reward-choose" style="margin-top:10px" onclick="openRewardCatalog()">🎁 הצג את בנק הפרסים</button>
+<div class="reward-bank" id="reward-bank"></div>
+<div style="margin-top:12px"><b>היסטוריית פרסים: <span id="reward-count">0</span></b><div id="reward-history" class="reward-history">עוד לא מומש פרס — ממשיכים לצבור 💪</div></div>
+</div></div><section class="card" id="weight-tracker" style="margin:15px 0;border:2px solid #b7dfc9"><h3>⚖️ מעקב משקל</h3><div style="font-size:14px">משקל התחלתי: <b>105.5 ק״ג</b> • יעד: <b>85 ק״ג</b></div><div style="font-size:26px;font-weight:900;margin:12px 0" id="weight-current">105.5 ק״ג</div><div id="weight-progress" class="small"></div><div style="margin-top:12px"><b>📅 שקילה בכל יום שישי</b><p class="small">השקילה הראשונה בתוכנית: 16.10.2026. אפשר להזין גם שקילות קודמות.</p><label>תאריך <input id="weight-date" type="date" style="padding:9px;max-width:160px"></label> <label>משקל בק״ג <input id="weight-value" type="number" min="30" max="350" step="0.1" style="padding:9px;max-width:100px"></label> <button id="weight-save" type="button" style="background:#2b7655;color:white;border:0;border-radius:9px;padding:11px">שמור שקילה</button></div><div id="weight-history" style="margin-top:14px"></div></section><div class="daynav"><button class="today-btn" id="today-btn" type="button">📅 היום</button><div class="tabs" id="tabs"></div></div><div id="days"></div>
+<div class="footer"><button class="reset" onclick="resetAll()">איפוס סימונים לשבוע</button><p>הסימונים נשמרים במכשיר הזה. כשמסיימים פעולה — מסמנים ✓ ומקבלים קונפטי 🎉</p></div>
+</main>
+<div id="view-extra-modal" class="modal"><div class="modal-card"><h2>👁️ פרטי האימון</h2><div id="view-extra-content"></div><div class="modal-actions"><button class="save-extra" id="close-view-extra" type="button">סגור</button></div></div></div><div id="extra-modal" class="modal"><div class="modal-card"><h2>➕ הוסף אימון</h2><div class="form-grid">
+<div class="field"><label>תאריך</label><input id="extra-date" type="date"></div>
+<div class="field"><label>זמן ביום</label><select id="extra-time"><option>בוקר</option><option>צהריים</option><option>ערב</option><option>לילה</option></select></div>
+<div class="field"><label>סוג אימון</label><select id="extra-type"><option>הליכה</option><option>ריצה</option><option>שחייה</option><option>אימון כוח</option><option>אופניים</option><option>משחק ספורט</option><option>אימון משולב</option><option>אחר</option></select></div>
+<div class="field"><label>משך בדקות</label><input id="extra-minutes" type="number" min="1" max="300" value="30"></div>
+<div class="field"><label>עצימות</label><select id="extra-intensity"><option value="light">קלה</option><option value="medium" selected>בינונית</option><option value="hard">גבוהה</option></select></div>
+<div class="field"><label>מרחק בק״מ (אופציונלי)</label><input id="extra-distance" type="number" min="0" step="0.1"></div>
+<div class="field full"><label>מה בדיוק עשיתי? (אופציונלי)</label><textarea id="extra-notes" rows="3" placeholder="למשל: הליכה מהירה + 3 סטים שכיבות סמיכה"></textarea></div></div>
+<div class="points-preview" id="extra-preview">הערכת ניקוד: 0 נק׳</div><div class="modal-actions"><button class="save-extra" id="save-extra">שמור אימון</button><button class="cancel-extra" id="cancel-extra">ביטול</button></div></div></div><div id="reward-catalog-modal" class="modal"><div class="modal-card"><h2>🎁 בנק הפרסים</h2><div class="small" style="margin-bottom:12px">אפשר לעיין בכל הפרסים בכל זמן. המימוש נפתח רק כשיש זכאות.</div><div id="reward-catalog-content"></div><div class="modal-actions"><button class="save-extra" type="button" onclick="closeRewardCatalog()">סגור</button></div></div></div><div id="gold-vault" class="gold-vault"><div class="gold-panel"><div class="gold-title">🔐 כספת הזהב</div><div class="gold-sub">שלושה פרסים הוגרלו עבורך. פתח את שלושת הקלפים ובחר אחד.</div><div class="gold-cards" id="gold-cards"></div><button id="gold-confirm" class="gold-confirm" type="button" disabled onclick="confirmGoldPrize()">בחרתי — זה הפרס שלי 🏆</button><button class="gold-cancel" type="button" onclick="closeGoldVault()">לא עכשיו</button></div></div><div id="reward-pop" class="reward-pop"><div class="reward-card"><div class="reward-emoji" id="reward-emoji">🎁</div><div id="reward-pop-title">הפרס שלך!</div><div class="reward-name" id="reward-name"></div><div class="small" id="reward-pop-note" style="margin-bottom:18px"></div><button class="reward-close" onclick="closeReward()">יאללה, ממשיכים 💪</button></div></div><div id="exercise-guide" class="guide-overlay" role="dialog" aria-modal="true" aria-label="מדריך תרגיל"><div class="guide-sheet" id="guide-sheet"></div></div><div id="toast">מעולה! עוד צעד הושלם 💪</div><div id="praise"></div><div id="points-fly" aria-live="polite"></div><canvas id="confetti"></canvas>
+<script>
+const exerciseGuides={"Leg Press": ["לחיצת רגליים במכונה", "Leg_Press", "כוון את המושב כך שהברכיים כפופות בנוחות. הנח את כפות הרגליים ברוחב הכתפיים במרכז הפלטה.", "דחוף דרך כל כף הרגל עד שהרגליים כמעט ישרות, בלי לנעול ברכיים. החזר לאט עד לטווח נוח.", "גב וישבן נשארים צמודים למשענת; ברכיים באותו כיוון של אצבעות הרגליים.", "לא ליישר ברכיים בנעילה, לא לקרב ברכיים פנימה ולא להרים אגן."], "Chest Press": ["לחיצת חזה במכונה", "Leverage_Chest_Press", "כוון את גובה המושב כך שהידיות בקו אמצע החזה. הצמד את הגב למשענת וכפות רגליים לרצפה.", "דחוף את הידיות קדימה בנשיפה, בלי לנעול מרפקים. החזר באיטיות תוך שמירה על שליטה.", "כתפיים רחוקות מהאוזניים ושכמות יציבות.", "לא להקשת גב בצורה מוגזמת ולא לתת למשקל להיטרק."], "Incline Chest Press": ["לחיצת חזה בשיפוע חיובי", "Incline_Chest_Press", "כוון ספסל/מכונה לשיפוע מתון. הידיות או המשקולות מתחילות סמוך לחזה העליון.", "דחוף מעלה וקדימה בתנועה מבוקרת, ואז החזר באיטיות.", "שמור על שורש כף יד ישר וכתפיים יציבות.", "לא להוריד מרפקים עמוק מדי אם יש כאב בכתף."], "Lat Pulldown": ["משיכת פולי עליון", "Wide-Grip_Lat_Pulldown", "שב מול מכשיר הפולי העליון וקבע את רפידות הירכיים. אחוז במוט מעט רחב מרוחב הכתפיים.", "הטה את החזה מעט לאחור ומשוך את המוט לכיוון החזה העליון תוך הורדת המרפקים מטה. החזר באיטיות למעלה.", "התחל בהורדת שכמות, שמור על גו יציב ונשוף בזמן המשיכה.", "לא למשוך מאחורי העורף, לא להתנדנד ולא למשוך בעזרת תנופה."], "Seated Leg Curl": ["כפיפת ברכיים בישיבה", "Seated_Leg_Curl", "כוון את גב המושב ואת הכרית כך שתהיה מעל העקבים. ודא שציר המכונה בקירוב מול הברך.", "כופף את הברכיים והורד את השוקיים כנגד ההתנגדות; חזור לאט לנקודת ההתחלה.", "הישבן והגב נשארים צמודים למושב.", "לא להרים אגן ולא לבצע תנועה קופצנית."], "Seated Cable Row": ["חתירה בכבל בישיבה", "Seated_Cable_Rows", "שב עם גב זקוף, ברכיים מעט כפופות, אחוז בידית והושט ידיים קדימה בלי לעגל גב.", "משוך את הידית לכיוון הבטן תוך קירוב שכמות, ואז יישר זרועות לאט.", "שמור על חזה פתוח ומרפקים נעים לצד הגוף.", "לא להישען קדימה ואחורה כדי להזיז את המשקל."], "Plank": ["פלאנק — תמיכת אמות", "Plank", "הנח אמות על הרצפה, מרפקים מתחת לכתפיים ורגליים ישרות לאחור.", "אסוף בעדינות את הבטן והחזק את הגוף בקו ישר למשך הזמן שנקבע.", "נשום רגיל, שמור על צוואר ניטרלי וישבן בגובה הגוף.", "לא לתת לגב התחתון לשקוע ולא לעצור נשימה."], "Goblet Squat": ["סקוואט עם משקולת מול החזה", "Goblet_Squat", "עמוד ברוחב כתפיים והחזק משקולת אחת צמוד לחזה בשתי ידיים.", "כופף ירכיים וברכיים כאילו אתה מתיישב; רד עד לטווח נוח ועלה דרך כפות הרגליים.", "שמור על חזה פתוח, עקבים על הקרקע וברכיים בכיוון האצבעות.", "לא לעגל את הגב ולא להכריח עומק שגורם לכאב."], "Leg Extension": ["פשיטת ברכיים במכונה", "Leg_Extensions", "שב כשהגב צמוד למשענת, ציר המכונה מול הברך והכרית מונחת על החלק התחתון של השוק.", "יישר את הברכיים בתנועה נשלטת, עצור קצרות והורד לאט.", "האגן נשאר במושב והטווח נוח וללא כאב.", "לא לבעוט במשקל ולא לנעול ברכיים בכוח."], "Dead Bug": ["דד באג — תרגיל ליבה", "Dead_Bug", "שכב על הגב, הרם ברכיים ל־90 מעלות והושט ידיים לכיוון התקרה.", "הושט לאט יד אחת ורגל נגדית לכיוון הרצפה, חזור למרכז והחלף צד.", "שמור על בטן פעילה ועל גב תחתון יציב בלי קשת מוגזמת.", "לא להוריד רגל נמוך מדי אם הגב מתנתק מהרצפה."]};
+function openExerciseGuide(key,plan){
+ const x=exerciseGuides[key];if(!x)return;
+ const [title,img,setup,motion,focus,mistakes]=x;
+ const photo=`https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${encodeURIComponent(img)}/0.jpg`;
+ const search=`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(title+' '+key+' gym machine')}`;
+ const safe=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ document.getElementById('guide-sheet').innerHTML=`<button class="guide-close" type="button" onclick="closeExerciseGuide()">✕ סגור</button><h2>${safe(title)}</h2><p><b>בתוכנית שלך:</b> ${safe(plan)}</p><div class="guide-photo-wrap"><img class="guide-photo" src="${photo}" alt="תמונת המחשה לתרגיל ${safe(title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><p class="guide-photo-note" style="display:none">לא ניתן לטעון תמונה כרגע. לחץ על הקישור למטה כדי לראות תמונות אמיתיות של המכשיר.</p></div><a class="guide-search" href="${search}" target="_blank" rel="noopener noreferrer">📸 תמונות אמיתיות נוספות לזיהוי המכשיר ↗</a><h3>1. הכנה וכיוון המכשיר</h3><p>${safe(setup)}</p><h3>2. איך מבצעים</h3><p>${safe(motion)}</p><h3>3. דגשים חשובים</h3><p>${safe(focus)}</p><h3>4. טעויות להימנע מהן</h3><p>${safe(mistakes)}</p><div class="note">💡 באימון הראשון בחר משקל קל שמאפשר תנועה נשלטת. אם יש כאב חד, סחרחורת או קוצר נשימה חריג — עצור ופנה לעזרה מתאימה. אם אינך בטוח בכיוון המכשיר, בקש מאיש צוות לבדוק אותו.</div>`;
+ document.getElementById('exercise-guide').classList.add('show');
+}
+function closeExerciseGuide(){document.getElementById('exercise-guide').classList.remove('show')}
+document.getElementById('exercise-guide').addEventListener('click',e=>{if(e.target.id==='exercise-guide')closeExerciseGuide()});
+
+const data=[
+{d:"ראשון",date:"11.10.2026",focus:"סיבולת בחוץ • הליכה/ריצה",cards:[
+["זמן מועדף: בוקר","שעה גמישה","יום ראשון: הקאנטרי נפתח רק ב־15:00. לכן פעילות הבוקר היא בחוץ; אם מעדיפים קאנטרי — כוח/שחייה/סאונה רק מ־15:00 ואילך.",["לשתות כוס מים","5 דקות הליכה רגועה לחימום","הליכה/ריצה 30 דקות בחוץ בקצב קל-בינוני","5–10 דקות הליכה רגועה לשחרור","מתיחות עדינות 5 דקות"]]]},
+{d:"שני",date:"12.10.2026",focus:"כוח A • גוף מלא",cards:[
+["חדר כושר","07:00–08:20","מנוחה בין סטים: 60–90 שניות. המשקל ההתחלתי הוא נקודת פתיחה — אם הטכניקה נפגעת, מורידים.",[
+"חימום: הליכון 8 דקות בקצב קל-בינוני",
+"Leg Press — 3×10, התחלה 40–60 ק״ג",
+"Chest Press — 3×10, התחלה 15–25 ק״ג",
+"Lat Pulldown — 3×10, התחלה 25–35 ק״ג",
+"Seated Leg Curl — 2×12, התחלה 20–30 ק״ג",
+"Seated Cable Row — 2×10, התחלה 20–30 ק״ג",
+"Plank — 3×20–30 שניות",
+"5 דקות הליכה רגועה לסיום",
+"סאונה רטובה 8–10 דקות"]]]},
+{d:"שלישי",date:"13.10.2026",focus:"התאוששות פעילה",cards:[
+["בוקר","07:00–07:45","יום קל — המטרה היא לצבור תנועה בלי לעייף את הגוף.",[
+"הליכה 30 דקות בקצב נוח",
+"5–10 דקות מוביליטי עדין: כתפיים, ירכיים וקרסוליים",
+"5 דקות נשימה והרגעה"]]]},
+{d:"רביעי",date:"14.10.2026",focus:"סיבולת • שחייה",cards:[
+["בריכה","07:00–08:00","קצב רציף ונוח; לא אימון מהיר.",[
+"חימום במים 5 דקות",
+"שחייה 30 דקות בקצב קל-בינוני",
+"הליכה/ציפה רגועה 5 דקות",
+"מתיחות עדינות 5 דקות",
+"סאונה רטובה 8–10 דקות"]]]},
+{d:"חמישי",date:"15.10.2026",focus:"מנוחה והתאוששות",cards:[
+["יום מנוחה","ללא אימון","אין צורך 'לפצות' על יום מנוחה.",[
+"10–20 דקות הליכה קלה אם מתחשק",
+"שתייה לאורך היום",
+"שינה טובה והכנה לאימון הכוח הבא"]]]},
+{d:"שישי",date:"16.10.2026",focus:"כוח B • גוף מלא",cards:[
+["חדר כושר","07:00–08:20","אותו עיקרון: טכניקה לפני משקל. מנוחה 60–90 שניות.",[
+"חימום: אופניים/הליכון 8 דקות",
+"Goblet Squat — 3×10, התחלה 8–12 ק״ג",
+"Incline Chest Press — 3×10, התחלה 15–25 ק״ג",
+"Lat Pulldown — 3×10, התחלה 25–35 ק״ג",
+"Leg Extension — 2×12, התחלה 15–25 ק״ג",
+"Seated Cable Row — 2×10, התחלה 20–30 ק״ג",
+"Dead Bug — 3×8 לכל צד",
+"5 דקות הליכה רגועה לסיום",
+"סאונה רטובה 8–10 דקות"]]]},
+{d:"שבת",date:"17.10.2026",focus:"סיבולת • הליכה ארוכה",cards:[
+["בוקר","08:00–09:00","סיבולת נינוחה. המטרה היא לסיים בתחושה שיכולת להמשיך.",[
+"הליכה 45–55 דקות בקצב בינוני-נוח",
+"5 דקות שחרור",
+"סימון סיכום שבועי: איך הרגשת במהלך השבוע?"]]]}
+];
+
+const tabs=document.getElementById("tabs"), days=document.getElementById("days");
+data.forEach((x,i)=>{
+ let b=document.createElement("button"); b.className="tab"+(i===0?" active":""); b.textContent=x.d+" • "+x.date.slice(0,5); b.onclick=()=>show(i); tabs.appendChild(b);
+ let day=document.createElement("section"); day.className="day"+(i===0?" active":""); day.id="day"+i;
+ day.innerHTML=`<div class="date">${x.d}, ${x.date}<span class="today-badge" data-today-badge style="display:none">היום</span></div><div class="focus">${x.focus}</div>`;
+ x.cards.forEach(c=>{
+  let card=document.createElement("div");card.className="card";
+  card.innerHTML=`<h3>${c[0]} <span class="tag">${c[1]}</span></h3><div class="meta">${c[2]}</div>`;
+  c[3].forEach((txt,j)=>{
+   let id=`w1-${i}-${j}`;let row=document.createElement("label");row.className="item";row.innerHTML=`<input class="check" type="checkbox" id="${id}"><div><div class="ititle">${txt}</div><div class="idesc">${desc(txt)}</div></div>`;
+   const key=Object.keys(exerciseGuides).find(k=>txt.includes(k));
+    if(key){const btn=document.createElement("button");btn.type="button";btn.className="exercise-help";btn.textContent="📖 הסבר מפורט + תמונת המכשיר";btn.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openExerciseGuide(key,txt)});row.querySelector(".idesc").after(btn)}
+    card.appendChild(row);
+  });day.appendChild(card);
+ });
+ if(i!==4){
+   const fb=document.createElement("div"); fb.className="card fallback"; fb.dataset.fallbackDay=i; fb.dataset.dayType=([1,5].includes(i)?"strength":([0,3,6].includes(i)?"cardio":"recovery"));
+   const isStrength=[1,5].includes(i);
+   fb.innerHTML=`<h3>⚡ אין לי זמן / צריך חלופה</h3><div class="small">לא מבטלים את היום — בוחרים גרסה שמתאימה לזמן שיש. הבחירה נשמרת.</div><div class="fallback-actions"><button class="fallback-btn" data-mode="short">⚡ ${isStrength?"אימון כוח מקוצר":"פעילות מקוצרת"}</button><button class="fallback-btn alt" data-mode="alternate">🚶 ${isStrength?"הליכה/ריצה + כוח":"חלופה קצרה + כוח"}</button></div><div class="fallback-plan" data-plan></div>`;
+   day.appendChild(fb);
+ }
+ if([0,1,3,5,6].includes(i)){
+   const rating=document.createElement("div"); rating.className="card rating"; rating.dataset.ratingDay=i;
+   rating.innerHTML=`<div class="rating-title">⭐ איך היה האימון?</div><div class="small">דרג מ־1 עד 10. הדירוג נשמר אוטומטית במכשיר.</div><div class="stars">${Array.from({length:10},(_,n)=>`<button class="star" data-value="${n+1}" aria-label="${n+1} מתוך 10">☆</button>`).join("")}</div><div class="rating-value">בחר דירוג 1–10</div><button class="rating-reset" type="button">אפס דירוג</button>`;
+   day.appendChild(rating);
+ }
+ const bonus=document.createElement("div"); bonus.className="card daily-bonus"; bonus.dataset.bonusDay=i;
+ bonus.innerHTML=`<div class="bonus-head"><div class="bonus-title">🏆 בונוסים יומיים</div><div class="day-points" id="day-points-${i}">0 נק׳</div></div>
+ <div class="bonus-block"><div class="bonus-label">🍽️ כמה אני מרוצה מהתזונה שלי היום?</div><div class="bonus-explain">1–4 כוכבים: ניקוד שלילי • 5: אפס • 6–10: בונוס עד 50 נק׳</div><div class="nutrition-stars">${Array.from({length:10},(_,n)=>`<button class="nutrition-star" data-value="${n+1}" aria-label="${n+1} מתוך 10">☆</button>`).join("")}</div><div class="rating-value nutrition-value">טרם דורג</div><button class="nutrition-reset" type="button">אפס דירוג</button></div>
+ <div class="bonus-block"><div class="bonus-label">🌙 כמה שעות לא אכלתי לפני השינה?</div><div class="bonus-explain">כל שעה = 10 נק׳ • ניקוד עד 4 שעות / 40 נק׳</div><div class="stepper"><button class="sleep-minus" aria-label="הפחת שעה">−</button><div class="stepper-value sleep-value">0 שעות</div><button class="sleep-plus" aria-label="הוסף שעה">+</button></div></div>
+ <div class="bonus-block"><div class="bonus-label">💧 כוסות מים</div><div class="bonus-explain">לחיצה על הכוס מוסיפה כוס • כל כוס = נקודה אחת</div><div class="water-row"><button class="water-btn" aria-label="הוסף כוס מים">🥤</button><div><div class="water-count">0 כוסות</div><div class="water-sub">0 נק׳ ממים</div><button class="water-minus reset" style="margin-top:7px;padding:6px 10px" aria-label="הפחת כוס">− כוס</button></div></div></div>
+ <div class="bonus-total">🏆 נקודות היום: <span class="bonus-total-value">0</span></div>`;
+ day.appendChild(bonus);
+ const timebox=document.createElement("div"); timebox.className="card timebox"; timebox.dataset.timeDay=i; timebox.innerHTML=`<div class="time-title">🕒 מתי ביצעתי את הפעילות?</div><div class="small">הזמן המועדף הוא בוקר, אבל השעה גמישה ואין שום הפחתת נקודות אם ביצעת בצהריים או בערב.${i===0?" ביום ראשון פעילות בקאנטרי אפשרית רק מ־15:00; הליכה/ריצה בחוץ אפשרית גם בבוקר.":""}</div><div class="time-options"><button class="time-btn" data-time="morning">🌅 בוקר</button><button class="time-btn" data-time="noon">☀️ צהריים</button><button class="time-btn" data-time="evening">🌆 ערב</button></div>`; day.appendChild(timebox);
+ days.appendChild(day);
+});
+function desc(t){
+ if(t.includes("Leg Press"))return "דחיפה עם כפות רגליים יציבות; ברכיים בקו עם כפות הרגליים, בלי לנעול ברכיים.";
+ if(t.includes("Chest Press"))return "שכמות יציבות, חזה פתוח; לדחוף בשליטה ולחזור לאט.";
+ if(t.includes("Lat Pulldown"))return "למשוך לכיוון החזה העליון, בלי תנופה ובלי למשוך מאחורי הראש.";
+ if(t.includes("Leg Curl"))return "כפיפת ברך בשליטה, בלי להרים את האגן מהמושב.";
+ if(t.includes("Cable Row"))return "גב ניטרלי, למשוך את הידית לכיוון הבטן ולהחזיר לאט.";
+ if(t.includes("Goblet"))return "משקולת צמודה לחזה, ירידה נוחה תוך שמירה על גב ניטרלי.";
+ if(t.includes("Leg Extension"))return "להרים את המשקל בשליטה ולרדת באיטיות; לא לנעול את הברך.";
+ if(t.includes("Dead Bug"))return "גב תחתון יציב; להאריך יד ורגל נגדית בלי לקשת את הגב.";
+ if(t.includes("Plank"))return "גוף בקו ישר; נשימה רגילה, לא להחזיק נשימה.";
+ return "בצע בקצב נוח. המטרה בשבוע הראשון היא עקביות ולא מקסימום מאמץ.";
+}
+function show(i){document.querySelectorAll(".tab").forEach((b,k)=>b.classList.toggle("active",k===i));document.querySelectorAll(".day").forEach((d,k)=>d.classList.toggle("active",k===i));const activeTab=document.querySelectorAll(".tab")[i];if(activeTab)activeTab.scrollIntoView({behavior:"instant",block:"nearest",inline:"center"});}
+function localDateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function dataDateKey(s){const [dd,mm,yyyy]=s.split(".");return `${yyyy}-${mm}-${dd}`}
+let calendarDayKey="";
+function syncCalendarDay(forceShow=false){const key=localDateKey();const idx=data.findIndex(x=>dataDateKey(x.date)===key);document.querySelectorAll(".tab").forEach((b,k)=>b.classList.toggle("today",k===idx));document.querySelectorAll("[data-today-badge]").forEach((b,k)=>b.style.display=k===idx?"inline-block":"none");if(idx>=0&&(forceShow||calendarDayKey!==key))show(idx);calendarDayKey=key}
+function goToday(){const key=localDateKey();const idx=data.findIndex(x=>dataDateKey(x.date)===key);if(idx>=0){show(idx);syncCalendarDay(false);toast("📅 חזרנו להיום")}else{toast("📅 התאריך הנוכחי מחוץ לשבוע 1")}}
+document.getElementById("today-btn").addEventListener("click",goToday);
+function msUntilNext0001(){const now=new Date(),next=new Date(now);next.setHours(24,1,0,0);return next-now}
+function scheduleMidnightSwitch(){setTimeout(()=>{syncCalendarDay(true);scheduleMidnightSwitch()},msUntilNext0001()+250)}
+const fallbackPlans={
+ strength:{
+  short:{title:"⚡ אימון כוח מקוצר • 25–35 דקות",items:["חימום 5 דקות","Leg Press / Goblet Squat — 2×10","Chest Press — 2×10","Lat Pulldown — 2×10","Seated Cable Row — 2×10","Plank / Dead Bug — 2 סטים","שחרור קצר 3–5 דקות"],score:"50% קרדיט על האימון"},
+  alternate:{title:"🚶 הליכה/ריצה + כוח • 35–50 דקות",items:["הליכה/ריצה 25–35 דקות בקצב קל-בינוני","שכיבות סמיכה — 2×6–10 (אפשר בשיפוע)","סקוואטים במשקל גוף — 2×10–15","Dead Bug או Plank — 2 סטים","הכנה למתח: תלייה 10–20 שנ׳ ×2 + משיכות שכמות 2×5; אם יש אפשרות — מתח בסיוע או ירידות איטיות 2×5","שחרור 3–5 דקות"],score:"70% קרדיט על האימון"}
+ },
+ cardio:{
+  short:{title:"⚡ סיבולת מקוצרת • 20–30 דקות",items:["חימום 5 דקות","הליכה מהירה / ריצה קלה 15–20 דקות או שחייה רציפה קצרה","שחרור 3–5 דקות"],score:"50% קרדיט על האימון"},
+  alternate:{title:"🚶 חלופה קצרה + כוח • 30–40 דקות",items:["הליכה/ריצה 20–30 דקות","שכיבות סמיכה — 2×6–10","סקוואטים במשקל גוף — 2×10–15","Plank או Dead Bug — 2 סטים","הכנה למתח: תלייה 2×10–20 שנ׳ + משיכות שכמות 2×5","שחרור קצר"],score:"70% קרדיט על האימון"}
+ },
+ recovery:{
+  short:{title:"⚡ התאוששות מקוצרת • 15–20 דקות",items:["הליכה קלה 10–15 דקות","מוביליטי 5 דקות"],score:"50% קרדיט על הפעילות"},
+  alternate:{title:"🚶 הליכה + כוח קל • 20–30 דקות",items:["הליכה 15–20 דקות","שכיבות סמיכה בשיפוע — 2×6–10","סקוואטים במשקל גוף — 2×10","Dead Bug — 2×6 לכל צד","תלייה קלה מהמתח 2×10 שנ׳ אם זמין"],score:"70% קרדיט על הפעילות"}
+ }
+};
+function fallbackKey(day){return "nivFitnessFallbackW1-"+day}
+function renderFallback(box,mode){const plan=box.querySelector("[data-plan]");box.querySelectorAll(".fallback-btn").forEach(b=>b.classList.toggle("on",b.dataset.mode===mode));const type=box.dataset.dayType||"cardio", plans=fallbackPlans[type];if(!mode||!plans||!plans[mode]){plan.classList.remove("show");return}const p=plans[mode];plan.innerHTML=`<h4>${p.title}</h4><ul>${p.items.map(x=>`<li>${x}</li>`).join("")}</ul><b>🏅 ${p.score}</b>`;plan.classList.add("show")}
+function loadFallbacks(){document.querySelectorAll(".fallback").forEach(box=>{const day=Number(box.dataset.fallbackDay);renderFallback(box,localStorage.getItem(fallbackKey(day))||"");box.querySelectorAll(".fallback-btn").forEach(btn=>btn.addEventListener("click",()=>{localStorage.setItem(fallbackKey(day),btn.dataset.mode);renderFallback(box,btn.dataset.mode);toast(btn.dataset.mode==="short"?"⚡ עוברים לאימון מקוצר":"🚶 החלופה נשמרה — העיקר ממשיכים!")}))})}
+const ratingLabels={1:"קשה מאוד",2:"קשה מאוד",3:"קשה",4:"קשה",5:"סביר",6:"טוב",7:"טוב מאוד",8:"מצוין",9:"מעולה",10:"אימון פצצה 🔥"};
+function ratingKey(day){return "nivFitnessRatingW1-"+day}
+function loadRatings(){document.querySelectorAll(".rating").forEach(box=>{const day=box.dataset.ratingDay;const saved=Number(localStorage.getItem(ratingKey(day))||0);renderRating(box,saved);box.querySelectorAll(".star").forEach(btn=>btn.addEventListener("click",()=>{const v=Number(btn.dataset.value);localStorage.setItem(ratingKey(day),v);renderRating(box,v);confetti();toast("⭐ "+v+"/10 — "+ratingLabels[v]);}));box.querySelector(".rating-reset").addEventListener("click",()=>{localStorage.removeItem(ratingKey(day));renderRating(box,0);toast("הדירוג אופס");});});}
+function renderRating(box,v){box.querySelectorAll(".star").forEach(btn=>{const n=Number(btn.dataset.value);btn.textContent=n<=v?"★":"☆";btn.classList.toggle("on",n<=v)});box.querySelector(".rating-value").textContent=v?(v+"/10 — "+ratingLabels[v]):"בחר דירוג 1–10";}
+
+function bonusKey(day){return "nivFitnessBonusW1-"+day}
+function getBonus(day){try{return JSON.parse(localStorage.getItem(bonusKey(day))||"{}")||{}}catch(e){return {}}}
+function saveBonus(day,state){localStorage.setItem(bonusKey(day),JSON.stringify(state));renderBonus(day,state);updateWeeklyScore()}
+function nutritionPoints(v){return ({1:-30,2:-20,3:-10,4:-5,5:0,6:5,7:10,8:20,9:30,10:50})[Number(v)]??0}
+function bonusPoints(state){return nutritionPoints(state.nutrition) + Math.min(Number(state.sleep)||0,4)*10 + (Number(state.water)||0)}
+function renderBonus(day,state){const box=document.querySelector(`[data-bonus-day="${day}"]`);if(!box)return;const nutrition=Number(state.nutrition)||0,sleep=Number(state.sleep)||0,water=Number(state.water)||0;box.querySelectorAll(".nutrition-star").forEach(b=>{const n=Number(b.dataset.value);b.textContent=n<=nutrition?"★":"☆";b.classList.toggle("on",n<=nutrition)});box.querySelector(".nutrition-value").textContent=nutrition?`${nutrition}/10 — ${nutritionPoints(nutrition)} נק׳`:"טרם דורג";box.querySelector(".sleep-value").textContent=sleep+" שעות";box.querySelector(".water-count").textContent=water+" כוסות";box.querySelector(".water-sub").textContent=water+" נק׳ ממים";const taskPts=[...document.querySelectorAll(`#day${day} .check`)].filter(x=>x.checked).length*TASK_POINTS;const pts=bonusPoints(state)+taskPts;box.querySelector(".bonus-total-value").textContent=pts;document.getElementById(`day-points-${day}`).textContent=pts+" נק׳"}
+function loadBonuses(){document.querySelectorAll(".daily-bonus").forEach(box=>{const day=Number(box.dataset.bonusDay);let state=getBonus(day);renderBonus(day,state);box.querySelectorAll(".nutrition-star").forEach(btn=>btn.addEventListener("click",()=>{state=getBonus(day);state.nutrition=Number(btn.dataset.value);saveBonus(day,state)}));box.querySelector(".nutrition-reset").addEventListener("click",()=>{state=getBonus(day);state.nutrition=0;saveBonus(day,state);toast("דירוג התזונה אופס");});box.querySelector(".sleep-plus").addEventListener("click",()=>{state=getBonus(day);state.sleep=(Number(state.sleep)||0)+1;saveBonus(day,state)});box.querySelector(".sleep-minus").addEventListener("click",()=>{state=getBonus(day);state.sleep=Math.max(0,(Number(state.sleep)||0)-1);saveBonus(day,state)});box.querySelector(".water-btn").addEventListener("click",()=>{state=getBonus(day);state.water=(Number(state.water)||0)+1;saveBonus(day,state);toast("💧 עוד כוס! +1 נק׳")});box.querySelector(".water-minus").addEventListener("click",()=>{state=getBonus(day);state.water=Math.max(0,(Number(state.water)||0)-1);saveBonus(day,state)})})}
+
+function timeKey(day){return "nivFitnessTimeW1-"+day}
+function renderTime(day,val){const box=document.querySelector(`[data-time-day="${day}"]`);if(!box)return;box.querySelectorAll(".time-btn").forEach(b=>b.classList.toggle("on",b.dataset.time===val))}
+function loadTimes(){document.querySelectorAll(".timebox").forEach(box=>{const day=Number(box.dataset.timeDay);renderTime(day,localStorage.getItem(timeKey(day))||"");box.querySelectorAll(".time-btn").forEach(btn=>btn.addEventListener("click",()=>{const val=btn.dataset.time;localStorage.setItem(timeKey(day),val);renderTime(day,val);toast("🕒 שעת הביצוע נשמרה — בלי שינוי בניקוד") }))})}
+
+const praises=["אלוף!","תותח!","כל הכבוד!","המשך כך!","איזה מלך!","שאפו!","סחתיין עלייך!","איזה חתיך!","מושלם!","אין עלייך!","מכונה!","מי יעצור אותך?!","ככה בונים רצף!","בום! עוד אחד!"];
+function praiseThenConfetti(points=TASK_POINTS){const el=document.getElementById("praise");el.textContent=praises[Math.floor(Math.random()*praises.length)];el.style.color=`hsl(${Math.random()*360},85%,48%)`;el.classList.remove("praise-show");void el.offsetWidth;el.classList.add("praise-show");const score=document.getElementById("points-fly");score.textContent=`+${points} נקודות!`;score.classList.remove("points-show");void score.offsetWidth;score.classList.add("points-show");setTimeout(()=>confettiUp(),850)}
+function confettiUp(){let c=document.getElementById("confetti"),ctx=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;let p=Array.from({length:150},()=>({x:Math.random()*innerWidth,y:innerHeight+20+Math.random()*120,vx:(Math.random()-.5)*5,vy:-(Math.random()*8+7),g:.035,s:Math.random()*9+6,a:1,h:Math.random()*360,r:Math.random()*6.28}));let start=performance.now();function f(now){ctx.clearRect(0,0,c.width,c.height);p.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=q.g;q.a-=.006;q.r+=.12;ctx.save();ctx.globalAlpha=Math.max(0,q.a);ctx.translate(q.x,q.y);ctx.rotate(q.r);ctx.fillStyle=`hsl(${q.h},90%,55%)`;ctx.fillRect(-q.s/2,-q.s/2,q.s,q.s*1.5);ctx.restore()});if(now-start<2400)requestAnimationFrame(f);else ctx.clearRect(0,0,c.width,c.height)}requestAnimationFrame(f)}
+
+function save(){let state={};document.querySelectorAll(".check").forEach(c=>state[c.id]=c.checked);localStorage.setItem("nivFitnessW1",JSON.stringify(state));update();for(let i=0;i<data.length;i++)renderBonus(i,getBonus(i));updateWeeklyScore();}
+function load(){let s={};try{s=JSON.parse(localStorage.getItem("nivFitnessW1")||"{}")}catch(e){}document.querySelectorAll(".check").forEach(c=>{c.checked=!!s[c.id];mark(c);c.addEventListener("change",()=>{mark(c);save();if(c.checked){praiseThenConfetti(TASK_POINTS);}})});update();}
+function mark(c){c.closest(".item").classList.toggle("done",c.checked)}
+function update(){let all=[...document.querySelectorAll(".check")],done=all.filter(x=>x.checked).length,p=all.length?Math.round(done/all.length*100):0;document.getElementById("bar").style.width=p+"%";document.getElementById("pct").textContent=p+"%";document.getElementById("count").textContent=`${done} מתוך ${all.length} פעולות`;}
+function resetAll(){if(confirm("לאפס את כל הסימונים של שבוע 1? הנקודות מהמשימות יעודכנו בהתאם.")){localStorage.removeItem("nivFitnessW1");document.querySelectorAll(".check").forEach(c=>{c.checked=false;mark(c)});update();updateWeeklyScore();}}
+function toast(msg){let t=document.getElementById("toast");if(msg)t.textContent=msg;t.classList.add("show");setTimeout(()=>{t.classList.remove("show");t.textContent="מעולה! עוד צעד הושלם 💪"},1500)}
+function confetti(){let c=document.getElementById("confetti"),ctx=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;let p=Array.from({length:90},()=>({x:innerWidth/2,y:innerHeight*.35,vx:(Math.random()-.5)*12,vy:Math.random()*-8-3,g:0.25,s:Math.random()*7+3,a:1}));let start=performance.now();function f(now){ctx.clearRect(0,0,c.width,c.height);p.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=q.g;q.a-=.012;ctx.globalAlpha=Math.max(0,q.a);ctx.fillStyle=`hsl(${Math.random()*360},80%,55%)`;ctx.fillRect(q.x,q.y,q.s,q.s*1.6)});if(now-start<1800)requestAnimationFrame(f);else ctx.clearRect(0,0,c.width,c.height)}requestAnimationFrame(f)}
+
+
+const EXTRA_KEY="nivFitnessExtraWorkoutsW1"; let editingExtraId=null;
+function getExtras(){try{return JSON.parse(localStorage.getItem(EXTRA_KEY)||"[]")||[]}catch(e){return []}}
+function saveExtras(a){localStorage.setItem(EXTRA_KEY,JSON.stringify(a));renderExtras();updateWeeklyScore()}
+function extraPoints(w){const rates={"הליכה":0.45,"ריצה":0.85,"שחייה":0.75,"אימון כוח":0.8,"אופניים":0.65,"משחק ספורט":0.7,"אימון משולב":0.8,"אחר":0.5};const mult={light:.8,medium:1,hard:1.2};let pts=Math.round((Number(w.minutes)||0)*(rates[w.type]||.5)*(mult[w.intensity]||1));if(Number(w.distance)>0 && ["הליכה","ריצה","אופניים"].includes(w.type))pts+=Math.min(15,Math.round(Number(w.distance)*1.5));return Math.max(1,Math.min(100,pts))}
+function extraMinutes(){return getExtras().reduce((a,w)=>a+(Number(w.minutes)||0),0)}
+function extraTotalPoints(){return getExtras().reduce((a,w)=>a+extraPoints(w),0)}
+function renderExtras(){const a=getExtras(),list=document.getElementById("extra-list"),sum=document.getElementById("extra-summary-text");sum.textContent=a.length?`${a.length} אימונים • ${extraMinutes()} דקות • +${extraTotalPoints()} נק׳`:`עדיין לא נוספו אימונים.`;list.innerHTML=a.map(w=>`<div class="extra-item"><b>${w.type}</b> • ${w.date.split("-").reverse().join(".")} • ${w.time}<div class="small">${w.minutes} דק׳${w.distance?` • ${w.distance} ק״מ`:``} • ${w.intensity==="light"?"עצימות קלה":w.intensity==="hard"?"עצימות גבוהה":"עצימות בינונית"} • <b>+${extraPoints(w)} נק׳</b>${w.notes?`<br>${escapeHtml(w.notes)}`:``}</div><div class="extra-actions"><button onclick="viewExtra('${w.id}')">הצג</button><button onclick="editExtra('${w.id}')">ערוך</button><button onclick="deleteExtra('${w.id}')">מחק</button></div></div>`).join("")}
+function escapeHtml(v){return String(v||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function localISODate(){const d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`}
+function openExtra(w=null){editingExtraId=w?w.id:null;document.getElementById("extra-date").value=w?.date||localISODate();document.getElementById("extra-time").value=w?.time||"בוקר";document.getElementById("extra-type").value=w?.type||"הליכה";document.getElementById("extra-minutes").value=w?.minutes||30;document.getElementById("extra-intensity").value=w?.intensity||"medium";document.getElementById("extra-distance").value=w?.distance||"";document.getElementById("extra-notes").value=w?.notes||"";document.getElementById("extra-modal").classList.add("show");updateExtraPreview()}
+function closeExtra(){document.getElementById("extra-modal").classList.remove("show");editingExtraId=null}
+function readExtraForm(){return {id:editingExtraId||String(Date.now()),date:document.getElementById("extra-date").value,time:document.getElementById("extra-time").value,type:document.getElementById("extra-type").value,minutes:Number(document.getElementById("extra-minutes").value)||0,intensity:document.getElementById("extra-intensity").value,distance:Number(document.getElementById("extra-distance").value)||0,notes:document.getElementById("extra-notes").value.trim()}}
+function updateExtraPreview(){const w=readExtraForm();document.getElementById("extra-preview").textContent=w.minutes?`הערכת ניקוד: +${extraPoints(w)} נק׳`:`הכנס משך אימון כדי לחשב ניקוד`}
+function viewExtra(id){const w=getExtras().find(x=>x.id===id);if(!w)return;const intensity=w.intensity==="light"?"קלה":w.intensity==="hard"?"גבוהה":"בינונית";const date=(w.date||"").split("-").reverse().join(".");document.getElementById("view-extra-content").innerHTML=`<div style="font-size:18px;line-height:1.8"><b>${escapeHtml(w.type)}</b><br>📅 ${date} • ${escapeHtml(w.time)}<br>⏱️ ${w.minutes} דקות<br>🔥 עצימות ${intensity}${w.distance?`<br>📍 ${w.distance} ק״מ`:``}${w.notes?`<br><br><b>מה ביצעתי:</b><br>${escapeHtml(w.notes)}`:``}<div class="points-preview" style="font-size:20px;margin-top:14px">⭐ ניקוד האימון: +${extraPoints(w)} נק׳</div></div>`;document.getElementById("view-extra-modal").classList.add("show")}
+function closeViewExtra(){document.getElementById("view-extra-modal").classList.remove("show")}
+function editExtra(id){const w=getExtras().find(x=>x.id===id);if(w)openExtra(w)}
+function deleteExtra(id){if(confirm("למחוק את האימון הנוסף הזה?"))saveExtras(getExtras().filter(x=>x.id!==id))}
+document.getElementById("close-view-extra").addEventListener("click",closeViewExtra);document.getElementById("view-extra-modal").addEventListener("click",e=>{if(e.target.id==="view-extra-modal")closeViewExtra()});document.getElementById("add-workout-btn").addEventListener("click",()=>openExtra());document.getElementById("cancel-extra").addEventListener("click",closeExtra);document.getElementById("extra-modal").addEventListener("click",e=>{if(e.target.id==="extra-modal")closeExtra()});["extra-type","extra-minutes","extra-intensity","extra-distance"].forEach(id=>document.getElementById(id).addEventListener("input",updateExtraPreview));document.getElementById("save-extra").addEventListener("click",()=>{const w=readExtraForm();if(!w.date||w.minutes<1){toast("צריך לבחור תאריך ומשך אימון");return}let a=getExtras(),idx=a.findIndex(x=>x.id===w.id);if(idx>=0)a[idx]=w;else a.push(w);saveExtras(a);closeExtra();confetti();toast(`⭐ אימון נשמר! +${extraPoints(w)} נק׳`)});renderExtras();
+
+const TASK_POINTS=10;
+const REWARD_TIERS={
+ small:{step:200,label:"פרס קטן",emoji:"🎁",items:[
+  "קינוח אחד שאתה ממש אוהב",
+  "גלידה טובה",
+  "שייק מפנק",
+  "מאפה אהוב",
+  "בקבוק/מארז משקה מיוחד שאתה אוהב",
+  "חולצת ספורט חדשה",
+  "כפפות אימון",
+  "חולצה חדשה ליום־יום",
+  "בושם/אפטרשייב קטן",
+  "גאדג׳ט קטן לבית",
+  "גאדג׳ט קטן לרכב",
+  "משהו קטן מאליאקספרס/אתר קניות",
+  "ערב סיינפלד עם נשנוש שאתה בוחר",
+  "ערב של משחק של מכבי חיפה + אוכל שאתה אוהב 💚",
+  "ערב של משחק של ריאל מדריד + פינוק",
+  "שטיפת רכב במקום לשטוף לבד",
+  "עציץ/פריט קטן לגינה",
+  "משהו קטן לבריכה/לחצר",
+  "ספר חדש",
+  "ארוחת בוקר זוגית",
+  "להזמין סרט משפחתי + פופקורן",
+  "נסיעה לים רק בשביל לשבת ולהירגע",
+  "הליכה במקום יפה במקום אימון רגיל",
+  "שעה בבית קפה לבד",
+  "להכניס 50 ₪ ל״קופת פרס גדול״ נפרדת",
+  "לצבור שני פרסים קטנים ולהמיר אותם לפרס משודרג",
+  "👑 Wild Card — להמציא לעצמך פרס קטן במקום אחד מהמאגר"
+ ]},
+ medium:{step:1000,label:"פרס בינוני",emoji:"🎉",items:[
+  "מסאז׳ מקצועי של שעה",
+  "ארוחת ערב זוגית במסעדה טובה",
+  "משלוח אוכל מושקע במיוחד הביתה",
+  "ערב אוכל + סרט בקולנוע",
+  "דייט מושקע עם מיכל",
+  "הופעה",
+  "מופע סטנדאפ",
+  "ערב באולם VIP בקולנוע + אוכל",
+  "נעליים חדשות ליום־יום",
+  "סט בגדי אימון חדש",
+  "טיפול פיזיותרפיה/ספורט פרטי לצורך תחזוקה והתאוששות",
+  "עיסוי ספורט",
+  "קנייה חופשית עד 400 ₪",
+  "גאדג׳ט חדש עד 400 ₪",
+  "משהו מגניב לחצר",
+  "משהו חדש לבריכה/אזור הבריכה",
+  "יום כיף זוגי",
+  "פיקניק/יום בים עם מיכל",
+  "פעילות זוגית חדשה שלא ניסיתם",
+  "באולינג/ביליארד + אוכל",
+  "🎁 לבחור שני פרסים קטנים מהבנק במקום פרס בינוני",
+  "👑 Wild Card בינוני — לבחור לעצמך כל פרס עד לתקרה כספית שנקבע מראש"
+ ]},
+ large:{step:10000,label:"כספת הזהב",emoji:"🔐",items:[
+  "שולחן פינג־פונג איכותי לחצר",
+  "PlayStation 5 + משחקים/שלט נוסף",
+  "מקרן איכותי + מסך לערבי סרטים בחצר",
+  "סוף שבוע זוגי במלון יוקרתי במיוחד",
+  "חופשת 2–3 לילות בחו״ל רק אתה ומיכל",
+  "טיסה + כרטיס למשחק גדול של ריאל מדריד",
+  "סוף שבוע במלון בוטיק בצפון",
+  "סוף שבוע במלון יוקרה בתל אביב",
+  "חופשת ספא זוגית ברמה גבוהה",
+  "2–3 לילות בקפריסין",
+  "2–3 לילות באתונה",
+  "טיסה לחו״ל לראות הופעה",
+  "Wildcard — כל דבר שמתחשק לך עד 5,000 ₪, גם אם הוא מטופש לחלוטין",
+  "Double Trouble — במקום פרס גדול אחד, לבחור שני פרסים בינוניים"
+ ]}
+};
+function earnedPoints(){const task=[...document.querySelectorAll(".check")].filter(x=>x.checked).length*TASK_POINTS;let bonus=0;for(let i=0;i<data.length;i++)bonus+=bonusPoints(getBonus(i));return task+bonus+extraTotalPoints()}
+function rewardState(){try{const x=JSON.parse(localStorage.getItem("nivFitnessRewardsV11")||"{}");return {claimed:x.claimed||{small:0,medium:0,large:0},history:x.history||[],goldSpent:Number(x.goldSpent)||0}}catch(e){return {claimed:{small:0,medium:0,large:0},history:[],goldSpent:0}}}
+function saveRewardState(s){localStorage.setItem("nivFitnessRewardsV11",JSON.stringify(s))}
+function totalWeeklyPoints(){return Math.max(0,earnedPoints()-rewardState().goldSpent)}
+function availableRewards(t,total){const s=rewardState();if(t==="large")return total>=10000?1:0;return Math.max(0,Math.floor(earnedPoints()/REWARD_TIERS[t].step)-(s.claimed[t]||0))}
+function nextMilestone(total){const steps=[200,1000,10000];let best=Infinity;for(const step of steps){const n=(Math.floor(total/step)+1)*step;if(n<best)best=n}return best}
+function renderRewardBank(total){
+ const s=rewardState(), bank=document.getElementById("reward-bank");
+ for(const t of ["small","medium","large"]){const av=availableRewards(t,total);const z=REWARD_TIERS[t];document.getElementById(t+"-status").textContent=av?`${av} זכאות זמינה`:t==="large"?`חסרות ${Math.max(0,10000-total).toLocaleString("he-IL")} נק׳`:`הבאה ב־${(Math.floor(earnedPoints()/z.step)+1)*z.step} נק׳`}
+ bank.innerHTML=["small","medium"].map(t=>{const z=REWARD_TIERS[t],av=availableRewards(t,total),disabled=av<1?" reward-disabled":"";return `<details><summary>${z.emoji} ${z.label} — ${av} זמינים</summary><div class="reward-actions"><button class="reward-choose${disabled}" ${av<1?"disabled":""} onclick="showChoices('${t}')">👆 אני בוחר</button><button class="reward-random${disabled}" ${av<1?"disabled":""} onclick="claimRandom('${t}')">🎰 מה שיוצא אני מרוצה</button></div><div id="choices-${t}"></div></details>`}).join("")+`<details><summary>🔐 כספת הזהב — ${availableRewards("large",total)?"מוכנה לפתיחה":"נעולה"}</summary><div class="small" style="margin-top:8px">ב־10,000 נק׳ נפתחים 3 פרסים אקראיים מתוך המאגר. בוחרים אחד בלבד, ואז יורדות 10,000 נק׳.</div><button class="gold-open" ${availableRewards("large",total)?"":"disabled"} onclick="openGoldVault()">🔐 פתח את כספת הזהב</button></details>`;
+ document.getElementById("reward-count").textContent=s.history.length;
+ document.getElementById("reward-history").innerHTML=s.history.length?s.history.slice().reverse().map(h=>`<div class="reward-history-item">${h.tier==="large"?"🔐":h.mode==="random"?"🎰":"👆"} <b>${h.reward}</b> • ${h.label} • ${h.date}</div>`).join(""):"עוד לא מומש פרס — ממשיכים לצבור 💪";
+}
+function openRewardCatalog(){
+ const total=totalWeeklyPoints();
+ document.getElementById("reward-catalog-content").innerHTML=["small","medium","large"].map(t=>{const z=REWARD_TIERS[t],av=availableRewards(t,total);return `<div style="margin:12px 0;padding:12px;border:1px solid #ddd;border-radius:14px"><b>${z.emoji} ${z.label} • ${t==="large"?"פתיחה ב־10,000 נק׳":`כל ${z.step.toLocaleString("he-IL")} נק׳`}</b><div class="small" style="margin:5px 0 8px">${av?`יש לך זכאות זמינה למימוש`:`עדיין אין זכאות זמינה`}</div>${z.items.map(x=>`<div style="padding:5px 0;border-bottom:1px solid #eee">• ${x}</div>`).join("")}</div>`}).join("");
+ document.getElementById("reward-catalog-modal").classList.add("show");
+}
+function closeRewardCatalog(){document.getElementById("reward-catalog-modal").classList.remove("show")}
+function showChoices(t){if(t==="large")return openGoldVault();const z=REWARD_TIERS[t],box=document.getElementById("choices-"+t);box.innerHTML=z.items.map((x,i)=>`<div class="reward-option"><span>${x}</span><button onclick="claimReward('${t}',${i},'choose')">בחר</button></div>`).join("")}
+function claimRandom(t){if(t==="large")return openGoldVault();const z=REWARD_TIERS[t];if(!availableRewards(t,totalWeeklyPoints()))return;const i=Math.floor(Math.random()*z.items.length);claimReward(t,i,"random")}
+function claimReward(t,i,mode){if(t==="large")return;const total=totalWeeklyPoints(),z=REWARD_TIERS[t];if(!availableRewards(t,total))return;const s=rewardState();s.claimed[t]=(s.claimed[t]||0)+1;s.history.push({tier:t,label:z.label,reward:z.items[i],mode,date:new Date().toLocaleDateString("he-IL")});saveRewardState(s);showReward({e:z.emoji,n:z.items[i]},mode);updateWeeklyScore()}
+let goldDraw=[],goldSelected=-1;
+function openGoldVault(){if(totalWeeklyPoints()<10000)return;const items=REWARD_TIERS.large.items.map((x,i)=>({x,i}));for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]]}goldDraw=items.slice(0,3);goldSelected=-1;document.getElementById("gold-cards").innerHTML=goldDraw.map((r,k)=>`<button type="button" class="gold-card hidden-prize" id="gold-card-${k}" onclick="revealGold(${k})">🔒</button>`).join("");document.getElementById("gold-confirm").disabled=true;document.getElementById("gold-vault").classList.add("show")}
+function revealGold(k){const c=document.getElementById("gold-card-"+k);if(!c.classList.contains("revealed")){c.classList.remove("hidden-prize");c.classList.add("revealed");c.textContent=goldDraw[k].x;return}document.querySelectorAll(".gold-card").forEach(x=>x.classList.remove("selected"));c.classList.add("selected");goldSelected=k;document.getElementById("gold-confirm").disabled=false}
+function closeGoldVault(){document.getElementById("gold-vault").classList.remove("show");goldDraw=[];goldSelected=-1}
+function confirmGoldPrize(){if(goldSelected<0||totalWeeklyPoints()<10000)return;const prize=goldDraw[goldSelected].x,s=rewardState();s.goldSpent=(Number(s.goldSpent)||0)+10000;s.claimed.large=(s.claimed.large||0)+1;s.history.push({tier:"large",label:"כספת הזהב",reward:prize,mode:"gold",date:new Date().toLocaleDateString("he-IL")});saveRewardState(s);closeGoldVault();showReward({e:"🏆",n:prize},"gold");updateWeeklyScore()}
+function updateWeeklyScore(){const total=totalWeeklyPoints();document.getElementById("week-points").textContent=total;const next=nextMilestone(total);document.getElementById("to-next").textContent=Math.max(0,next-total);const prev=Math.floor(total/200)*200;document.getElementById("reward-bar").style.width=((total-prev)/200*100)+"%";renderRewardBank(total)}
+function showReward(r,mode){const p=document.getElementById("reward-pop");document.getElementById("reward-emoji").textContent=r.e;document.getElementById("reward-name").textContent=r.n;document.getElementById("reward-pop-title").textContent=mode==="gold"?"🏆 זכית בפרס מכספת הזהב!":mode==="random"?"🎰 מה שיוצא אני מרוצה!":"🎁 הפרס שבחרת";document.getElementById("reward-pop-note").textContent=mode==="gold"?"10,000 נקודות ירדו מהקופה. הזכייה נשמרה בהיסטוריה.":"הנקודות נשארות בקופה. הזכאות הזו סומנה כמומשה.";p.classList.add("show");confettiUp()}
+function closeReward(){document.getElementById("reward-pop").classList.remove("show")}
+
+syncCalendarDay(true);
+scheduleMidnightSwitch();
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncCalendarDay(false)});
+window.addEventListener("focus",()=>syncCalendarDay(false));
+load();
+loadRatings();
+loadFallbacks();
+loadBonuses();
+loadTimes();
+updateWeeklyScore();
+</script>
+
+<!-- Safe backup addition: does not alter existing app state -->
+<div id="niv-backup-panel" style="position:relative;margin:22px auto;padding:18px;max-width:720px;border:2px solid #16a34a;border-radius:16px;background:#effdf3;color:#123c24;direction:rtl;text-align:center;font-family:Arial,sans-serif">
+  <h2 style="margin:0 0 10px">💾 גיבוי הנתונים שלי</h2>
+  <p>לפני עדכון האפליקציה, שמור את כל האימונים, הנקודות והפרסים בקובץ.</p>
+  <button type="button" onclick="nivExportBackup()" style="background:#15803d;color:white;border:0;border-radius:12px;padding:14px 22px;font-size:18px;font-weight:bold;cursor:pointer">⬇️ ייצוא גיבוי עכשיו</button>
+  <p id="niv-backup-status" style="font-size:13px"></p>
+</div>
+<script>
+function nivExportBackup(){
+ try {
+  const data={format:'niv-fitness-localstorage-backup',version:1,exportedAt:new Date().toISOString(),origin:location.origin,items:{}};
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data.items[k]=localStorage.getItem(k)}
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='Niv_Fitness_Backup_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  document.getElementById('niv-backup-status').textContent='הגיבוי הוכן ('+Object.keys(data.items).length+' פריטי אחסון). שמור אותו באפליקציית קבצים.';
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+ }catch(e){document.getElementById('niv-backup-status').textContent='שגיאה ביצירת הגיבוי: '+e.message}
+}
+</script>
+<script>
+(function(){
+const KEY='nivFitnessWeighInsV1',START=105.5,TARGET=85;
+const $=id=>document.getElementById(id);
+function read(){try{let a=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+function draw(){let a=read().sort((x,y)=>x.date.localeCompare(y.date));let last=a.length?a[a.length-1].weight:START,change=last-START;
+$('weight-current').textContent=last.toFixed(1)+' ק״ג';$('weight-progress').textContent=(change===0?'ללא שינוי':(change<0?'ירידה של ':'עלייה של ')+Math.abs(change).toFixed(1)+' ק״ג')+' ('+(change/START*100).toFixed(2)+'%) • נותרו '+Math.max(0,last-TARGET).toFixed(1)+' ק״ג ליעד';
+$('weight-history').innerHTML=a.length?'<b>היסטוריית שקילות</b>'+a.map(x=>'<div style="padding:7px 0;border-bottom:1px solid #ddd">'+x.date.split('-').reverse().join('.')+' — '+Number(x.weight).toFixed(1)+' ק״ג <button type="button" data-del="'+x.date+'">מחק</button></div>').join(''):'<span class="small">טרם נשמרו שקילות.</span>';
+$('weight-history').querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>{if(confirm('למחוק את השקילה?')){localStorage.setItem(KEY,JSON.stringify(read().filter(x=>x.date!==btn.dataset.del)));draw()}});
+}
+$('weight-date').value='2026-10-16';$('weight-save').onclick=()=>{let date=$('weight-date').value,weight=Number($('weight-value').value);if(!date||!Number.isFinite(weight)||weight<30||weight>350){alert('יש להזין תאריך ומשקל תקין');return}let a=read().filter(x=>x.date!==date);a.push({date,weight});localStorage.setItem(KEY,JSON.stringify(a));$('weight-value').value='';draw()};draw();
+})();
+</script>
+<style>
+.exercise-help{margin-inline-start:9px;padding:5px 10px;border-radius:12px;border:1px solid #2b7655;background:#e9f7ef;color:#15543a;font-weight:800;font-size:12px;cursor:pointer}
+#exercise-guide{display:none;position:fixed;inset:0;background:#0009;z-index:99999;overflow:auto;padding:16px;align-items:flex-start;justify-content:center}
+#exercise-guide.open{display:flex}
+.guide-panel{background:#fff;border-radius:22px;padding:22px;max-width:610px;width:100%;margin:20px auto 40px;box-shadow:0 20px 60px #0005;line-height:1.7}
+.guide-panel h2{margin:0;color:#206044}.guide-panel h3{margin:16px 0 3px;color:#206044;font-size:16px}
+.guide-close{float:left;border:0;background:#e8eee9;border-radius:10px;padding:8px 12px;font-size:20px}
+.guide-visual{background:#eff8f2;border-radius:16px;text-align:center;padding:17px;margin:14px 0}
+.guide-visual .big{font-size:64px}.guide-visual .steps{display:flex;justify-content:space-around;gap:10px;font-size:14px;font-weight:800}
+.guide-note{background:#fff6df;padding:12px;border-radius:12px;margin-top:14px}
+</style>
+<div id="exercise-guide" role="dialog" aria-modal="true" aria-label="מדריך תרגיל"><div class="guide-panel"><button class="guide-close" type="button" aria-label="סגור">✕</button><div id="guide-body"></div></div></div>
+<script>
+(()=>{
+const guides={"Leg Press": ["לחיצת רגליים", "🦵", "ארבע־ראשי, ישבן ושרירי הירך", "כוון את המושב כך שבתחילת התנועה הברכיים כפופות בנוחות, בלי שהאגן מתרומם. הנח את שתי כפות הרגליים ברוחב כתפיים במרכז המשטח.", "דחוף דרך כל כף הרגל עד שהרגליים כמעט ישרות. החזר לאט במשך 2–3 שניות, עד עומק שבו הגב והאגן נשארים צמודים.", "נשוף בדחיפה; שאף בחזרה.", "אל תנעל ברכיים, אל תאפשר להן לקרוס פנימה, ואל תנתק את האגן מהמושב."], "Chest Press": ["לחיצת חזה", "💪", "חזה, כתף קדמית ויד אחורית", "כוון את גובה המושב כך שהידיות בערך בגובה אמצע החזה. הצמד גב למשענת, כפות רגליים על הרצפה.", "דחוף את הידיות קדימה בשליטה, בלי לנעול מרפקים. החזר באיטיות עד למתיחה נוחה בלבד.", "נשוף בדחיפה; שאף בחזרה.", "אל תרים כתפיים לאוזניים ואל תקשת את הגב כדי להזיז יותר משקל."], "Lat Pulldown": ["משיכת פולי עליון", "🏋️", "רחב גבי, גב עליון ויד קדמית", "כוון את כריות הירכיים כך שיקבעו אותך למושב. אחוז במוט מעט רחב מרוחב הכתפיים, חזה פתוח וגב ניטרלי.", "משוך מרפקים כלפי מטה ולצדדים עד שהמוט מתקרב לחזה העליון. השהה רגע והחזר לאט למעלה.", "נשוף במשיכה; שאף בעלייה.", "אל תמשוך מאחורי העורף, אל תתנדנד לאחור ואל תמשוך בכוח מהצוואר."], "Seated Leg Curl": ["כפיפת ברכיים בישיבה", "🦵", "שרירי הירך האחורית", "כוון את משענת הגב כך שהברכיים בקו עם ציר המכשיר. מקם את הכרית התחתונה מעל העקבים ואת כרית הירכיים בנוחות.", "כופף את הברכיים ומשוך את השוקיים מטה ואחורה כנגד הכרית; החזר לאט בלי שהמשקל נטרק.", "נשוף בכפיפה; שאף ביישור.", "אל תרים את האגן ואל תכפה טווח שמכאיב לברך."], "Seated Cable Row": ["חתירה בכבל בישיבה", "🚣", "גב אמצעי, רחב גבי ויד קדמית", "שב יציב, ברכיים מעט כפופות, גב ניטרלי וחזה פתוח. אחוז בידית כשזרועותיך מושטות קדימה.", "משוך את הידית לכיוון הבטן תוך הובלת המרפקים לאחור; קרב שכמות בעדינות. החזר לאט בלי לעגל את הגב.", "נשוף במשיכה; שאף בהחזרה.", "אל תישען קדימה ואחורה בתנופה ואל תמשוך עם גב מעוגל."], "Plank": ["פלאנק", "🔥", "שרירי ליבה, בטן וייצוב כתפיים", "הנח אמות על מזרן, מרפקים מתחת לכתפיים ובהונות על הרצפה. אסוף מעט את הבטן והישבן.", "החזק קו ישר מהראש ועד העקבים במשך 20–30 שניות, תוך נשימה רגילה. אם קשה, בצע על הברכיים.", "נשום ברציפות; אל תעצור נשימה.", "אל תיתן לאגן לשקוע או להתרומם גבוה. הפסק אם מופיע כאב חד בגב."], "Goblet Squat": ["סקוואט גביע", "🏋️", "ירכיים וישבן", "החזק משקולת אחת מול החזה, כפות רגליים ברוחב נוח.", "שב מטה ואחורה בין הרגליים, שמור על עקבים ברצפה ועלה בלחיצה דרך כפות הרגליים.", "שאף בירידה; נשוף בעלייה.", "אל תעגל גב ואל תכפה עומק."], "Leg Extension": ["פשיטת ברכיים", "🦵", "ארבע־ראשי", "כוון את ציר המכשיר לברך ואת הכרית מעל הקרסול.", "יישר ברכיים בשליטה עד כמעט יישור מלא והורד לאט.", "נשוף בעלייה; שאף בירידה.", "אל תבעט בתנופה ואל תנעל ברכיים."], "Dead Bug": ["דד באג", "🐞", "שרירי ליבה", "שכב על הגב, ידיים לתקרה וברכיים מעל האגן בכיפוף 90 מעלות.", "הושט לאט יד ורגל נגדית בלי שהגב התחתון מתנתק מהרצפה, וחזור להחליף צד.", "נשוף בהושטת הגפיים; שאף בחזרה.", "אל תיתן לגב להתקשת."]};
+const photos={"Leg Press": "https://www.anytimefitness.com/wp-content/uploads/2020/06/AnytimeFitness_LegPress-2.jpg", "Chest Press": "https://commons.wikimedia.org/wiki/Special:FilePath/Girl_doing_chest_press_machine_exercise.jpg?width=800", "Seated Leg Curl": "https://www.zing.coach/exercises/single-leg-seated-leg-curls.webp", "Seated Cable Row": "https://cdn.mos.cms.futurecdn.net/5PT9ANyAFTwWy9qYKoYbR8.jpg", "Plank": "https://www.mensjournal.com/.image/w_3840%2Cq_auto%3Agood%2Cc_fill%2Car_16%3A9/MTk2MTM3MjE4NzA1NDAxMzQ5/planks_for_abs_main_0.jpg"};
+const names=Object.keys(guides);
+const modal=document.getElementById('exercise-guide');
+function openGuide(key){
+ const [name,emoji,muscles,setup,execution,breathing,mistakes]=guides[key];
+ document.getElementById('guide-body').innerHTML=`<h2>${emoji} ${name}</h2><div class="guide-visual">${photos[key]?`<img src="${photos[key]}" alt="תמונה אמיתית להמחשת ${name}" loading="lazy" style="width:100%;max-height:310px;object-fit:contain;border-radius:12px" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div style="display:none">התמונה אינה זמינה כרגע. אפשר להמשיך לקרוא את ההוראות.</div>`:`<div class="big">${emoji}</div><div>תמונה לא זמינה כרגע</div>`}<div class="steps"><span>① כיוון והתמקמות</span><span>➜</span><span>② ביצוע בשליטה</span></div><small>תמונת המחשה ממכון כושר אחר — ייתכנו הבדלים במראה ובכיוון המכשיר. התמונות דורשות חיבור לאינטרנט</small></div><h3>🎯 שרירים עובדים</h3><div>${muscles}</div><h3>⚙️ איך מכוונים ומתמקמים</h3><div>${setup}</div><h3>💪 איך מבצעים כל חזרה</h3><div>${execution}</div><h3>🫁 נשימה</h3><div>${breathing}</div><h3>🚫 טעויות שכדאי להימנע מהן</h3><div>${mistakes}</div><div class="guide-note"><b>אימון ראשון:</b> התחל במשקל קל, נסה 5 חזרות לבדיקה ורק אז בחר משקל עבודה. עצור בכאב חד או בסחרחורת. אם אינך בטוח בכיוון המכשיר, בקש בדיקת בטיחות קצרה מאיש צוות.</div>`;
+ modal.classList.add('open');document.body.style.overflow='hidden';
+}
+function decorate(){
+ document.querySelectorAll('.item').forEach(el=>{
+  if(el.dataset.exerciseGuideAdded)return;
+  const label=el.textContent||'';
+  const key=names.find(k=>label.includes(k));
+  if(!key)return;
+  const btn=document.createElement('button');btn.type='button';btn.className='exercise-help';btn.textContent='📖 איך מבצעים?';
+  btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openGuide(key)});
+  el.appendChild(btn);el.dataset.exerciseGuideAdded='1';
+ });
+}
+function close(){modal.classList.remove('open');document.body.style.overflow=''}
+modal.querySelector('.guide-close').addEventListener('click',close);
+modal.addEventListener('click',e=>{if(e.target===modal)close()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+decorate();new MutationObserver(decorate).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+
+<style>
+#future-fitness{max-width:850px;margin:18px auto;padding:0 18px;direction:rtl;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#17211d}
+.ff-card{background:white;border:1px solid #dfe9e3;border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 5px 18px #17211d10}
+.ff-card h2,.ff-card h3{margin:0 0 10px}.ff-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.ff-btn{border:0;background:#2b7655;color:white;padding:11px 14px;border-radius:11px;font-weight:850;cursor:pointer}.ff-btn:disabled{opacity:.4}
+.ff-input{width:100%;padding:10px;border:1px solid #cbd9d0;border-radius:10px;font:inherit;background:white}
+.ff-row{padding:12px 0;border-top:1px solid #e5ebe7}.ff-row label{display:flex;align-items:center;gap:10px;font-weight:700}.ff-row input[type=checkbox]{width:23px;height:23px;accent-color:#2b7655}
+.ff-small{font-size:13px;color:#5b7064;line-height:1.6}.ff-warning{background:#fff5e2;border-radius:12px;padding:12px;line-height:1.7}
+@media(max-width:500px){.ff-grid{grid-template-columns:1fr}}
+</style>
+<div id="future-fitness"><div class="ff-card"><h2>📅 תוכנית מתפתחת — 52 שבועות</h2><p class="ff-small">כל השבועות נוצרים במכשיר לפי התאריך והמשוב שלך. שבוע 1 נשאר כפי שהוא. שבועות 2–52 נפתחים אוטומטית, והנקודות מצטברות.</p><div class="ff-grid"><div><label for="ff-week">בחר שבוע</label><select id="ff-week" class="ff-input"></select></div><div><label for="ff-status">מצב התוכנית</label><div id="ff-status" style="font-weight:850;margin-top:10px"></div></div></div><div class="ff-warning" style="margin-top:12px">⚠️ יעד המרתון הוא ארוך טווח, לא התחייבות לרוץ מרתון בתוך שנה. לפני התחלת ריצה או הגדלת עומס, ובמיוחד אם עדיין יש כאב בחזה/בטן בנשימה עמוקה, יש להיבדק רפואית. כאב חדש, סחרחורת או קוצר נשימה חריג = מפסיקים ולא מתקדמים.</div></div><div id="ff-content"></div></div>
+<script>
+(function(){
+'use strict';
+const START=new Date(2026,9,11), STORE='nivFitness52WeeksV1', CHECK='nivFitness52ChecksV1';
+const $=id=>document.getElementById(id);
+const get=(k,def)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??def}catch(e){return def}};
+const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const dateFor=(w,d=0)=>{const a=new Date(START);a.setDate(a.getDate()+7*(w-1)+d);return a};
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const fmt=d=>d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'});
+const currentWeek=()=>Math.min(52,Math.max(1,Math.floor((new Date().setHours(12,0,0,0)-START.getTime())/604800000)+1));
+const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+const exercisesA=[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10'],['Plank','3×20–30 שנ׳']];
+const exercisesB=[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Lat Pulldown','3×10'],['Leg Extension','2×12'],['Seated Cable Row','2×10'],['Dead Bug','3×8 לכל צד']];
+function feedback(w){return get(STORE,{})[w]||{}}
+function pace(w){
+ let base=0;for(let k=2;k<=w;k++){
+  const prev=feedback(k-1);const cycle=((k-2)%4===3);
+  if(prev.pain==='yes'||prev.effort==='hard'||prev.completion==='low')base=Math.max(0,base-1);
+  else if(prev.completion==='high'&&prev.effort==='easy'&&prev.pain==='no')base=Math.min(24,base+1);
+  else if(prev.completion==='high'&&prev.effort==='ok'&&prev.pain==='no'&&!cycle&&k>3)base=Math.min(24,base+0.5);
+  // Without explicit feedback, never increase automatically.
+ }
+ return base;
+}
+function plan(w){
+ const level=pace(w),cutback=(w%4===0),baseLong=Math.min(105,35+level*4),long=Math.round((cutback?baseLong*.8:baseLong)/5)*5;
+ const runApproved=feedback(w-1).runReady==='yes';
+ const runMinutes=runApproved?Math.min(35,8+Math.floor(level)*2):0;
+ const strength=(list)=>['חימום קל 8 דקות',...list.map(([n,r])=>`${n} — ${r}; בחר משקל לפי טכניקה, השאר 2–3 חזרות ברזרבה`),'שחרור 5 דקות'];
+ return [
+ ['הליכה/ריצה קלה בחוץ', [`חימום הליכה 5 דקות`,runMinutes?`הליכה–ריצה לסירוגין ${25+Math.min(15,level*2)} דקות; ריצה מצטברת עד ${runMinutes} דקות, בקצב דיבור`:'הליכה 30–40 דקות; מעבר לריצה רק לאחר אישור כשירות אישי', 'שחרור 5 דקות'],'סיבולת'],
+ ['כוח A — גוף מלא',strength(exercisesA),'כוח'],
+ ['התאוששות פעילה', ['הליכה נוחה 20–30 דקות','מוביליטי 5–10 דקות'],'התאוששות'],
+ ['סיבולת בבריכה / הליכה', [`שחייה קלה או הליכה ${Math.min(55,30+level*2)} דקות`, 'שחרור 5 דקות'],'סיבולת'],
+ ['מנוחה', ['שתייה, שינה והתאוששות; אין צורך לפצות על יום מנוחה'],'מנוחה'],
+ ['כוח B — גוף מלא',strength(exercisesB),'כוח'],
+ ['אימון סיבולת ארוך', [`${runMinutes?'הליכה–ריצה נינוחה':'הליכה נינוחה'} עד ${long} דקות; קצב שיחה, בלי מאמץ מקסימלי`, 'אם יש כאב או עייפות חריגה, לקצר או להחליף בהליכה', 'שחרור 5 דקות'],'סיבולת']
+ ];
+}
+function saveFeedback(w){const all=get(STORE,{});all[w]={completion:$('ff-completion').value,effort:$('ff-effort').value,pain:$('ff-pain').value,runReady:$('ff-runready').value,notes:$('ff-notes').value,updated:iso(new Date())};set(STORE,all);render();updateWeeklyScore();}
+function render(){
+ const w=Number($('ff-week').value),now=currentWeek(),content=$('ff-content');$('ff-status').textContent=w>now?'🔒 שבוע עתידי — תצוגה מקדימה':w===now?'🟢 השבוע הנוכחי':'📚 שבוע שהסתיים';
+ if(w===1){content.innerHTML='<div class="ff-card"><h3>שבוע 1 — 11–17.10.2026</h3><p>תוכנית השבוע הראשון נמצאת בחלק העליון של האפליקציה, כולל הסימונים, הניקוד וההסברים המקוריים.</p></div>';return}
+ const tasks=plan(w),checks=get(CHECK,{}),saved=feedback(w),locked=w>now;
+ let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">שני אימוני כוח + שלושה אימוני סיבולת, התאוששות ומנוחה. בכל יום ראשון: הקאנטרי רק אחרי 15:00. זמן ביצוע גמיש. שבוע רביעי בכל מחזור הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, אין העלאה אוטומטית של העומס.'}</div></div>`;
+ tasks.forEach(([title,steps,kind],d)=>{
+ html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'להישאר בקצב שמאפשר לדבר.':''}</div>`;
+ steps.forEach((step,j)=>{const id=`${w}-${d}-${j}`;html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${step}</span></label></div>`});html+='</div>';
+ });
+ const options=(items,v)=>items.map(([key,label])=>`<option value="${key}" ${v===key?'selected':''}>${label}</option>`).join('');
+ html+=`<div class="ff-card"><h2>📊 סיכום והתאמה לשבוע הבא</h2><p class="ff-small">מלא בסוף השבוע. המערכת תעלה עומס רק כשהדיווח מצביע על ביצוע טוב, מאמץ נסבל וללא כאב. משקלים בפועל כדאי לתעד בהערות.</p><div class="ff-grid"><div><label>כמה מהתוכנית בוצע?</label><select id="ff-completion" class="ff-input">${options([['','בחר'],['low','פחות מ־70%'],['high','70% ומעלה']],saved.completion)}</select></div><div><label>איך הרגיש העומס?</label><select id="ff-effort" class="ff-input">${options([['','בחר'],['easy','קל יחסית'],['ok','מתאים'],['hard','קשה מדי']],saved.effort)}</select></div><div><label>היה כאב חריג?</label><select id="ff-pain" class="ff-input">${options([['','בחר'],['no','לא'],['yes','כן']],saved.pain)}</select></div><div><label>קיבלתי אישור רפואי לחזור לריצה?</label><select id="ff-runready" class="ff-input">${options([['','בחר'],['no','לא / עדיין לא'],['yes','כן']],saved.runReady)}</select></div></div><label style="display:block;margin-top:12px">הערות: מרחקים, זמנים, משקלים ותחושות</label><textarea id="ff-notes" class="ff-input" rows="3" placeholder="לדוגמה: 4 ק״מ הליכה, 40 ק״ג Leg Press...">${(saved.notes||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea><button id="ff-save" class="ff-btn" style="margin-top:12px" ${locked?'disabled':''}>💾 שמור משוב והכן את השבוע הבא</button></div>`;
+ content.innerHTML=html;
+ content.querySelectorAll('[data-ff-check]').forEach(box=>box.addEventListener('change',()=>{const all=get(CHECK,{});all[box.dataset.ffCheck]=box.checked;set(CHECK,all);updateWeeklyScore();if(box.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(10)}));
+ $('ff-save').addEventListener('click',()=>saveFeedback(w));
+}
+const sel=$('ff-week');for(let w=1;w<=52;w++){const opt=document.createElement('option');opt.value=w;opt.textContent=`שבוע ${w} • ${fmt(dateFor(w))}`;sel.appendChild(opt)}sel.value=currentWeek();sel.addEventListener('change',render);
+// Add the new weeks' task points to the existing permanent points bank, without changing week 1.
+const previousEarned=earnedPoints;
+earnedPoints=function(){return previousEarned()+Object.values(get(CHECK,{})).filter(Boolean).length*10};
+render();updateWeeklyScore();
+window.addEventListener('focus',()=>{const w=currentWeek();if(Number(sel.value)<w){sel.value=w;render()}});
+})();
+</script>
+
+<style>
+/* Daily-first layout: existing app logic and storage keys remain untouched. */
+#niv-daily-nav{position:relative;z-index:6;max-width:850px;margin:12px auto;padding:0 18px;direction:rtl}
+.niv-nav-card{background:#fff;border:1px solid #dce9e1;border-radius:17px;padding:12px;box-shadow:0 5px 18px #17211d10}
+.niv-nav-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;justify-content:center}
+.niv-nav-row button{border:0;border-radius:11px;padding:10px 12px;background:#e6f2ea;color:#185a3c;font-weight:850;font-size:14px}
+.niv-nav-row button.primary{background:#287650;color:white}
+#niv-date-label{font-size:18px;font-weight:900;text-align:center;margin-bottom:9px}
+#niv-backup-panel{max-width:850px!important;margin:12px auto 24px!important;padding:0 18px!important;border:0!important;background:transparent!important}
+#niv-backup-panel details{border:1px solid #e1e9e4;border-radius:12px;background:#fff;padding:9px 13px;text-align:right}
+#niv-backup-panel summary{font-size:13px;color:#53665b;font-weight:750;cursor:pointer}
+#niv-backup-panel .backup-inner{padding:12px 0 4px;text-align:center}
+#niv-backup-panel .backup-inner button{font-size:14px!important;padding:10px 14px!important}
+#niv-dashboard-content[hidden],#niv-future-container[hidden]{display:none!important}
+#niv-daily-nav .niv-note{font-size:12px;color:#64746b;text-align:center;margin-top:7px}
+#future-fitness.niv-daily-future #ff-content>.ff-card[data-niv-day]{display:none}
+#future-fitness.niv-daily-future #ff-content>.ff-card[data-niv-day].niv-current-day{display:block}
+#future-fitness.niv-daily-future #ff-content>.ff-card.niv-week-summary{display:none}
+#future-fitness.niv-daily-future.niv-show-summary #ff-content>.ff-card.niv-week-summary{display:block}
+</style>
+<div id="niv-daily-nav"><div class="niv-nav-card"><div id="niv-date-label">📅 היום שלי</div><div class="niv-nav-row"><button type="button" id="niv-prev">◀ יום קודם</button><button type="button" id="niv-today" class="primary">🏠 היום</button><button type="button" id="niv-next">יום הבא ▶</button></div><div class="niv-nav-row" style="margin-top:8px"><button type="button" id="niv-dashboard-toggle">🏆 ניקוד, משקל ופרסים</button><button type="button" id="niv-weeks-toggle">📅 תוכנית 52 השבועות</button><button type="button" id="niv-feedback-toggle">📊 משוב שבועי</button></div><div class="niv-note">האימון של התאריך שבחרת מוצג מיד. כל הנתונים והסימונים נשמרים.</div></div></div>
+<script>
+(function(){
+'use strict';
+const start=new Date(2026,9,11,12), end=new Date(2027,9,9,12);
+const $=id=>document.getElementById(id);
+const dateAt=offset=>{const d=new Date(start);d.setDate(d.getDate()+offset);return d};
+const dayIndex=d=>Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate(),12)-start)/86400000);
+const clamp=n=>Math.max(0,Math.min(363,n));
+let selected=clamp(dayIndex(new Date()));
+const main=document.querySelector('main.wrap');
+const dashboard=document.createElement('div');dashboard.id='niv-dashboard-content';dashboard.hidden=true;
+// Move only the summary widgets; keep the week-one tabs and daily tasks in place.
+['add-workout-btn','extra-summary'].forEach(id=>{const el=$(id);if(el)dashboard.appendChild(el)});
+const score=main.querySelector('.scoreboard');if(score)dashboard.appendChild(score);
+const weight=$('weight-tracker');if(weight)dashboard.appendChild(weight);
+main.insertBefore(dashboard,main.firstChild);
+const future=$('future-fitness');
+const futureWrap=document.createElement('div');futureWrap.id='niv-future-container';futureWrap.hidden=false;
+future.parentNode.insertBefore(futureWrap,future);futureWrap.appendChild(future);
+const backup=$('niv-backup-panel');
+const inner=document.createElement('div');inner.className='backup-inner';
+while(backup.firstChild)inner.appendChild(backup.firstChild);
+const details=document.createElement('details');details.innerHTML='<summary>💾 גיבוי נתונים</summary>';details.appendChild(inner);backup.appendChild(details);
+// Move the backup after all program content, at the very bottom.
+document.body.appendChild(backup);
+const nav=$('niv-daily-nav');document.querySelector('header').after(nav);
+const weekOneTabs=$('tabs').closest('.daynav');
+weekOneTabs.style.display='none';
+const weekOneExtras=$('extra-summary');
+function updateFutureCards(day){
+ const cards=[...document.querySelectorAll('#ff-content > .ff-card')];
+ cards.forEach((c,i)=>{c.classList.remove('niv-current-day','niv-week-summary');c.removeAttribute('data-niv-day');
+  if(i>=1&&i<=7){c.dataset.nivDay=String(i-1);if(i-1===day)c.classList.add('niv-current-day')}
+  else if(i>=8)c.classList.add('niv-week-summary');
+ });
+}
+function draw(){
+ const d=dateAt(selected),w=Math.floor(selected/7)+1,di=selected%7;
+ $('niv-date-label').textContent='📅 '+d.toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const w1=w===1;
+ $('days').style.display=w1?'':'none';
+ if(w1){show(di);futureWrap.hidden=true}
+ else {futureWrap.hidden=false;const sel=$('ff-week');if(sel&&Number(sel.value)!==w){sel.value=w;sel.dispatchEvent(new Event('change'))}future.classList.add('niv-daily-future');updateFutureCards(di)}
+ $('niv-prev').disabled=selected===0;$('niv-next').disabled=selected===363;
+ $('niv-prev').style.opacity=selected===0?'.4':'1';$('niv-next').style.opacity=selected===363?'.4':'1';
+}
+const focusDay=()=>{const nav=$('niv-daily-nav');if(nav){const y=nav.getBoundingClientRect().top+window.scrollY;window.scrollTo(0,Math.max(0,y));}};
+$('niv-prev').onclick=()=>{selected=clamp(selected-1);draw();focusDay()};
+$('niv-next').onclick=()=>{selected=clamp(selected+1);draw();focusDay()};
+$('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw();focusDay()};
+$('niv-dashboard-toggle').onclick=()=>{dashboard.hidden=!dashboard.hidden;if(!dashboard.hidden)dashboard.scrollIntoView({behavior:'smooth',block:'start'})};
+$('niv-weeks-toggle').onclick=()=>{futureWrap.hidden=!futureWrap.hidden;if(!futureWrap.hidden){future.classList.remove('niv-daily-future');futureWrap.scrollIntoView({behavior:'smooth',block:'start'})}else future.classList.add('niv-daily-future')};
+$('niv-feedback-toggle').onclick=()=>{const w=Math.floor(selected/7)+1;if(w===1){alert('משוב שבוע 1 אינו מופיע בטופס השבועות העתידיים. אפשר לתעד את השבוע הראשון באימונים ובדירוגים שלו.');return}futureWrap.hidden=false;future.classList.add('niv-daily-future','niv-show-summary');updateFutureCards(selected%7);const summary=document.querySelector('.niv-week-summary');if(summary)summary.scrollIntoView({behavior:'smooth',block:'start'})};
+const observer=new MutationObserver(()=>{if(!futureWrap.hidden&&future.classList.contains('niv-daily-future'))updateFutureCards(selected%7)});
+observer.observe($('ff-content'),{childList:true});
+// If user selects a week in the full 52-week browser, show the complete selected week.
+$('ff-week').addEventListener('change',()=>{if(!future.classList.contains('niv-daily-future'))futureWrap.hidden=false});
+// Start on the current day, with no scrolling through past days.
+draw();
+// iOS Safari/PWA may restore an old scroll position after scripts run.
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+const refreshToday=()=>{selected=clamp(dayIndex(new Date()));dashboard.hidden=true;future.classList.add('niv-daily-future');draw();focusDay()};
+window.addEventListener('pageshow',()=>{refreshToday();requestAnimationFrame(()=>requestAnimationFrame(focusDay));setTimeout(focusDay,180);setTimeout(focusDay,650);setTimeout(focusDay,1400)});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday()});
+window.addEventListener('load',()=>{refreshToday();setTimeout(focusDay,350)});
+refreshToday();
+})();
+</script>
+</body></html>
