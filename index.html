@@ -15,7 +15,7 @@
 <style>
 :root{--bg:#f5f7f6;--card:#fff;--ink:#17211d;--muted:#68756f;--accent:#3c8d68;--accent2:#dff1e7;--line:#e4e9e6;--shadow:0 8px 30px #1c2d2412}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-header{background:linear-gradient(135deg,#1f5e43,#4aa477);color:#fff;padding:28px 18px 22px;position:sticky;top:0;z-index:5}
+header{background:linear-gradient(135deg,#1f5e43,#4aa477);color:#fff;padding:28px 18px 22px;position:relative;z-index:5}
 .wrap{max-width:850px;margin:auto}.eyebrow{opacity:.85;font-size:13px;font-weight:700}.title{font-size:30px;font-weight:850;margin:5px 0}.sub{opacity:.9}
 .progressbox{margin-top:16px;background:#ffffff22;border:1px solid #ffffff33;border-radius:16px;padding:12px}.bar{height:9px;background:#ffffff30;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#fff;border-radius:20px;transition:.3s}.progline{display:flex;justify-content:space-between;font-size:13px;margin-top:7px}
 main{padding:18px}.daynav{display:flex;align-items:center;gap:10px;margin-bottom:15px}.tabs{display:flex;gap:8px;overflow:auto;flex:1;margin-bottom:0}.today-btn{border:0;background:var(--accent2);color:#246044;padding:10px 14px;border-radius:999px;white-space:nowrap;font-weight:900;box-shadow:0 2px 10px #00000008}.tab{border:0;background:#fff;color:var(--ink);padding:10px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 2px 10px #00000008;font-weight:700}.tab.active{background:var(--accent);color:#fff}.tab.today{outline:2px solid var(--accent2);outline-offset:2px}.add-workout-btn{width:100%;border:0;background:linear-gradient(135deg,#17211d,#3c8d68);color:#fff;border-radius:18px;padding:16px;font-size:19px;font-weight:950;box-shadow:var(--shadow);margin:0 0 15px}.extra-summary{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:0 0 15px;box-shadow:var(--shadow)}.extra-list{margin-top:9px}.extra-item{border-top:1px solid var(--line);padding:10px 0}.extra-item:first-child{border-top:0}.extra-actions{display:flex;gap:8px;margin-top:7px}.extra-actions button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 9px;font-weight:750}.modal{position:fixed;inset:0;background:#0009;z-index:80;display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}.modal-card{background:#fff;width:100%;max-width:600px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px}.modal-card h2{margin:0 0 14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:850}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;font:inherit;background:#fff}.modal-actions{display:flex;gap:9px;margin-top:16px}.save-extra{flex:1;border:0;background:var(--accent);color:#fff;border-radius:13px;padding:12px;font-weight:900}.cancel-extra{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;font-weight:850}.points-preview{background:var(--accent2);border-radius:12px;padding:10px;margin-top:10px;font-weight:850}.today-badge{display:inline-block;margin-inline-start:8px;background:var(--accent2);color:#246044;font-size:13px;font-weight:900;padding:4px 8px;border-radius:999px;vertical-align:middle}
@@ -604,7 +604,7 @@ function draw(){
  $('niv-prev').disabled=selected===0;$('niv-next').disabled=selected===363;
  $('niv-prev').style.opacity=selected===0?'.4':'1';$('niv-next').style.opacity=selected===363?'.4':'1';
 }
-const focusDay=()=>{const nav=$('niv-daily-nav');if(nav){const y=nav.getBoundingClientRect().top+window.scrollY;window.scrollTo({top:y,behavior:'instant'})}};
+const focusDay=()=>{const nav=$('niv-daily-nav');if(nav){const y=nav.getBoundingClientRect().top+window.scrollY;window.scrollTo({top:Math.max(0,y-12),behavior:'instant'})}};
 $('niv-prev').onclick=()=>{selected=clamp(selected-1);draw();focusDay()};
 $('niv-next').onclick=()=>{selected=clamp(selected+1);draw();focusDay()};
 $('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw();focusDay()};
@@ -620,7 +620,7 @@ draw();
 // iOS Safari/PWA may restore an old scroll position after scripts run.
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 const refreshToday=()=>{selected=clamp(dayIndex(new Date()));dashboard.hidden=true;future.classList.add('niv-daily-future');draw();focusDay()};
-window.addEventListener('pageshow',()=>{refreshToday();requestAnimationFrame(()=>requestAnimationFrame(focusDay));setTimeout(focusDay,180);setTimeout(focusDay,650)});
+window.addEventListener('pageshow',()=>{refreshToday();requestAnimationFrame(()=>requestAnimationFrame(focusDay));setTimeout(focusDay,180);setTimeout(focusDay,650);setTimeout(focusDay,1400)});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday()});
 window.addEventListener('load',()=>{refreshToday();setTimeout(focusDay,350)});
 refreshToday();
