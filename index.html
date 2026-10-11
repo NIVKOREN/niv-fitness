@@ -53,7 +53,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 11.10.2026 • מדריך תרגילים מפורט</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 11.10.2026 • פתיחה ישירה להיום</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -195,7 +195,7 @@ function desc(t){
  if(t.includes("Plank"))return "גוף בקו ישר; נשימה רגילה, לא להחזיק נשימה.";
  return "בצע בקצב נוח. המטרה בשבוע הראשון היא עקביות ולא מקסימום מאמץ.";
 }
-function show(i){document.querySelectorAll(".tab").forEach((b,k)=>b.classList.toggle("active",k===i));document.querySelectorAll(".day").forEach((d,k)=>d.classList.toggle("active",k===i));const activeTab=document.querySelectorAll(".tab")[i];if(activeTab)activeTab.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});}
+function show(i){document.querySelectorAll(".tab").forEach((b,k)=>b.classList.toggle("active",k===i));document.querySelectorAll(".day").forEach((d,k)=>d.classList.toggle("active",k===i));const activeTab=document.querySelectorAll(".tab")[i];if(activeTab)activeTab.scrollIntoView({behavior:"instant",block:"nearest",inline:"center"});}
 function localDateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function dataDateKey(s){const [dd,mm,yyyy]=s.split(".");return `${yyyy}-${mm}-${dd}`}
 let calendarDayKey="";
@@ -604,9 +604,10 @@ function draw(){
  $('niv-prev').disabled=selected===0;$('niv-next').disabled=selected===363;
  $('niv-prev').style.opacity=selected===0?'.4':'1';$('niv-next').style.opacity=selected===363?'.4':'1';
 }
-$('niv-prev').onclick=()=>{selected=clamp(selected-1);draw()};
-$('niv-next').onclick=()=>{selected=clamp(selected+1);draw()};
-$('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw()};
+const focusDay=()=>{const nav=$('niv-daily-nav');if(nav){const y=nav.getBoundingClientRect().top+window.scrollY;window.scrollTo({top:y,behavior:'instant'})}};
+$('niv-prev').onclick=()=>{selected=clamp(selected-1);draw();focusDay()};
+$('niv-next').onclick=()=>{selected=clamp(selected+1);draw();focusDay()};
+$('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw();focusDay()};
 $('niv-dashboard-toggle').onclick=()=>{dashboard.hidden=!dashboard.hidden;if(!dashboard.hidden)dashboard.scrollIntoView({behavior:'smooth',block:'start'})};
 $('niv-weeks-toggle').onclick=()=>{futureWrap.hidden=!futureWrap.hidden;if(!futureWrap.hidden){future.classList.remove('niv-daily-future');futureWrap.scrollIntoView({behavior:'smooth',block:'start'})}else future.classList.add('niv-daily-future')};
 $('niv-feedback-toggle').onclick=()=>{const w=Math.floor(selected/7)+1;if(w===1){alert('משוב שבוע 1 אינו מופיע בטופס השבועות העתידיים. אפשר לתעד את השבוע הראשון באימונים ובדירוגים שלו.');return}futureWrap.hidden=false;future.classList.add('niv-daily-future','niv-show-summary');updateFutureCards(selected%7);const summary=document.querySelector('.niv-week-summary');if(summary)summary.scrollIntoView({behavior:'smooth',block:'start'})};
@@ -615,7 +616,14 @@ observer.observe($('ff-content'),{childList:true});
 // If user selects a week in the full 52-week browser, show the complete selected week.
 $('ff-week').addEventListener('change',()=>{if(!future.classList.contains('niv-daily-future'))futureWrap.hidden=false});
 // Start on the current day, with no scrolling through past days.
-draw();window.scrollTo(0,0);
+draw();
+// iOS Safari/PWA may restore an old scroll position after scripts run.
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+const refreshToday=()=>{selected=clamp(dayIndex(new Date()));dashboard.hidden=true;future.classList.add('niv-daily-future');draw();focusDay()};
+window.addEventListener('pageshow',()=>{refreshToday();requestAnimationFrame(()=>requestAnimationFrame(focusDay));setTimeout(focusDay,180);setTimeout(focusDay,650)});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday()});
+window.addEventListener('load',()=>{refreshToday();setTimeout(focusDay,350)});
+refreshToday();
 })();
 </script>
 </body></html>
