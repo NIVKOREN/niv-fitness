@@ -97,6 +97,8 @@ function openExerciseGuide(key,plan){
 }
 function closeExerciseGuide(){document.getElementById('exercise-guide').classList.remove('show')}
 document.getElementById('exercise-guide').addEventListener('click',e=>{if(e.target.id==='exercise-guide')closeExerciseGuide()});
+// Use a single guide dialog; do not duplicate its id or replace its contents.
+document.addEventListener("click",function(e){const btn=e.target.closest(".exercise-help");if(!btn)return;e.preventDefault();e.stopPropagation();const row=btn.closest(".item");if(!row)return;const title=row.querySelector(".ititle")?.textContent||"";const key=Object.keys(exerciseGuides).find(k=>title.includes(k));if(key)openExerciseGuide(key,title);},true);
 
 const data=[
 {d:"ראשון",date:"11.10.2026",focus:"סיבולת בחוץ • הליכה/ריצה",cards:[
@@ -419,48 +421,6 @@ $('weight-history').querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>
 $('weight-date').value='2026-10-16';$('weight-save').onclick=()=>{let date=$('weight-date').value,weight=Number($('weight-value').value);if(!date||!Number.isFinite(weight)||weight<30||weight>350){alert('יש להזין תאריך ומשקל תקין');return}let a=read().filter(x=>x.date!==date);a.push({date,weight});localStorage.setItem(KEY,JSON.stringify(a));$('weight-value').value='';draw()};draw();
 })();
 </script>
-<style>
-.exercise-help{margin-inline-start:9px;padding:5px 10px;border-radius:12px;border:1px solid #2b7655;background:#e9f7ef;color:#15543a;font-weight:800;font-size:12px;cursor:pointer}
-#exercise-guide{display:none;position:fixed;inset:0;background:#0009;z-index:99999;overflow:auto;padding:16px;align-items:flex-start;justify-content:center}
-#exercise-guide.open{display:flex}
-.guide-panel{background:#fff;border-radius:22px;padding:22px;max-width:610px;width:100%;margin:20px auto 40px;box-shadow:0 20px 60px #0005;line-height:1.7}
-.guide-panel h2{margin:0;color:#206044}.guide-panel h3{margin:16px 0 3px;color:#206044;font-size:16px}
-.guide-close{float:left;border:0;background:#e8eee9;border-radius:10px;padding:8px 12px;font-size:20px}
-.guide-visual{background:#eff8f2;border-radius:16px;text-align:center;padding:17px;margin:14px 0}
-.guide-visual .big{font-size:64px}.guide-visual .steps{display:flex;justify-content:space-around;gap:10px;font-size:14px;font-weight:800}
-.guide-note{background:#fff6df;padding:12px;border-radius:12px;margin-top:14px}
-</style>
-<div id="exercise-guide" role="dialog" aria-modal="true" aria-label="מדריך תרגיל"><div class="guide-panel"><button class="guide-close" type="button" aria-label="סגור">✕</button><div id="guide-body"></div></div></div>
-<script>
-(()=>{
-const guides={"Leg Press": ["לחיצת רגליים", "🦵", "ארבע־ראשי, ישבן ושרירי הירך", "כוון את המושב כך שבתחילת התנועה הברכיים כפופות בנוחות, בלי שהאגן מתרומם. הנח את שתי כפות הרגליים ברוחב כתפיים במרכז המשטח.", "דחוף דרך כל כף הרגל עד שהרגליים כמעט ישרות. החזר לאט במשך 2–3 שניות, עד עומק שבו הגב והאגן נשארים צמודים.", "נשוף בדחיפה; שאף בחזרה.", "אל תנעל ברכיים, אל תאפשר להן לקרוס פנימה, ואל תנתק את האגן מהמושב."], "Chest Press": ["לחיצת חזה", "💪", "חזה, כתף קדמית ויד אחורית", "כוון את גובה המושב כך שהידיות בערך בגובה אמצע החזה. הצמד גב למשענת, כפות רגליים על הרצפה.", "דחוף את הידיות קדימה בשליטה, בלי לנעול מרפקים. החזר באיטיות עד למתיחה נוחה בלבד.", "נשוף בדחיפה; שאף בחזרה.", "אל תרים כתפיים לאוזניים ואל תקשת את הגב כדי להזיז יותר משקל."], "Lat Pulldown": ["משיכת פולי עליון", "🏋️", "רחב גבי, גב עליון ויד קדמית", "כוון את כריות הירכיים כך שיקבעו אותך למושב. אחוז במוט מעט רחב מרוחב הכתפיים, חזה פתוח וגב ניטרלי.", "משוך מרפקים כלפי מטה ולצדדים עד שהמוט מתקרב לחזה העליון. השהה רגע והחזר לאט למעלה.", "נשוף במשיכה; שאף בעלייה.", "אל תמשוך מאחורי העורף, אל תתנדנד לאחור ואל תמשוך בכוח מהצוואר."], "Seated Leg Curl": ["כפיפת ברכיים בישיבה", "🦵", "שרירי הירך האחורית", "כוון את משענת הגב כך שהברכיים בקו עם ציר המכשיר. מקם את הכרית התחתונה מעל העקבים ואת כרית הירכיים בנוחות.", "כופף את הברכיים ומשוך את השוקיים מטה ואחורה כנגד הכרית; החזר לאט בלי שהמשקל נטרק.", "נשוף בכפיפה; שאף ביישור.", "אל תרים את האגן ואל תכפה טווח שמכאיב לברך."], "Seated Cable Row": ["חתירה בכבל בישיבה", "🚣", "גב אמצעי, רחב גבי ויד קדמית", "שב יציב, ברכיים מעט כפופות, גב ניטרלי וחזה פתוח. אחוז בידית כשזרועותיך מושטות קדימה.", "משוך את הידית לכיוון הבטן תוך הובלת המרפקים לאחור; קרב שכמות בעדינות. החזר לאט בלי לעגל את הגב.", "נשוף במשיכה; שאף בהחזרה.", "אל תישען קדימה ואחורה בתנופה ואל תמשוך עם גב מעוגל."], "Plank": ["פלאנק", "🔥", "שרירי ליבה, בטן וייצוב כתפיים", "הנח אמות על מזרן, מרפקים מתחת לכתפיים ובהונות על הרצפה. אסוף מעט את הבטן והישבן.", "החזק קו ישר מהראש ועד העקבים במשך 20–30 שניות, תוך נשימה רגילה. אם קשה, בצע על הברכיים.", "נשום ברציפות; אל תעצור נשימה.", "אל תיתן לאגן לשקוע או להתרומם גבוה. הפסק אם מופיע כאב חד בגב."], "Goblet Squat": ["סקוואט גביע", "🏋️", "ירכיים וישבן", "החזק משקולת אחת מול החזה, כפות רגליים ברוחב נוח.", "שב מטה ואחורה בין הרגליים, שמור על עקבים ברצפה ועלה בלחיצה דרך כפות הרגליים.", "שאף בירידה; נשוף בעלייה.", "אל תעגל גב ואל תכפה עומק."], "Leg Extension": ["פשיטת ברכיים", "🦵", "ארבע־ראשי", "כוון את ציר המכשיר לברך ואת הכרית מעל הקרסול.", "יישר ברכיים בשליטה עד כמעט יישור מלא והורד לאט.", "נשוף בעלייה; שאף בירידה.", "אל תבעט בתנופה ואל תנעל ברכיים."], "Dead Bug": ["דד באג", "🐞", "שרירי ליבה", "שכב על הגב, ידיים לתקרה וברכיים מעל האגן בכיפוף 90 מעלות.", "הושט לאט יד ורגל נגדית בלי שהגב התחתון מתנתק מהרצפה, וחזור להחליף צד.", "נשוף בהושטת הגפיים; שאף בחזרה.", "אל תיתן לגב להתקשת."]};
-const photos={"Leg Press": "https://www.anytimefitness.com/wp-content/uploads/2020/06/AnytimeFitness_LegPress-2.jpg", "Chest Press": "https://commons.wikimedia.org/wiki/Special:FilePath/Girl_doing_chest_press_machine_exercise.jpg?width=800", "Seated Leg Curl": "https://www.zing.coach/exercises/single-leg-seated-leg-curls.webp", "Seated Cable Row": "https://cdn.mos.cms.futurecdn.net/5PT9ANyAFTwWy9qYKoYbR8.jpg", "Plank": "https://www.mensjournal.com/.image/w_3840%2Cq_auto%3Agood%2Cc_fill%2Car_16%3A9/MTk2MTM3MjE4NzA1NDAxMzQ5/planks_for_abs_main_0.jpg"};
-const names=Object.keys(guides);
-const modal=document.getElementById('exercise-guide');
-function openGuide(key){
- const [name,emoji,muscles,setup,execution,breathing,mistakes]=guides[key];
- document.getElementById('guide-body').innerHTML=`<h2>${emoji} ${name}</h2><div class="guide-visual">${photos[key]?`<img src="${photos[key]}" alt="תמונה אמיתית להמחשת ${name}" loading="lazy" style="width:100%;max-height:310px;object-fit:contain;border-radius:12px" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div style="display:none">התמונה אינה זמינה כרגע. אפשר להמשיך לקרוא את ההוראות.</div>`:`<div class="big">${emoji}</div><div>תמונה לא זמינה כרגע</div>`}<div class="steps"><span>① כיוון והתמקמות</span><span>➜</span><span>② ביצוע בשליטה</span></div><small>תמונת המחשה ממכון כושר אחר — ייתכנו הבדלים במראה ובכיוון המכשיר. התמונות דורשות חיבור לאינטרנט</small></div><h3>🎯 שרירים עובדים</h3><div>${muscles}</div><h3>⚙️ איך מכוונים ומתמקמים</h3><div>${setup}</div><h3>💪 איך מבצעים כל חזרה</h3><div>${execution}</div><h3>🫁 נשימה</h3><div>${breathing}</div><h3>🚫 טעויות שכדאי להימנע מהן</h3><div>${mistakes}</div><div class="guide-note"><b>אימון ראשון:</b> התחל במשקל קל, נסה 5 חזרות לבדיקה ורק אז בחר משקל עבודה. עצור בכאב חד או בסחרחורת. אם אינך בטוח בכיוון המכשיר, בקש בדיקת בטיחות קצרה מאיש צוות.</div>`;
- modal.classList.add('open');document.body.style.overflow='hidden';
-}
-function decorate(){
- document.querySelectorAll('.item').forEach(el=>{
-  if(el.dataset.exerciseGuideAdded)return;
-  const label=el.textContent||'';
-  const key=names.find(k=>label.includes(k));
-  if(!key)return;
-  const btn=document.createElement('button');btn.type='button';btn.className='exercise-help';btn.textContent='📖 איך מבצעים?';
-  btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openGuide(key)});
-  el.appendChild(btn);el.dataset.exerciseGuideAdded='1';
- });
-}
-function close(){modal.classList.remove('open');document.body.style.overflow=''}
-modal.querySelector('.guide-close').addEventListener('click',close);
-modal.addEventListener('click',e=>{if(e.target===modal)close()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
-decorate();new MutationObserver(decorate).observe(document.body,{childList:true,subtree:true});
-})();
-</script>
-
 <style>
 #future-fitness{max-width:850px;margin:18px auto;padding:0 18px;direction:rtl;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#17211d}
 .ff-card{background:white;border:1px solid #dfe9e3;border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 5px 18px #17211d10}
