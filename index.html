@@ -641,4 +641,56 @@ refreshToday();
  },true);
 })();
 </script>
+<style>
+#niv-session-modal{position:fixed;inset:0;background:#071b13b9;z-index:120;display:none;align-items:flex-end;justify-content:center}#niv-session-modal.open{display:flex}#niv-session-sheet{width:100%;max-width:620px;max-height:94dvh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:20px;direction:rtl}#niv-session-sheet label{display:block;margin:12px 0 4px;font-weight:750}#niv-session-sheet input,#niv-session-sheet select{width:100%;padding:11px;border:1px solid #c9d9d0;border-radius:10px;font:inherit}#niv-session-sheet .session-actions{display:flex;gap:8px;margin-top:18px}#niv-session-sheet button{padding:12px;border:0;border-radius:11px;font-weight:800;background:#2b7655;color:white}#niv-session-sheet button.secondary{background:#e7eee9;color:#234633}.niv-session-btn{display:block;margin:12px 0;padding:11px;border:1px solid #aad1b7;border-radius:12px;background:#e8f6ed;color:#185a3c;font-weight:850;width:100%}
+</style>
+<div id="niv-session-modal" role="dialog" aria-modal="true"><div id="niv-session-sheet"></div></div>
+<script>
+(function(){'use strict';
+const KEY='nivFitnessSessionLogsV1', START=new Date(2026,9,11);
+const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}};
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const dateAt=n=>{let d=new Date(START);d.setDate(d.getDate()+n);return iso(d)};
+const modal=document.getElementById('niv-session-modal'),sheet=document.getElementById('niv-session-sheet');
+const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const strengthA=['Leg Press','Chest Press','Lat Pulldown','Seated Leg Curl','Seated Cable Row','Plank'];
+const strengthB=['Goblet Squat','Incline Chest Press','Lat Pulldown','Leg Extension','Seated Cable Row','Dead Bug'];
+function category(day){if(day===1||day===5)return 'strength';if(day===3)return 'swim';return 'run'}
+function latest(type,name,before){const all=read();return Object.entries(all).filter(([date,x])=>date<before&&x.type===type&&(!name||x.exercises?.[name])).sort((a,b)=>b[0].localeCompare(a[0]))[0]?.[1]||null}
+function field(label,id,type='number',extra=''){return `<label for="${id}">${label}</label><input id="${id}" type="${type}" ${extra}>`}
+function sel(label,id,options){return `<label for="${id}">${label}</label><select id="${id}"><option value="">בחר</option>${options.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select>`}
+function open(date,day){const type=category(day),saved=read()[date]||{};let body='';
+if(type==='swim')body=field('כמה בריכות של 25 מטר שחית?','ns-laps','number','min="0" max="400"')+field('כמה בריכות שחית ברצף הארוך ביותר?','ns-cont','number','min="0" max="400"')+field('משך האימון בדקות','ns-min','number','min="0" max="240"')+sel('סגנונות ששילבת','ns-style',[['free','חתירה'],['back','גב'],['both','חתירה וגב']]);
+else if(type==='run')body=sel('סוג פעילות','ns-kind',[['walk','הליכה'],['mix','הליכה וריצה'],['run','ריצה']])+field('מרחק בקילומטרים','ns-km','number','min="0" max="100" step="0.01"')+field('משך כולל בדקות','ns-min','number','min="0" max="300"')+field('דקות ריצה רצופה (0 אם רק הלכת)','ns-cont','number','min="0" max="300"');
+else {const names=day===1?strengthA:strengthB;body='<p>לכל תרגיל רשום משקל עבודה, חזרות בסט האחרון וקושי. בתרגילי ליבה אפשר להשאיר משקל ריק.</p>'+names.map((name,i)=>`<fieldset style="border:1px solid #dce8df;border-radius:12px;margin:10px 0;padding:10px"><legend><b>${escapeHtml(name)}</b></legend>${field('משקל בק״ג',`ns-kg-${i}`,'number','min="0" step="0.5"')}${field('חזרות בסט האחרון / שניות בהחזקה',`ns-reps-${i}`,'number','min="0" max="300"')}${field('קושי התרגיל 1–10',`ns-rpe-${i}`,'number','min="1" max="10"')}</fieldset>`).join('');}
+body+=sel('רמת קושי כללית','ns-rpe',[...Array(10)].map((_,i)=>[String(i+1),String(i+1)+'/10']))+sel('רמת הנאה','ns-fun',[...Array(10)].map((_,i)=>[String(i+1),String(i+1)+'/10']))+sel('כאב חריג במהלך האימון?','ns-pain',[['no','לא'],['yes','כן']]);
+sheet.innerHTML=`<h2>📝 סיכום אימון • ${date}</h2><p>הדיווח נשמר במכשיר ומשמש להצעת האימון הבא. אפשר לחזור ולערוך.</p><form id="ns-form">${body}<div class="session-actions"><button type="submit">💾 שמור והתאם</button><button type="button" class="secondary" id="ns-close">סגור</button></div></form>`;
+const val=id=>sheet.querySelector('#'+id)?.value||'';
+if(type==='strength'){(day===1?strengthA:strengthB).forEach((name,i)=>{const x=saved.exercises?.[name]||{};for(const [key,part] of [['kg','kg'],['reps','reps'],['rpe','rpe']])sheet.querySelector(`#ns-${key}-${i}`).value=x[part]??'';});}
+else for(const id of ['laps','cont','min','style','kind','km']){const el=sheet.querySelector('#ns-'+id);if(el)el.value=saved[id]??'';}
+for(const id of ['rpe','fun','pain'])sheet.querySelector('#ns-'+id).value=saved[id]??'';
+sheet.querySelector('#ns-close').onclick=()=>modal.classList.remove('open');
+sheet.querySelector('#ns-form').onsubmit=e=>{e.preventDefault();const x={type,rpe:val('ns-rpe'),fun:val('ns-fun'),pain:val('ns-pain'),updated:new Date().toISOString()};
+if(type==='strength'){x.exercises={};(day===1?strengthA:strengthB).forEach((name,i)=>{x.exercises[name]={kg:val(`ns-kg-${i}`),reps:val(`ns-reps-${i}`),rpe:val(`ns-rpe-${i}`)}})}else for(const k of (type==='swim'?['laps','cont','min','style']:['kind','km','min','cont']))x[k]=val('ns-'+k);
+const all=read();all[date]=x;localStorage.setItem(KEY,JSON.stringify(all));
+// Feed the existing weekly recommendation engine without removing its other saved fields.
+const week=Math.floor((new Date(date+'T12:00:00')-START)/604800000)+1;
+if(week>=1&&week<=52){let metrics={};try{metrics=JSON.parse(localStorage.getItem('nivFitnessPerformanceV2')||'{}')}catch(e){}const old=metrics[week]||{};
+if(type==='strength')old.strength={...(old.strength||{}),...x.exercises};
+if(type==='run')old.run={minutes:x.min,km:x.km,rpe:x.rpe,pain:x.pain,continuous:x.cont,kind:x.kind};
+metrics[week]=old;localStorage.setItem('nivFitnessPerformanceV2',JSON.stringify(metrics));}
+modal.classList.remove('open');alert('✅ הדיווח נשמר! האימון הבא יוכל להתחשב בנתונים שלך.');
+};modal.classList.add('open');}
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+function attach(){document.querySelectorAll('.day').forEach((box,d)=>{if(d===4||box.querySelector('.niv-session-btn'))return;const btn=document.createElement('button');btn.className='niv-session-btn';btn.type='button';btn.textContent='📝 סיימתי אימון — דווח ביצועים';btn.onclick=()=>open(dateAt(d),d);box.appendChild(btn)});
+// The 52-week renderer replaces its cards; install a delegated handler and buttons after each render.
+const future=document.getElementById('ff-content');if(!future)return;
+function addButtons(){future.querySelectorAll('.ff-card').forEach(card=>{const h=card.querySelector('h3');if(!h||card.querySelector('.niv-session-btn'))return;const m=h.textContent.match(/^(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s+(\d{1,2}\.\d{1,2}\.\d{4})/);if(!m)return;const day=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'].indexOf(m[1]);if(day===4)return;const [dd,mm,yy]=m[2].split('.');const date=`${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;const btn=document.createElement('button');btn.className='niv-session-btn';btn.textContent=read()[date]?'✏️ ערוך דיווח אימון':'📝 סיימתי אימון — דווח ביצועים';btn.onclick=()=>open(date,day);card.appendChild(btn)})}
+new MutationObserver(()=>{if(!future.dataset.nsBusy){future.dataset.nsBusy='1';addButtons();delete future.dataset.nsBusy}}).observe(future,{childList:true,subtree:false});addButtons();
+// Open only after the last checkbox of a day's planned tasks is checked, never on an unchecked item.
+document.addEventListener('change',e=>{const c=e.target;if(!c.matches('.check,[data-ff-check]')||!c.checked)return;let day,date,boxes;if(c.matches('.check')){const section=c.closest('.day');if(!section)return;day=Number(section.id.replace('day',''));date=dateAt(day);boxes=[...section.querySelectorAll('.check')]}else{const id=c.dataset.ffCheck.split('-');const w=Number(id[0]);day=Number(id[1]);date=dateAt((w-1)*7+day);boxes=[...c.closest('.ff-card').querySelectorAll('[data-ff-check]')]}if(boxes.length&&boxes.every(x=>x.checked)&&!read()[date])setTimeout(()=>open(date,day),550)},true);
+}
+attach();
+})();
+</script>
 </body></html>
