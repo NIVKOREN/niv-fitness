@@ -436,7 +436,7 @@ $('weight-date').value='2026-10-16';$('weight-save').onclick=()=>{let date=$('we
 <script>
 (function(){
 'use strict';
-const START=new Date(2026,9,11), STORE='nivFitness52WeeksV1', CHECK='nivFitness52ChecksV1';
+const START=new Date(2026,9,11), STORE='nivFitness52WeeksV1', CHECK='nivFitness52ChecksV1', METRICS='nivFitnessPerformanceV2';
 const $=id=>document.getElementById(id);
 const get=(k,def)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??def}catch(e){return def}};
 const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
@@ -447,6 +447,11 @@ const currentWeek=()=>Math.min(52,Math.max(1,Math.floor((new Date().setHours(12,
 const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 const exercisesA=[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10'],['Plank','3×20–30 שנ׳']];
 const exercisesB=[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Lat Pulldown','3×10'],['Leg Extension','2×12'],['Seated Cable Row','2×10'],['Dead Bug','3×8 לכל צד']];
+function metrics(w){return get(METRICS,{})[w]||{}}
+function previousExercise(w,name){for(let k=w-1;k>=1;k--){const v=metrics(k).strength?.[name];if(v&&Number(v.kg)>0)return v}return null}
+function strengthAdvice(w,name){const prior=previousExercise(w,name);if(!prior)return 'משקל פתיחה: קל ונשלט; רשום משקל וחזרות לאחר האימון';const kg=Number(prior.kg),reps=Number(prior.reps)||0,rpe=Number(prior.rpe)||0;const step=kg<20?1:kg<50?2.5:5;const next=(rpe>0&&rpe<=7&&reps>=10)?kg+step:(rpe>=9||reps<7)?Math.max(0,kg-step):kg;return `הצעה לפי הדיווח האחרון: ${next} ק״ג (קודם ${kg} ק״ג, ${reps} חזרות, קושי ${rpe||'לא דווח'}/10). אם הטכניקה נפגעת — להפחית`}
+function runAdvice(w){const prev=metrics(w-1).run;if(!prev||!Number(prev.minutes))return 'התחלה: הליכה וריצה קלה לסירוגין, ללא יעד מהירות';const m=Number(prev.minutes),difficulty=Number(prev.rpe)||0, pain=prev.pain;const next=pain==='yes'||difficulty>=8?Math.max(10,Math.round(m*.85)):difficulty>0&&difficulty<=5?Math.min(120,Math.round(m*1.05)):m;return `משך מומלץ לפי האימון האחרון: כ־${next} דקות (בוצעו ${m} דקות, ${prev.km||0} ק״מ). הגדל רק בהיעדר כאב וביכולת לדבר בנוחות`}
+function saveMetrics(w){const all=get(METRICS,{}),old=all[w]||{},strength={};document.querySelectorAll('[data-exercise]').forEach(row=>{const name=row.dataset.exercise;strength[name]={kg:row.querySelector('[data-kg]').value,reps:row.querySelector('[data-reps]').value,rpe:row.querySelector('[data-rpe]').value}});const run={minutes:$('ff-run-min').value,km:$('ff-run-km').value,rpe:$('ff-run-rpe').value,pain:$('ff-run-pain').value};all[w]={...old,strength,run};set(METRICS,all);render();alert('נתוני הריצה והכוח נשמרו. ההמלצות הבאות יתעדכנו לפי הביצוע בפועל.');}
 function feedback(w){return get(STORE,{})[w]||{}}
 function pace(w){
  let base=0;for(let k=2;k<=w;k++){
@@ -472,9 +477,9 @@ function plan(w){
  const level=pace(w),cutback=(w%4===0),baseLong=Math.min(105,35+level*4),long=Math.round((cutback?baseLong*.8:baseLong)/5)*5;
  const runApproved=feedback(w-1).runReady==='yes';
  const runMinutes=runApproved?Math.min(35,8+Math.floor(level)*2):0;
- const strength=(list)=>['חימום קל 8 דקות',...list.map(([n,r])=>`${n} — ${r}; בחר משקל לפי טכניקה, השאר 2–3 חזרות ברזרבה`),'שחרור 5 דקות'];
+ const strength=(list)=>['חימום קל 8 דקות',...list.map(([n,r])=>`${n} — ${r}; ${strengthAdvice(w,n)}; השאר 2–3 חזרות ברזרבה`),'שחרור 5 דקות'];
  return [
- ['הליכה/ריצה קלה בחוץ', [`חימום הליכה 5 דקות`,runMinutes?`הליכה–ריצה לסירוגין ${25+Math.min(15,level*2)} דקות; ריצה מצטברת עד ${runMinutes} דקות, בקצב דיבור`:'הליכה 30–40 דקות; מעבר לריצה רק לאחר אישור כשירות אישי', 'שחרור 5 דקות'],'סיבולת'],
+ ['הליכה/ריצה קלה בחוץ', [`חימום הליכה 5 דקות`,runMinutes?`הליכה–ריצה לסירוגין ${25+Math.min(15,level*2)} דקות; ריצה מצטברת עד ${runMinutes} דקות, בקצב דיבור`:'הליכה 30–40 דקות; מעבר לריצה רק לאחר אישור כשירות אישי', 'שחרור 5 דקות',runAdvice(w)],'סיבולת'],
  ['כוח A — גוף מלא',strength(exercisesA),'כוח'],
  ['התאוששות פעילה', ['הליכה נוחה 20–30 דקות','מוביליטי 5–10 דקות'],'התאוששות'],
  ['סיבולת בבריכה / הליכה', [`שחייה בבריכת 25 מ׳: ${swimLaps(w)} בריכות בסך הכול, במקטעים של 25–50 מ׳, חתירה וגב לפי העדפה; מנוחה 30–60 שניות בין מקטעים`, 'לסיים בתחושה שאפשר היה להמשיך. בלי פרפר ובלי שחייה עד תשישות', 'שחרור 2 בריכות קלות (כלולות בסך הכול); אפשר להחליף בהליכה נוחה'],'סיבולת'],
@@ -495,7 +500,13 @@ function render(){
  });
  const options=(items,v)=>items.map(([key,label])=>`<option value="${key}" ${v===key?'selected':''}>${label}</option>`).join('');
  html+=`<div class="ff-card"><h2>📊 סיכום והתאמה לשבוע הבא</h2><p class="ff-small">מלא בסוף השבוע. המערכת תעלה עומס רק כשהדיווח מצביע על ביצוע טוב, מאמץ נסבל וללא כאב. משקלים בפועל כדאי לתעד בהערות.</p><div class="ff-grid"><div><label>כמה מהתוכנית בוצע?</label><select id="ff-completion" class="ff-input">${options([['','בחר'],['low','פחות מ־70%'],['high','70% ומעלה']],saved.completion)}</select></div><div><label>איך הרגיש העומס?</label><select id="ff-effort" class="ff-input">${options([['','בחר'],['easy','קל יחסית'],['ok','מתאים'],['hard','קשה מדי']],saved.effort)}</select></div><div><label>היה כאב חריג?</label><select id="ff-pain" class="ff-input">${options([['','בחר'],['no','לא'],['yes','כן']],saved.pain)}</select></div><div><label>קיבלתי אישור רפואי לחזור לריצה?</label><select id="ff-runready" class="ff-input">${options([['','בחר'],['no','לא / עדיין לא'],['yes','כן']],saved.runReady)}</select></div></div><div class="ff-grid" style="margin-top:12px"><div><label>🏊 כמה בריכות של 25 מ׳ שחיתי בפועל?</label><input id="ff-swim-laps" class="ff-input" type="number" min="0" max="400" value="${saved.swimLaps||''}" placeholder="מספר בריכות"></div><div><label>איך הרגישה השחייה?</label><select id="ff-swim-feel" class="ff-input">${options([['','בחר'],['easy','קל'],['ok','נוח'],['hard','קשה מדי']],saved.swimFeel)}</select></div></div><label style="display:block;margin-top:12px">הערות: מרחקים, זמנים, משקלים ותחושות</label><textarea id="ff-notes" class="ff-input" rows="3" placeholder="לדוגמה: 4 ק״מ הליכה, 40 ק״ג Leg Press...">${(saved.notes||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea><button id="ff-save" class="ff-btn" style="margin-top:12px" ${locked?'disabled':''}>💾 שמור משוב והכן את השבוע הבא</button></div>`;
+ const savedMetrics=metrics(w);const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ html+=`<div class="ff-card"><h2>📈 יומן ביצועים אישי — ריצה וכוח</h2><p class="ff-small">דווח את הביצועים האמיתיים. לכל תרגיל: משקל העבודה, חזרות בסט האחרון וקושי מ־1 עד 10. המערכת תציע שינוי קטן במשקל לפי הביצוע; זו המלצה בלבד ולא הוראה להעלות עומס.</p><h3>🏃 הליכה / ריצה</h3><div class="ff-grid"><div><label>משך בדקות</label><input class="ff-input" id="ff-run-min" type="number" min="0" max="300" value="${esc(savedMetrics.run?.minutes)}"></div><div><label>מרחק בק״מ</label><input class="ff-input" id="ff-run-km" type="number" step="0.01" min="0" max="100" value="${esc(savedMetrics.run?.km)}"></div><div><label>קושי 1–10</label><input class="ff-input" id="ff-run-rpe" type="number" min="1" max="10" value="${esc(savedMetrics.run?.rpe)}"></div><div><label>כאב חריג</label><select class="ff-input" id="ff-run-pain"><option value="">בחר</option><option value="no" ${savedMetrics.run?.pain==='no'?'selected':''}>לא</option><option value="yes" ${savedMetrics.run?.pain==='yes'?'selected':''}>כן</option></select></div></div><p class="ff-small">${runAdvice(w)}</p><h3>🏋️ חדר כושר</h3>`;
+ const names=[...new Set([...exercisesA,...exercisesB].map(x=>x[0]).filter(x=>!['Plank','Dead Bug'].includes(x)))];
+ names.forEach(name=>{const v=savedMetrics.strength?.[name]||{};html+=`<div data-exercise="${esc(name)}" style="border-top:1px solid #ddd;padding:10px 0"><b>${esc(name)}</b><div class="ff-small">${strengthAdvice(w,name)}</div><div class="ff-grid"><div><label>ק״ג</label><input class="ff-input" data-kg type="number" step="0.5" min="0" value="${esc(v.kg)}"></div><div><label>חזרות בסט האחרון</label><input class="ff-input" data-reps type="number" min="0" max="50" value="${esc(v.reps)}"></div><div><label>קושי 1–10</label><input class="ff-input" data-rpe type="number" min="1" max="10" value="${esc(v.rpe)}"></div></div></div>`});
+ html+=`<button id="ff-save-metrics" class="ff-btn" ${locked?'disabled':''}>💾 שמור ביצועי ריצה וכוח</button><p class="ff-small">שבועות עתידיים הם תצוגה מקדימה בלבד. שבוע 1 נשמר במערכת הישנה; אפשר להתחיל ביומן המפורט משבוע 2.</p></div>`;
  content.innerHTML=html;
+ $('ff-save-metrics').addEventListener('click',()=>saveMetrics(w));
  content.querySelectorAll('[data-ff-check]').forEach(box=>box.addEventListener('change',()=>{const all=get(CHECK,{});all[box.dataset.ffCheck]=box.checked;set(CHECK,all);updateWeeklyScore();if(box.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(10)}));
  $('ff-save').addEventListener('click',()=>saveFeedback(w));
 }
