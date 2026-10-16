@@ -54,7 +54,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 <style>header{position:relative!important;top:auto!important}html{scroll-behavior:auto!important}#niv-daily-nav{scroll-margin-top:0!important}</style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • משוב שבוע 1</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • משוב שבוע 1 מתוקן</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -488,7 +488,7 @@ function plan(w){
  ['אימון סיבולת ארוך', [`${runMinutes?'הליכה–ריצה נינוחה':'הליכה נינוחה'} עד ${long} דקות; קצב שיחה, בלי מאמץ מקסימלי`, 'אם יש כאב או עייפות חריגה, לקצר או להחליף בהליכה', 'שחרור 5 דקות'],'סיבולת']
  ];
 }
-function saveFeedback(w){const all=get(STORE,{});all[w]={completion:$('ff-completion').value,effort:$('ff-effort').value,pain:$('ff-pain').value,runReady:$('ff-runready').value,notes:$('ff-notes').value,swimLaps:$('ff-swim-laps').value,swimFeel:$('ff-swim-feel').value,updated:iso(new Date())};set(STORE,all);render();updateWeeklyScore();}
+function saveFeedback(w){const all=get(STORE,{});all[w]={completion:$('ff-completion').value,effort:$('ff-effort').value,pain:$('ff-pain').value,runReady:$('ff-runready').value,notes:$('ff-notes').value,swimLaps:$('ff-swim-laps').value,swimFeel:$('ff-swim-feel').value,updated:iso(new Date())};set(STORE,all);render();updateWeeklyScore();alert('✅ המשוב של שבוע '+w+' נשמר בהצלחה. הוא ישמש להתאמת האימונים בשבוע הבא.');}
 function render(){
  const w=Number($('ff-week').value),now=currentWeek(),content=$('ff-content');$('ff-status').textContent=w>now?'🔒 שבוע עתידי — תצוגה מקדימה':w===now?'🟢 השבוע הנוכחי':'📚 שבוע שהסתיים';
  // Week 1 also has a feedback form; its original daily plan stays untouched.
@@ -575,7 +575,7 @@ function updateFutureCards(day){
  const cards=[...document.querySelectorAll('#ff-content > .ff-card')];
  cards.forEach((c,i)=>{c.classList.remove('niv-current-day','niv-week-summary');c.removeAttribute('data-niv-day');
   if(i>=1&&i<=7){c.dataset.nivDay=String(i-1);if(i-1===day)c.classList.add('niv-current-day')}
-  else if(i>=8)c.classList.add('niv-week-summary');
+  else if(i>=8 || c.querySelector('#ff-save'))c.classList.add('niv-week-summary');
  });
 }
 function draw(){
@@ -594,7 +594,7 @@ $('niv-next').onclick=()=>{selected=clamp(selected+1);draw();focusDay()};
 $('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw();focusDay()};
 $('niv-dashboard-toggle').onclick=()=>{dashboard.hidden=!dashboard.hidden;if(!dashboard.hidden)dashboard.scrollIntoView({behavior:'smooth',block:'start'})};
 $('niv-weeks-toggle').onclick=()=>{futureWrap.hidden=!futureWrap.hidden;if(!futureWrap.hidden){future.classList.remove('niv-daily-future');futureWrap.scrollIntoView({behavior:'smooth',block:'start'})}else future.classList.add('niv-daily-future')};
-$('niv-feedback-toggle').onclick=()=>{const w=Math.floor(selected/7)+1;futureWrap.hidden=false;const selector=document.getElementById('ff-week');if(selector&&Number(selector.value)!==w){selector.value=w;selector.dispatchEvent(new Event('change'));}future.classList.add('niv-daily-future','niv-show-summary');updateFutureCards(selected%7);const summary=document.querySelector('#ff-content .ff-card:nth-last-child(1)');if(summary)summary.scrollIntoView({behavior:'smooth',block:'start'})};
+$('niv-feedback-toggle').onclick=()=>{const w=Math.floor(selected/7)+1;futureWrap.hidden=false;const selector=document.getElementById('ff-week');if(selector){selector.value=String(w);selector.dispatchEvent(new Event('change'));}future.classList.remove('niv-daily-future','niv-show-summary');const feedbackCard=document.getElementById('ff-save')?.closest('.ff-card');if(feedbackCard){feedbackCard.scrollIntoView({behavior:'smooth',block:'start'});}else{futureWrap.scrollIntoView({behavior:'smooth',block:'start'});}};
 const observer=new MutationObserver(()=>{if(!futureWrap.hidden&&future.classList.contains('niv-daily-future'))updateFutureCards(selected%7)});
 observer.observe($('ff-content'),{childList:true});
 // If user selects a week in the full 52-week browser, show the complete selected week.
