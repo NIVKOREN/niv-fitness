@@ -55,9 +55,16 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 <style>header{position:relative!important;top:auto!important}html{scroll-behavior:auto!important}#niv-daily-nav{scroll-margin-top:0!important}</style><style id="niv-feedback-overlay-fix">
 #niv-future-container.niv-feedback-open{display:block!important;position:fixed!important;inset:0!important;z-index:10000!important;background:#f5f7f6!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;padding:70px 0 25px!important}
 #niv-feedback-close{position:fixed;top:env(safe-area-inset-top, 0px);right:12px;z-index:10001;border:0;border-radius:12px;background:#216b49;color:#fff;font-weight:900;padding:12px 16px;box-shadow:0 4px 12px #0002}
-</style></head>
+<style id="niv-feedback-focused-view">
+/* In feedback mode, show the actual questionnaire rather than the 52-week browser. */
+#niv-future-container.niv-feedback-open #future-fitness > .ff-card{display:none!important}
+#niv-future-container.niv-feedback-open #ff-content > .ff-card{display:none!important}
+#niv-future-container.niv-feedback-open #ff-content > .ff-card:has(#ff-save){display:block!important}
+#niv-future-container.niv-feedback-open #future-fitness{margin-top:0!important}
+#niv-future-container.niv-feedback-open{padding-top:64px!important}
+</style></style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • אימון חכם ומשוב שבת 18:00</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • תיקון תצוגת משוב שבת 18:00</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -620,8 +627,8 @@ $('niv-feedback-toggle').onclick=()=>{
  futureWrap.classList.add('niv-feedback-open');
  let close=$('niv-feedback-close');
  if(!close){close=document.createElement('button');close.id='niv-feedback-close';close.type='button';close.textContent='✕ סגור משוב וחזור לאימון';close.onclick=()=>{futureWrap.classList.remove('niv-feedback-open');draw();focusDay()};futureWrap.insertBefore(close,future);}
- const feedbackCard=$('ff-save')?.closest('.ff-card');
- if(feedbackCard){requestAnimationFrame(()=>{futureWrap.scrollTop=Math.max(0,feedbackCard.getBoundingClientRect().top-futureWrap.getBoundingClientRect().top+futureWrap.scrollTop-65)});}
+ // The focused feedback view starts at the questionnaire, even on iPhone home-screen mode.
+ requestAnimationFrame(()=>{futureWrap.scrollTop=0;});
 };
 const observer=new MutationObserver(()=>{if(!futureWrap.hidden&&future.classList.contains('niv-daily-future'))updateFutureCards(selected%7)});
 observer.observe($('ff-content'),{childList:true});
