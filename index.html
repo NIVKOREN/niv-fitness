@@ -69,7 +69,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • משוב נעול v8</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • תוכנית אוטומטית v9</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -518,7 +518,7 @@ function plan(w){
  ['אימון סיבולת ארוך', [`${runMinutes?'הליכה–ריצה נינוחה':'הליכה נינוחה'} עד ${long} דקות; קצב שיחה, בלי מאמץ מקסימלי`, 'אם יש כאב או עייפות חריגה, לקצר או להחליף בהליכה', 'שחרור 5 דקות'],'סיבולת']
  ];
 }
-function saveFeedback(w){if(!feedbackUnlocked(w)){alert('המשוב נפתח בשבת של אותו שבוע בשעה 18:00.');return;}if(!$('ff-completion').value||!$('ff-effort').value||!$('ff-pain').value||!$('ff-energy').value||!$('ff-recovery-pain').value||!$('ff-readiness').value){alert('יש להשלים את שדות המשוב המרכזיים לפני שמירה.');return;}const all=get(STORE,{});all[w]={completion:$('ff-completion').value,effort:$('ff-effort').value,pain:$('ff-pain').value,runReady:$('ff-runready').value,notes:$('ff-notes').value,swimLaps:$('ff-swim-laps').value,swimFeel:$('ff-swim-feel').value,energy:$('ff-energy').value,recoveryPain:$('ff-recovery-pain').value,readiness:$('ff-readiness').value,updated:iso(new Date())};set(STORE,all);render();updateWeeklyScore();alert('✅ המשוב של שבוע '+w+' נשמר בהצלחה. הוא ישמש להתאמת האימונים בשבוע הבא.');}
+function saveFeedback(w){if(!feedbackUnlocked(w)){alert('המשוב נפתח בשבת של אותו שבוע בשעה 18:00.');return;}if(!$('ff-completion').value||!$('ff-effort').value||!$('ff-pain').value||!$('ff-energy').value||!$('ff-recovery-pain').value||!$('ff-readiness').value){alert('יש להשלים את שדות המשוב המרכזיים לפני שמירה.');return;}const all=get(STORE,{});all[w]={completion:$('ff-completion').value,effort:$('ff-effort').value,pain:$('ff-pain').value,runReady:$('ff-runready').value,notes:$('ff-notes').value,swimLaps:$('ff-swim-laps').value,swimFeel:$('ff-swim-feel').value,energy:$('ff-energy').value,recoveryPain:$('ff-recovery-pain').value,readiness:$('ff-readiness').value,updated:iso(new Date())};set(STORE,all);render();updateWeeklyScore();if(typeof window.nivShowNextWeek==='function')window.nivShowNextWeek(w);alert('✅ המשוב נשמר! תוכנית שבוע '+Math.min(52,w+1)+' מוכנה לצפייה.');}
 function render(){
  const w=Number($('ff-week').value),now=currentWeek(),content=$('ff-content');$('ff-status').textContent=w>now?'🔒 שבוע עתידי — תצוגה מקדימה':w===now?'🟢 השבוע הנוכחי':'📚 שבוע שהסתיים';
  // Week 1 also has a feedback form; its original daily plan stays untouched.
@@ -624,6 +624,19 @@ $('niv-next').onclick=()=>{selected=clamp(selected+1);draw();focusDay()};
 $('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw();focusDay()};
 $('niv-dashboard-toggle').onclick=()=>{dashboard.hidden=!dashboard.hidden;if(!dashboard.hidden)dashboard.scrollIntoView({behavior:'smooth',block:'start'})};
 $('niv-weeks-toggle').onclick=()=>{futureWrap.hidden=!futureWrap.hidden;if(!futureWrap.hidden){future.classList.remove('niv-daily-future');futureWrap.scrollIntoView({behavior:'smooth',block:'start'})}else future.classList.add('niv-daily-future')};
+// After saving a weekly review, show the generated next week immediately.
+window.nivShowNextWeek=(w)=>showNextWeekAfterFeedback(w);
+function showNextWeekAfterFeedback(w){
+ const next=Math.min(52,w+1);
+ closeIndependentFeedback();
+ const selector=$('ff-week');
+ selector.value=String(next);
+ future.classList.remove('niv-daily-future','niv-show-summary');
+ futureWrap.hidden=false;
+ selector.dispatchEvent(new Event('change',{bubbles:true}));
+ requestAnimationFrame(()=>futureWrap.scrollIntoView({behavior:'smooth',block:'start'}));
+}
+
 // Standalone weekly feedback dialog. Move the original form (never clone its IDs).
 const feedbackModal=document.createElement('div');
 feedbackModal.id='niv-independent-feedback';
@@ -682,7 +695,7 @@ $('niv-feedback-toggle').onclick=()=>{
     if(['ff-completion','ff-effort','ff-pain','ff-energy','ff-recovery-pain','ff-readiness'].some(id=>!val(id))){alert('יש להשלים את שדות המשוב המרכזיים');return}
     let latest={};try{latest=JSON.parse(localStorage.getItem(storageKey)||'{}')||{}}catch(e){}
     latest[w]={completion:val('ff-completion'),effort:val('ff-effort'),pain:val('ff-pain'),runReady:val('ff-runready'),notes:val('ff-notes'),swimLaps:val('ff-swim-laps'),swimFeel:val('ff-swim-feel'),energy:val('ff-energy'),recoveryPain:val('ff-recovery-pain'),readiness:val('ff-readiness'),updated:new Date().toISOString().slice(0,10)};
-    try{localStorage.setItem(storageKey,JSON.stringify(latest));alert('✅ משוב שבוע '+w+' נשמר. הנתונים ישמשו להתאמת השבוע הבא.');closeIndependentFeedback();selector.dispatchEvent(new Event('change'))}catch(e){alert('לא ניתן לשמור את המשוב: '+e.message)}
+    try{localStorage.setItem(storageKey,JSON.stringify(latest));showNextWeekAfterFeedback(w);alert('✅ המשוב נשמר! תוכנית שבוע '+Math.min(52,w+1)+' מוצגת כעת, מותאמת לדיווח שלך.')}catch(e){alert('לא ניתן לשמור את המשוב: '+e.message)}
    };
  }
  // Lock ALL feedback inputs until Saturday 18:00, not just the save button.
