@@ -59,9 +59,17 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 #niv-future-container.niv-feedback-open #ff-content > .ff-card{display:none!important}
 #niv-future-container.niv-feedback-open #ff-content > .ff-card.niv-feedback-form{display:block!important}
 #niv-future-container.niv-feedback-open #future-fitness{margin-top:0!important}
-</style></head>
+</style><style id="niv-independent-feedback-style">
+#niv-independent-feedback[hidden]{display:none!important}
+#niv-independent-feedback{position:fixed!important;inset:0!important;z-index:2147483000!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;background:#f5f7f6!important;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px calc(env(safe-area-inset-bottom,0px) + 30px)!important;box-sizing:border-box!important;direction:rtl!important}
+#niv-independent-feedback .niv-independent-top{position:sticky;top:0;background:#e8f3eb;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border-radius:14px;z-index:2;color:#174e36}
+#niv-independent-feedback button#niv-independent-close{border:0;border-radius:9px;padding:12px;background:#216b49;color:white;font-weight:bold}
+#niv-independent-feedback #niv-independent-body{max-width:850px;margin:auto}
+#niv-independent-feedback .ff-card{display:block!important;background:white!important;color:#17211d!important}
+</style>
+</head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • תיקון משוב ממוקד v3</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • משוב עצמאי v4</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -616,20 +624,35 @@ $('niv-next').onclick=()=>{selected=clamp(selected+1);draw();focusDay()};
 $('niv-today').onclick=()=>{selected=clamp(dayIndex(new Date()));draw();focusDay()};
 $('niv-dashboard-toggle').onclick=()=>{dashboard.hidden=!dashboard.hidden;if(!dashboard.hidden)dashboard.scrollIntoView({behavior:'smooth',block:'start'})};
 $('niv-weeks-toggle').onclick=()=>{futureWrap.hidden=!futureWrap.hidden;if(!futureWrap.hidden){future.classList.remove('niv-daily-future');futureWrap.scrollIntoView({behavior:'smooth',block:'start'})}else future.classList.add('niv-daily-future')};
+// Standalone weekly feedback dialog. Move the original form (never clone its IDs).
+const feedbackModal=document.createElement('div');
+feedbackModal.id='niv-independent-feedback';
+feedbackModal.hidden=true;
+feedbackModal.innerHTML='<div class="niv-independent-top"><strong>📊 משוב שבועי</strong><button type="button" id="niv-independent-close">✕ חזרה לאימון</button></div><div id="niv-independent-body"></div>';
+document.body.appendChild(feedbackModal);
+let feedbackOriginalParent=null, feedbackOriginalNext=null, activeFeedbackCard=null;
+function closeIndependentFeedback(){
+ if(activeFeedbackCard&&feedbackOriginalParent){
+  if(feedbackOriginalNext&&feedbackOriginalNext.parentNode===feedbackOriginalParent)feedbackOriginalParent.insertBefore(activeFeedbackCard,feedbackOriginalNext);
+  else feedbackOriginalParent.appendChild(activeFeedbackCard);
+ }
+ activeFeedbackCard=null;feedbackOriginalParent=null;feedbackOriginalNext=null;
+ feedbackModal.hidden=true;document.body.style.overflow='';
+ draw();focusDay();
+}
+$('niv-independent-close').onclick=closeIndependentFeedback;
 $('niv-feedback-toggle').onclick=()=>{
+ if(!feedbackModal.hidden)return;
  const w=Math.floor(selected/7)+1;
- futureWrap.hidden=false;
- futureWrap.removeAttribute('hidden');
- future.classList.remove('niv-daily-future','niv-show-summary');
+ // Render the form in its normal container before moving it into an independent dialog.
  const selector=$('ff-week');selector.value=String(w);selector.dispatchEvent(new Event('change'));
- futureWrap.classList.add('niv-feedback-open');
- // Mark the form explicitly; do not depend on :has() support or DOM nesting.
- const formButton=$('ff-save');
- if(formButton){const formCard=formButton.closest('.ff-card');if(formCard){formCard.classList.add('niv-feedback-form');formCard.style.setProperty('display','block','important');}}
- let close=$('niv-feedback-close');
- if(!close){close=document.createElement('button');close.id='niv-feedback-close';close.type='button';close.textContent='✕ סגור משוב וחזור לאימון';close.onclick=()=>{futureWrap.classList.remove('niv-feedback-open');draw();focusDay()};futureWrap.insertBefore(close,future);}
- // The focused feedback view starts at the questionnaire, even on iPhone home-screen mode.
- requestAnimationFrame(()=>{futureWrap.scrollTop=0;});
+ const saveButton=$('ff-save');
+ const card=saveButton?.closest('.ff-card');
+ if(!card){alert('לא ניתן לטעון את שאלון המשוב.');return;}
+ feedbackOriginalParent=card.parentNode;feedbackOriginalNext=card.nextSibling;activeFeedbackCard=card;
+ $('niv-independent-body').appendChild(card);
+ card.style.display='block';
+ feedbackModal.hidden=false;document.body.style.overflow='hidden';feedbackModal.scrollTop=0;
 };
 const observer=new MutationObserver(()=>{if(!futureWrap.hidden&&future.classList.contains('niv-daily-future'))updateFutureCards(selected%7)});
 observer.observe($('ff-content'),{childList:true});
