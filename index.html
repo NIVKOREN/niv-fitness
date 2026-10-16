@@ -69,7 +69,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • משוב עצמאי v5</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • משוב עצמאי v6</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -647,7 +647,7 @@ $('niv-feedback-toggle').onclick=()=>{
  const selector=$('ff-week');
  selector.value=String(w);
  // Rebuild explicitly: a change event alone can leave the weekly form absent.
- try{render()}catch(err){console.error('Weekly feedback render failed',err);alert('שגיאה בהכנת המשוב: '+err.message);return;}
+ try{selector.dispatchEvent(new Event('change',{bubbles:true}))}catch(err){console.error('Weekly feedback render failed',err);alert('שגיאה בהכנת המשוב: '+err.message);return;}
  const content=$('ff-content');
  let card=[...content.querySelectorAll(':scope > .ff-card')].find(el=>el.querySelector('#ff-save'));
  if(!card){alert('שאלון המשוב לא נוצר. נסה לפתוח מחדש את האפליקציה.');return;}
