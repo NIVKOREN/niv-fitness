@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Niv Fitness — תוכנית דינמית v13</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v13-20261017-1830-feedback-history-guides">
+<meta name="niv-build" content="v13-20261017-1900-guide-click-fix">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -70,7 +70,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 17.10.2026 • תוכנית דינמית v13 • build 1810</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 17.10.2026 • תוכנית דינמית v13 • build 1900</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -829,10 +829,11 @@ refreshToday();
    const btn=e.target.closest('.exercise-help');
    if(!btn)return;
    e.preventDefault();e.stopImmediatePropagation();
-   const row=btn.closest('.item');
-   const title=row?.querySelector('.ititle')?.textContent||'';
-   const key=Object.keys(exerciseGuides).find(k=>title.includes(k));
-   if(!key){alert('לא נמצא מדריך לתרגיל הזה');return;}
+   // Future-week buttons live in .ff-row, not .item. Read their explicit key first.
+   const row=btn.closest('.item, .ff-row');
+   const title=btn.dataset.guidePlan || row?.querySelector('.ititle, label span')?.textContent || '';
+   const key=btn.dataset.guideKey || Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>title.includes(k));
+   if(!key || !exerciseGuides[key]){console.warn('Missing exercise guide:',key,title);return;}
    try{
      openExerciseGuide(key,title);
      const modal=document.getElementById('exercise-guide');
