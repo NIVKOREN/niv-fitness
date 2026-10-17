@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Niv Fitness — תוכנית דינמית v13</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v13-20261017-1810-feedback-week-fix">
+<meta name="niv-build" content="v13-20261017-1830-feedback-history-guides">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -584,7 +584,7 @@ function render(){
  let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">חלוקה דינמית: שני אימוני כוח, שלושה אימוני סיבולת, התאוששות ומנוחה. ימי הפעילות משתנים לפי המשוב; ביום ראשון אין פעילות בקאנטרי לפני 15:00. שבוע רביעי הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, אין העלאה אוטומטית של העומס.'}</div></div>`;
  (w===1?[]:tasks).forEach(([title,steps,kind],d)=>{
  html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'להישאר בקצב שמאפשר לדבר.':''}</div>`;
- steps.forEach((step,j)=>{const id=`${w}-${d}-${j}`;html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${step}</span></label></div>`});html+='</div>';
+ steps.forEach((step,j)=>{const id=`${w}-${d}-${j}`;const guideKey=Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>step.includes(k));const guideButton=guideKey?`<button type="button" class="exercise-help niv-future-guide" data-guide-key="${guideKey.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}" data-guide-plan="${String(step).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}">📖 הסבר מפורט + תמונת התרגיל</button>`:"";html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${step}</span></label>${guideButton}</div>`});html+='</div>';
  });
  const options=(items,v)=>items.map(([key,label])=>`<option value="${key}" ${v===key?'selected':''}>${label}</option>`).join('');
  if(w===1){const boxes=[...document.querySelectorAll('.day .check')];const done=boxes.filter(b=>b.checked).length;const pct=boxes.length?Math.round(done/boxes.length*100):0;html+=`<div class="ff-card"><h3>📋 נתוני שבוע 1 מהאפליקציה</h3><p>סומנו ${done} מתוך ${boxes.length} משימות (${pct}%). הסימון כולל גם פעולות עזר כגון שתייה וסאונה, ולכן אינו מדד מדויק להשלמת האימונים. בחר ידנית את שיעור הביצוע לפי האימונים שביצעת בפועל.</p><p class="ff-small">דיווחי האימונים האישיים והדירוגים נשמרים במקומם. רשום כאן את תחושת העומס הכוללת; אין העלאת עומס בלי משוב חיובי מפורש.</p></div>`;}
@@ -720,6 +720,23 @@ $('niv-independent-close').onclick=closeIndependentFeedback;
 $('niv-feedback-toggle').onclick=()=>{
  if(!feedbackModal.hidden)return;
  const w=Math.max(1,Math.floor((new Date().setHours(12,0,0,0)-new Date(2026,9,11).getTime())/604800000)+1);
+ const storageKey='nivFitness52WeeksV1';
+ let feedbackRecords={};try{feedbackRecords=JSON.parse(localStorage.getItem(storageKey)||'{}')||{}}catch(e){}
+ const existing=feedbackRecords[w];
+ if(existing&&Object.keys(existing).length&&!window.nivFeedbackEditMode){
+  const labels={completion:{high:'70% ומעלה',low:'פחות מ־70%'},effort:{easy:'קל יחסית',ok:'מתאים',hard:'קשה מדי'},pain:{no:'לא',yes:'כן'},runReady:{no:'לא / עדיין לא',yes:'כן'},swimFeel:{easy:'קל',ok:'נוח',hard:'קשה מדי'},recoveryPain:{no:'לא',yes:'כן'},readiness:{progress:'אפשר להתקדם',maintain:'לשמור על הרמה',reduce:'להוריד עומס'}};
+  const fields=[['completion','כמה מהתוכנית בוצע?'],['effort','איך הרגיש העומס?'],['pain','היה כאב חריג?'],['runReady','אישור רפואי לחזור לריצה'],['swimLaps','בריכות של 25 מטר'],['swimFeel','תחושת השחייה'],['energy','הרגשה גופנית (1–10)'],['recoveryPain','כאבים / התאוששות קשה'],['readiness','התקדמות לשבוע הבא'],['notes','הערות']];
+  const safe=v=>String(v??'לא דווח').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const body=$('niv-independent-body');body.replaceChildren();
+  const summary=document.createElement('div');summary.className='ff-card';summary.style.cssText='padding:20px;border-radius:16px;margin-top:14px';
+  summary.innerHTML=`<h2>✅ משוב שבוע ${w} נשמר</h2><p class="ff-warning">זהו המשוב השמור שלך. התשובות אינן נמחקות בפתיחה מחדש.</p>${fields.map(([k,label])=>`<div style="padding:9px 0;border-bottom:1px solid #e4e9e6"><b>${label}</b><div>${safe(labels[k]?.[existing[k]]??existing[k]??'לא דווח')}</div></div>`).join('')}<button type="button" id="niv-feedback-edit" class="ff-btn" style="width:100%;margin-top:16px">✏️ עריכת המשוב השמור</button>`;
+  body.appendChild(summary);
+  feedbackModal.hidden=false;document.body.style.overflow='hidden';feedbackModal.scrollTop=0;
+  $('niv-feedback-edit').onclick=()=>{feedbackModal.hidden=true;document.body.style.overflow='';window.nivFeedbackEditMode=true;$('niv-feedback-toggle').click();window.nivFeedbackEditMode=false;};
+  // Edit request: skip summary once and display original form populated from storage.
+  if(!window.nivFeedbackEditInstalled){window.nivFeedbackEditInstalled=true;}
+  return;
+ }
  const selector=$('ff-week');selector.value=String(w);
  try{selector.dispatchEvent(new Event('change',{bubbles:true}))}catch(err){console.warn('Weekly view unavailable',err)}
  const content=$('ff-content');
@@ -783,6 +800,7 @@ $('niv-feedback-toggle').onclick=()=>{
  },1000);
 
 };
+document.getElementById('ff-content').addEventListener('click',e=>{const btn=e.target.closest('.niv-future-guide');if(btn){e.preventDefault();openExerciseGuide(btn.dataset.guideKey,btn.dataset.guidePlan)}});
 const observer=new MutationObserver(()=>{if(!futureWrap.hidden&&future.classList.contains('niv-daily-future'))updateFutureCards(selected%7)});
 observer.observe($('ff-content'),{childList:true});
 // If user selects a week in the full unlimited-week browser, show the complete selected week.
