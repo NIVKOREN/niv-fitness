@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Niv Fitness — תוכנית דינמית v13</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v13-20261016-2215">
+<meta name="niv-build" content="v13-20261017-1810-feedback-week-fix">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -70,7 +70,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 16.10.2026 • תוכנית דינמית v13 • build 2215</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 17.10.2026 • תוכנית דינמית v13 • build 1810</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -719,7 +719,7 @@ $('niv-independent-close').onclick=closeIndependentFeedback;
 // Reliable independent feedback: never rely on moving a card that may be absent.
 $('niv-feedback-toggle').onclick=()=>{
  if(!feedbackModal.hidden)return;
- const w=Math.floor(selected/7)+1;
+ const w=Math.max(1,Math.floor((new Date().setHours(12,0,0,0)-new Date(2026,9,11).getTime())/604800000)+1);
  const selector=$('ff-week');selector.value=String(w);
  try{selector.dispatchEvent(new Event('change',{bubbles:true}))}catch(err){console.warn('Weekly view unavailable',err)}
  const content=$('ff-content');
