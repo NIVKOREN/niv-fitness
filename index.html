@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Niv Fitness — תוכנית דינמית v13</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v13-20261017-1900-guide-click-fix">
+<meta name="niv-build" content="v14-20261017-2015-endurance-baselines">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -70,7 +70,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 17.10.2026 • תוכנית דינמית v13 • build 1900</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 17.10.2026 • תוכנית דינמית v13 • build 2015</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -513,15 +513,52 @@ function pace(w){
  }
  return base;
 }
+function latestEnduranceSession(w,kind){
+ let logs={};try{logs=JSON.parse(localStorage.getItem('nivFitnessSessionLogsV1')||'{}')||{}}catch(e){}
+ const start=new Date(2026,9,11);
+ return Object.entries(logs).filter(([date,x])=>{
+  const day=Math.round((new Date(date+'T12:00:00')-start)/86400000);
+  if(day<0||day>=(w-1)*7||x?.type!==kind)return false;
+  const week=Math.floor(day/7)+1,weekday=day%7;
+  if(week===1)return kind==='swim'?weekday===3:(weekday===0||weekday===6);
+  const session=plan(week)[weekday];
+  return session?.[2]==='סיבולת'&&(kind==='swim'?session[0].includes('בריכה'):!session[0].includes('בריכה'));
+ }).sort((a,b)=>b[0].localeCompare(a[0]))[0]?.[1]||null;
+}
+function enduranceStrained(w){const f=feedback(w-1);return f.pain==='yes'||f.recoveryPain==='yes'||f.effort==='hard'||f.readiness==='reduce'||(f.energy&&Number(f.energy)<=4)}
 function swimLaps(w){
- // Base: 10 x 25 m, modest progression only after an explicitly good prior week.
- let laps=10;
+ // Use actual distance, never restart at 10 lengths after a successful 34-length session.
+ let target=10;
  for(let k=2;k<=w;k++){
-  const f=feedback(k-1);
-  if(f.pain==='yes'||f.recoveryPain==='yes'||f.effort==='hard'||f.completion==='low'||f.swimFeel==='hard')laps=Math.max(6,laps-2);
-  else if(trainingSignal(k-1)&&f.swimFeel&&f.swimFeel!=='hard')laps=Math.min(80,laps+((k%4===0)?0:2));
+  const f=feedback(k-1),log=latestEnduranceSession(k,'swim');
+  const performed=Math.max(Number(f.swimLaps)||0,Number(log?.laps)||0);
+  if(performed>0)target=Math.max(target,performed);
+  const strained=f.pain==='yes'||f.recoveryPain==='yes'||f.effort==='hard'||f.swimFeel==='hard'||f.readiness==='reduce';
+  if(strained)target=Math.max(8,Math.round(target*.85));
+  else if(performed>0&&trainingSignal(k-1)&&f.swimFeel==='easy')target=Math.round(target*1.05);
+  else if(performed>0&&trainingSignal(k-1)&&f.swimFeel==='ok')target=Math.round(target*1.02);
+  // A recovery week reduces volume, without erasing the established baseline.
+  if(k%4===0)target=Math.max(8,Math.round(target*.9));
  }
- return (w%4===0)?Math.max(6,Math.round(laps*.8)):laps;
+ return Math.max(8,Math.min(160,Math.round(target)));
+}
+function swimIntervals(w){
+ const log=latestEnduranceSession(w,'swim'),continuous=Number(log?.cont)||0;
+ if(continuous>=6)return 'מקטעים של 50–150 מ׳ בהתאם להרגשה';
+ if(continuous>=4)return 'מקטעים של 50–100 מ׳ (עד 4 בריכות רצופות)';
+ return 'מקטעים של 50–100 מ׳ לפי היכולת, עם אפשרות לקצר ל־25 מ׳';
+}
+function enduranceMinutes(w,longSession){
+ let target=longSession?50:45;
+ for(let k=2;k<=w;k++){
+  const f=feedback(k-1),log=latestEnduranceSession(k,'run');
+  const performed=Number(log?.min)||0;
+  if(performed>=30)target=Math.max(target,Math.min(100,performed));
+  if(enduranceStrained(k))target=Math.max(longSession?35:30,Math.round(target*.85/5)*5);
+  else if(performed>=30&&trainingSignal(k-1)&&Number(log.rpe)>0&&Number(log.rpe)<=6)target=Math.round(target*1.05/5)*5;
+  if(k%4===0)target=Math.max(30,Math.round(target*.9/5)*5);
+ }
+ return Math.min(longSession?105:75,Math.round(target/5)*5);
 }
 function weeklyLayout(w){
  // All layouts contain 2 strength, 3 endurance (including swimming), 1 recovery and 1 full rest.
@@ -544,16 +581,16 @@ function weeklyLayout(w){
  return layouts[(Math.floor((w-2)/2)%3)+1];
 }
 function calculatePlan(w){
- const level=pace(w),cutback=(w%4===0),baseLong=Math.min(105,35+level*4),long=Math.round((cutback?baseLong*.8:baseLong)/5)*5;
+ const level=pace(w),long=enduranceMinutes(w,true),regular=enduranceMinutes(w,false);
  const prior=feedback(w-1),runApproved=prior.runReady==='yes'&&prior.pain==='no'&&prior.recoveryPain!=='yes';
  const runMinutes=runApproved?Math.min(35,8+Math.floor(level)*2):0;
- const strength=list=>['חימום קל 8 דקות',...list.map(([n,r])=>`${n} — ${r}; ${strengthAdvice(w,n)}; השאר 2–3 חזרות ברזרבה`),'שחרור 5 דקות'];
+ const strength=list=>['חימום קל 8 דקות',...list.map(([n,r])=>`${n} — ${r}; ${strengthAdvice(w,n)}; השאר 2–3 חזרות ברזרבה`),'שחרור 5 דקות','♨️ סאונה רטובה 10–12 דקות (רשות; לא נחשבת לעומס האימון או לתנאי להשלמתו). רק בהרגשה טובה, לאחר שתייה והתאוששות; לצאת אם מופיעה סחרחורת.'];
  const types={
-  run:['הליכה/ריצה קלה בחוץ',['חימום הליכה 5 דקות',runMinutes?`הליכה–ריצה לסירוגין ${25+Math.min(15,level*2)} דקות; ריצה מצטברת עד ${runMinutes} דקות, בקצב דיבור`:'הליכה 30–40 דקות; מעבר לריצה רק לאחר אישור כשירות אישי','שחרור 5 דקות',runAdvice(w)],'סיבולת'],
+  run:['הליכה/ריצה קלה בחוץ',['חימום הליכה 5 דקות',runMinutes?`הליכה–ריצה לסירוגין ${regular} דקות בסך הכול; ריצה מצטברת עד ${runMinutes} דקות, בקצב דיבור`:`הליכה ${regular} דקות בקצב שיחה; מעבר לריצה רק לאחר אישור כשירות אישי`,'שחרור 5 דקות',runAdvice(w)],'סיבולת'],
   strengthA:['כוח A — גוף מלא',strength(weeklyStrength(w,'a')),'כוח'],
   strengthB:['כוח B — גוף מלא',strength(weeklyStrength(w,'b')),'כוח'],
   recovery:['התאוששות פעילה',['הליכה נוחה 15–25 דקות לפי התחושה (לא נחשבת להתקדמות סיבולת)','מוביליטי 5–10 דקות; אפשר גם מנוחה מלאה'],'התאוששות'],
-  swim:['סיבולת בבריכה / הליכה',[`שחייה בבריכת 25 מ׳: ${swimLaps(w)} בריכות בסך הכול, במקטעים של 25–50 מ׳, חתירה וגב לפי העדפה; מנוחה 30–60 שניות בין מקטעים`,'לסיים בתחושה שאפשר היה להמשיך. בלי פרפר ובלי שחייה עד תשישות','שחרור 2 בריכות קלות (כלולות בסך הכול); אפשר להחליף בהליכה נוחה'],'סיבולת'],
+  swim:['סיבולת בבריכה / הליכה',[`שחייה בבריכת 25 מ׳: ${swimLaps(w)} בריכות בסך הכול, ${swimIntervals(w)}, חתירה וגב לפי העדפה; מנוחה 30–60 שניות בין מקטעים`,'לסיים בתחושה שאפשר היה להמשיך. בלי פרפר ובלי שחייה עד תשישות','שחרור 2 בריכות קלות (כלולות בסך הכול); אפשר להחליף בהליכה נוחה','♨️ סאונה רטובה 10–12 דקות (רשות; לא נחשבת לעומס האימון או לתנאי להשלמתו). רק בהרגשה טובה, לאחר שתייה והתאוששות; לצאת אם מופיעה סחרחורת.'],'סיבולת'],
   rest:['מנוחה מלאה',['שתייה, שינה והתאוששות; אין צורך לפצות על יום מנוחה. הליכה אגבית לא משנה את יעדי האימון הבא'],'מנוחה'],
   long:['אימון סיבולת ארוך',[`${runMinutes?'הליכה–ריצה נינוחה':'הליכה נינוחה'} עד ${long} דקות; קצב שיחה, בלי מאמץ מקסימלי`,'אם יש כאב או עייפות חריגה, לקצר או להחליף בהליכה','שחרור 5 דקות'],'סיבולת']
  };
@@ -570,6 +607,17 @@ function freezeWeek(w){if(w<=1)return;const saved=get(PLAN_SNAP,{});if(!saved[w]
   const w=Number(week);
   if(w<=now||Object.keys(checks).some(id=>id.startsWith(w+'-')))continue;
   delete saved[week];
+ }
+ set(PLAN_SNAP,saved);localStorage.setItem(key,'1');
+})();
+// One-time correction of frozen, not-yet-started plans generated by the old low baselines.
+(function migrateEnduranceBaseline(){
+ const key='nivFitnessEnduranceBaselineFixV14';if(localStorage.getItem(key))return;
+ const saved=get(PLAN_SNAP,{}),checks=get(CHECK,{}),now=currentWeek();
+ for(const wk of Object.keys(saved)){
+  const w=Number(wk);
+  if(w<=now||Object.keys(checks).some(id=>id.startsWith(w+'-')))continue;
+  saved[w]=calculatePlan(w);
  }
  set(PLAN_SNAP,saved);localStorage.setItem(key,'1');
 })();
