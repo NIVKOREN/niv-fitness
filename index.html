@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — אימון חלופי אמיתי v16</title>
+<title>Niv Fitness — עורך אימונים v18</title>
 <meta name="theme-color" content="#2b7655">
 <meta name="niv-build" content="v16-20261018-real-workout-switch">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -68,9 +68,16 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 #niv-independent-feedback #niv-independent-body{max-width:850px;margin:auto}
 #niv-independent-feedback .ff-card{display:block!important;background:white!important;color:#17211d!important}
 </style>
-</head>
+<style id="niv-v18-editor-style">
+.niv-custom-overlay{position:fixed;inset:0;z-index:2147483100;background:#0009;display:flex;align-items:flex-end;justify-content:center;direction:rtl}
+.niv-custom-dialog{background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:650px;max-height:92dvh;overflow-y:auto;padding:20px 18px calc(22px + env(safe-area-inset-bottom));box-sizing:border-box}
+.niv-custom-dialog h2{margin:0 0 8px}.niv-custom-dialog p{color:#526159;font-size:14px}
+.niv-custom-row{display:flex;gap:8px;margin:10px 0;align-items:center}.niv-custom-row textarea{flex:1;min-width:0;font:inherit;padding:12px;border:1px solid #cbd8d0;border-radius:12px;resize:vertical}.niv-custom-row button{border:0;border-radius:10px;background:#fff0ef;padding:12px;font-size:20px}
+.niv-custom-add{width:100%;background:#e6f4eb;color:#185b3b;border:1px solid #b6dcc7;padding:14px;border-radius:12px;font-weight:900;font-size:16px}
+.niv-custom-actions{display:flex;gap:10px;margin-top:16px}.niv-custom-actions button{flex:1;padding:14px;border:0;border-radius:12px;font-size:16px;font-weight:900}.niv-custom-save{background:#216b49;color:#fff}.niv-custom-cancel{background:#e8eae9}
+</style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 18.10.2026 • v17 • בחירת אימון ועריכה אישית</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 18.10.2026 • v18 • עריכת פעולות מרובות</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -1085,7 +1092,18 @@ function apply(card,iso,x){
  original.forEach(row=>row.classList.toggle('niv-v16-hidden',!!mode));
  holder.replaceChildren();if(!mode)return;
  const list=Array.isArray(x.custom?.[mode])&&x.custom[mode].length?x.custom[mode]:plans[kind][mode];
- const edit=document.createElement('button');edit.type='button';edit.className='niv-action';edit.textContent='✏️ ערוך את האימון בעצמי';edit.onclick=()=>{const current=(daily(iso).custom?.[mode]||plans[kind][mode]).join('\n');const result=prompt('ערוך את הפעולות, פעולה אחת בכל שורה:',current);if(result===null)return;const items=result.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);if(!items.length){alert('יש להזין לפחות פעולה אחת');return}const y=daily(iso);y.custom??={};y.custom[mode]=items;y.completed??={};y.completed[mode]={};localStorage.setItem(prefix+iso,JSON.stringify(y));apply(card,iso,y);if(typeof updateWeeklyScore==='function')updateWeeklyScore()};holder.append(edit);
+ const edit=document.createElement('button');edit.type='button';edit.className='niv-action';edit.textContent='✏️ ערוך את האימון בעצמי';edit.onclick=()=>{
+ const current=[...(daily(iso).custom?.[mode]||plans[kind][mode])];
+ const overlay=document.createElement('div');overlay.className='niv-custom-overlay';
+ overlay.innerHTML='<div class="niv-custom-dialog" role="dialog" aria-modal="true"><h2>✏️ עריכת האימון שלי</h2><p>כל שורה היא פעולה נפרדת. אפשר להוסיף, לשנות ולמחוק פעולות.</p><div class="niv-custom-fields"></div><button type="button" class="niv-custom-add">➕ הוסף פעולה נוספת</button><div class="niv-custom-actions"><button type="button" class="niv-custom-save">💾 שמור אימון</button><button type="button" class="niv-custom-cancel">ביטול</button></div></div>';
+ const fields=overlay.querySelector('.niv-custom-fields');
+ const addField=(value='')=>{const row=document.createElement('div');row.className='niv-custom-row';const input=document.createElement('textarea');input.rows=2;input.placeholder='תיאור הפעולה';input.value=value;const remove=document.createElement('button');remove.type='button';remove.textContent='🗑️';remove.setAttribute('aria-label','מחק פעולה');remove.onclick=()=>row.remove();row.append(input,remove);fields.append(row)};
+ current.forEach(v=>addField(v));
+ overlay.querySelector('.niv-custom-add').onclick=()=>{addField();fields.lastElementChild.querySelector('textarea').focus()};
+ const close=()=>overlay.remove();overlay.querySelector('.niv-custom-cancel').onclick=close;
+ overlay.querySelector('.niv-custom-save').onclick=()=>{const items=[...fields.querySelectorAll('textarea')].map(v=>v.value.trim()).filter(Boolean);if(!items.length){alert('יש להזין לפחות פעולה אחת');return}const y=daily(iso);y.custom??={};y.custom[mode]=items;y.completed??={};y.completed[mode]={};localStorage.setItem(prefix+iso,JSON.stringify(y));close();apply(card,iso,y);if(typeof updateWeeklyScore==='function')updateWeeklyScore()};
+ document.body.append(overlay);
+ };holder.append(edit);
  const label=document.createElement('div');label.className='niv-v16-notice';label.textContent=(mode==='short'?'⚡ אימון מקוצר — 50%':'🚶 אימון חלופי — 100%')+' • סמן את הפעולות שביצעת';holder.append(label);
  list.forEach((step,j)=>{const row=document.createElement('div');row.className='ff-row';const lab=document.createElement('label');const input=document.createElement('input');input.type='checkbox';input.className='niv-v16-check';input.checked=!!(x.completed?.[mode]?.[j]);input.disabled=!!original[0]?.querySelector('input')?.disabled;const span=document.createElement('span');span.textContent=step;lab.append(input,span);row.append(lab);holder.append(row);input.addEventListener('change',()=>{const y=daily(iso);y.completed??={};y.completed[mode]??={};y.completed[mode][j]=input.checked;localStorage.setItem(prefix+iso,JSON.stringify(y));if(typeof updateWeeklyScore==='function')updateWeeklyScore();if(input.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(mode==='short'?5:10)})});
 }
