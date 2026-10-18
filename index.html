@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — תוכנית דינמית v13</title>
+<title>Niv Fitness — תצוגה יומית אחידה v15</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v14-20261018-week2-daily-repair">
+<meta name="niv-build" content="v15-20261018-unified-daily">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -90,7 +90,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 <div class="reward-bank" id="reward-bank"></div>
 <div style="margin-top:12px"><b>היסטוריית פרסים: <span id="reward-count">0</span></b><div id="reward-history" class="reward-history">עוד לא מומש פרס — ממשיכים לצבור 💪</div></div>
 </div></div><section class="card" id="weight-tracker" style="margin:15px 0;border:2px solid #b7dfc9"><h3>⚖️ מעקב משקל</h3><div style="font-size:14px">משקל התחלתי: <b>105.5 ק״ג</b> • יעד: <b>85 ק״ג</b></div><div style="font-size:26px;font-weight:900;margin:12px 0" id="weight-current">105.5 ק״ג</div><div id="weight-progress" class="small"></div><div style="margin-top:12px"><b>📅 שקילה בכל יום שישי</b><p class="small">השקילה הראשונה בתוכנית: 16.10.2026. אפשר להזין גם שקילות קודמות.</p><label>תאריך <input id="weight-date" type="date" style="padding:9px;max-width:160px"></label> <label>משקל בק״ג <input id="weight-value" type="number" min="30" max="350" step="0.1" style="padding:9px;max-width:100px"></label> <button id="weight-save" type="button" style="background:#2b7655;color:white;border:0;border-radius:9px;padding:11px">שמור שקילה</button></div><div id="weight-history" style="margin-top:14px"></div></section><div class="daynav"><button class="today-btn" id="today-btn" type="button">📅 היום</button><div class="tabs" id="tabs"></div></div><div id="days"></div>
-<div class="footer"><button class="reset" onclick="resetAll()">איפוס סימונים לשבוע</button><p>הסימונים נשמרים במכשיר הזה. כשמסיימים פעולה — מסמנים ✓ ומקבלים קונפטי 🎉</p></div>
+<div class="footer"><p>הסימונים נשמרים במכשיר הזה. כשמסיימים פעולה — מסמנים ✓ ומקבלים קונפטי 🎉</p></div>
 </main>
 <div id="view-extra-modal" class="modal"><div class="modal-card"><h2>👁️ פרטי האימון</h2><div id="view-extra-content"></div><div class="modal-actions"><button class="save-extra" id="close-view-extra" type="button">סגור</button></div></div></div><div id="extra-modal" class="modal"><div class="modal-card"><h2>➕ הוסף אימון</h2><div class="form-grid">
 <div class="field"><label>תאריך</label><input id="extra-date" type="date"></div>
@@ -985,7 +985,7 @@ function decorate(){
   const kind=card.querySelector('h3')?.textContent||'';
   const isRest=/מנוחה/.test(kind),isRecovery=/התאוששות/.test(kind),isStrength=/כוח/.test(kind),isSwim=/שחייה/.test(kind);
   const rating=!isRest&&!isRecovery;
-  box.innerHTML=`${!isRest?`<div class="niv-tool-card"><h3>⚡ אין לי זמן / צריך חלופה</h3><div class="niv-muted">בחר אימון מקוצר (50% קרדיט) או חלופי (70% קרדיט).</div><button type="button" class="niv-action" data-mode="short">⚡ אימון מקוצר</button><button type="button" class="niv-action" data-mode="alternate">🚶 אימון חלופי + כוח</button><div data-mode-text class="niv-muted"></div></div>`:''}${rating?`<div class="niv-tool-card"><h3>⭐ איך היה האימון?</h3><div class="niv-muted">דרג מ־1 עד 10</div><div class="niv-stars" data-stars="rating"></div><div data-rating-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="rating">אפס דירוג</button></div>`:''}<div class="niv-tool-card"><h3>🏆 בונוסים יומיים</h3><b>🍽️ כמה אני מרוצה מהתזונה שלי היום?</b><div class="niv-stars" data-stars="nutrition"></div><div data-nutrition-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="nutrition">אפס דירוג תזונה</button><hr><b>🌙 כמה שעות לא אכלתי לפני השינה?</b><div class="niv-muted">10 נקודות לשעה, עד 4 שעות</div><button type="button" class="niv-action" data-counter="sleep" data-delta="-1">−</button><span class="niv-counter" data-value="sleep"></span><button type="button" class="niv-action" data-counter="sleep" data-delta="1">+</button><hr><b>💧 כוסות מים</b><div class="niv-muted">נקודה אחת לכוס</div><button type="button" class="niv-action" data-counter="water" data-delta="-1">−</button><span class="niv-counter" data-value="water"></span><button type="button" class="niv-action" data-counter="water" data-delta="1">🥤 +</button><div class="niv-result" data-points></div></div><div class="niv-tool-card"><h3>🕒 מתי ביצעתי את הפעילות?</h3><button class="niv-action" data-time="morning">🌅 בוקר</button><button class="niv-action" data-time="noon">☀️ צהריים</button><button class="niv-action" data-time="evening">🌆 ערב</button><div class="niv-muted" data-time-text></div></div>`;
+  box.innerHTML=`${!isRest?`<div class="niv-tool-card"><h3>⚡ אין לי זמן / צריך חלופה</h3><div class="niv-muted">בחר אימון מקוצר (50% קרדיט) או חלופי (70% קרדיט).</div><button type="button" class="niv-action" data-mode="short">⚡ אימון מקוצר</button><button type="button" class="niv-action" data-mode="alternate">🚶 אימון חלופי + כוח</button><div data-mode-text class="niv-muted"></div><div data-fallback-plan class="niv-fallback-detail" hidden></div></div>`:''}${rating?`<div class="niv-tool-card"><h3>⭐ איך היה האימון?</h3><div class="niv-muted">דרג מ־1 עד 10</div><div class="niv-stars" data-stars="rating"></div><div data-rating-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="rating">אפס דירוג</button></div>`:''}<div class="niv-tool-card"><h3>🏆 בונוסים יומיים</h3><b>🍽️ כמה אני מרוצה מהתזונה שלי היום?</b><div class="niv-stars" data-stars="nutrition"></div><div data-nutrition-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="nutrition">אפס דירוג תזונה</button><hr><b>🌙 כמה שעות לא אכלתי לפני השינה?</b><div class="niv-muted">10 נקודות לשעה, עד 4 שעות</div><button type="button" class="niv-action" data-counter="sleep" data-delta="-1">−</button><span class="niv-counter" data-value="sleep"></span><button type="button" class="niv-action" data-counter="sleep" data-delta="1">+</button><hr><b>💧 כוסות מים</b><div class="niv-muted">נקודה אחת לכוס</div><button type="button" class="niv-action" data-counter="water" data-delta="-1">−</button><span class="niv-counter" data-value="water"></span><button type="button" class="niv-action" data-counter="water" data-delta="1">🥤 +</button><div class="niv-result" data-points></div></div><div class="niv-tool-card"><h3>🕒 מתי ביצעתי את הפעילות?</h3><button class="niv-action" data-time="morning">🌅 בוקר</button><button class="niv-action" data-time="noon">☀️ צהריים</button><button class="niv-action" data-time="evening">🌆 ערב</button><div class="niv-muted" data-time-text></div></div>`;
   card.appendChild(box);
   const save=x=>{localStorage.setItem(prefix+iso,JSON.stringify(x));paint();if(typeof updateWeeklyScore==='function')updateWeeklyScore()};
   function paint(){const x=read(iso);for(const field of ['nutrition','rating']){const stars=box.querySelector(`[data-stars="${field}"]`);if(!stars)continue;stars.replaceChildren();for(let n=1;n<=10;n++){const b=document.createElement('button');b.type='button';b.className='niv-star'+(n<=(x[field]||0)?' on':'');b.textContent=n<=(x[field]||0)?'★':'☆';b.setAttribute('aria-label',n+' מתוך 10');b.onclick=()=>{const y=read(iso);y[field]=n;save(y)};stars.appendChild(b)}}
@@ -995,8 +995,13 @@ function decorate(){
    box.querySelector('[data-points]').textContent='🏆 בונוסים היום: '+points(x)+' נק׳';
    const t=box.querySelector('[data-time-text]');if(t)t.textContent=x.time?'נבחר: '+({morning:'בוקר',noon:'צהריים',evening:'ערב'}[x.time]||x.time):'טרם נבחר זמן';
    const m=box.querySelector('[data-mode-text]');if(m)m.textContent=x.mode==='short'?'נבחר אימון מקוצר — 50% קרדיט':x.mode==='alternate'?'נבחר אימון חלופי — 70% קרדיט':'';
+   const detail=box.querySelector('[data-fallback-plan]');
+   if(detail){const type=isStrength?'strength':isRecovery?'recovery':'cardio';const plan=typeof fallbackPlans!=='undefined'?fallbackPlans[type]?.[x.mode]:null;
+     detail.hidden=!plan;if(plan)detail.innerHTML='<h4>'+plan.title+'</h4><ul>'+plan.items.map(item=>'<li>'+item+'</li>').join('')+'</ul><b>'+plan.score+'</b>';
+   }
+   box.querySelectorAll('[data-mode]').forEach(btn=>{btn.classList.toggle('niv-selected',btn.dataset.mode===x.mode);btn.setAttribute('aria-pressed',String(btn.dataset.mode===x.mode))});
   }
-  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const x=read(iso);if(b.dataset.counter){const field=b.dataset.counter;x[field]=Math.max(0,Math.min(field==='sleep'?4:100,(x[field]||0)+Number(b.dataset.delta)));save(x)}else if(b.dataset.clear){delete x[b.dataset.clear];save(x)}else if(b.dataset.time){x.time=b.dataset.time;save(x)}else if(b.dataset.mode){x.mode=b.dataset.mode;save(x)}});
+  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const x=read(iso);if(b.dataset.counter){const field=b.dataset.counter;x[field]=Math.max(0,Math.min(field==='sleep'?4:100,(x[field]||0)+Number(b.dataset.delta)));save(x)}else if(b.dataset.clear){delete x[b.dataset.clear];save(x)}else if(b.dataset.time){x.time=b.dataset.time;save(x)}else if(b.dataset.mode){x.mode=x.mode===b.dataset.mode?'':b.dataset.mode;save(x)}});
   paint();
  });
 }
@@ -1007,6 +1012,43 @@ function mode(){const dateLabel=document.getElementById('niv-date-label');const 
 new MutationObserver(mode).observe(document.getElementById('future-fitness'),{attributes:true,attributeFilter:['class']});
 document.getElementById('ff-week').addEventListener('change',()=>setTimeout(()=>{decorate();mode()},0));
 mode();if(typeof updateWeeklyScore==='function')updateWeeklyScore();
+})();
+</script>
+
+<style id="niv-v15-clean-daily">
+/* Same clean daily shell for every week; original week-one cards and storage are preserved. */
+body>header{display:none!important}
+#niv-daily-nav{margin-top:calc(env(safe-area-inset-top,0px) + 10px)!important}
+#niv-daily-nav .niv-note{display:none!important}
+main.wrap>.footer{display:none!important}
+#niv-future-container.niv-daily-mode{margin-top:0!important;padding-top:0!important}
+#niv-future-container.niv-daily-mode #future-fitness{margin-top:0!important;padding-top:0!important}
+#niv-future-container.niv-daily-mode #ff-content>.ff-card.niv-current-day{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important}
+#niv-future-container.niv-daily-mode #ff-content>.ff-card.niv-current-day>h3{font-size:25px!important;line-height:1.35;margin:8px 0 8px!important;color:#17211d}
+#niv-future-container.niv-daily-mode #ff-content>.ff-card.niv-current-day>.ff-small{margin-bottom:15px;color:#64746b}
+#niv-future-container.niv-daily-mode .ff-row{background:white;border:1px solid #e4e9e6;border-radius:13px;padding:15px 13px;margin:8px 0;box-shadow:0 3px 12px #1c2d2409}
+#niv-future-container.niv-daily-mode .ff-row label{display:flex;align-items:flex-start;gap:12px;line-height:1.55}
+#niv-future-container.niv-daily-mode .ff-row input{flex-shrink:0;width:22px;height:22px;accent-color:#3c8d68}
+.niv-day-tools{margin-top:16px}
+.niv-day-tools .niv-tool-card{border-radius:18px!important;padding:16px!important;margin:12px 0!important;box-shadow:0 6px 18px #1c2d240c!important}
+.niv-day-tools .niv-action{margin:5px 3px!important}
+.niv-day-tools .niv-action.niv-selected{background:#174a35!important;outline:3px solid #a5d4b9}
+.niv-fallback-detail{margin-top:12px;padding:12px;border:1px solid #cfe3d5;background:#f3faf5;border-radius:12px;line-height:1.7}
+.niv-fallback-detail[hidden]{display:none!important}
+.niv-fallback-detail h4{margin:0 0 6px}
+.niv-fallback-detail ul{margin:5px 0;padding-right:20px}
+/* Retain settings and weekly controls only when explicitly opened. */
+#niv-future-container.niv-daily-mode #ff-content>.ff-card:not(.niv-current-day){display:none!important}
+</style>
+<script id="niv-v15-clean-logic">
+(function(){'use strict';
+// The new-week engine inserts a completion button after rendering. Keep it inside the daily card.
+const future=document.getElementById('future-fitness');
+const content=document.getElementById('ff-content');
+if(!future||!content)return;
+// Prevent the old weekly header from reappearing after navigation.
+function clean(){const old=document.querySelector('main.wrap>.footer');if(old)old.hidden=true;}
+clean();
 })();
 </script>
 </body></html>
