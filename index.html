@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Niv Fitness — תוכנית דינמית v13</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v14-20261017-2015-endurance-baselines">
+<meta name="niv-build" content="v14-20261018-week2-daily-repair">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -70,7 +70,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 17.10.2026 • תוכנית דינמית v13 • build 2015</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 18.10.2026 • תוכנית דינמית v14 • תיקון שבוע 2</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -949,6 +949,64 @@ new MutationObserver(()=>{if(!future.dataset.nsBusy){future.dataset.nsBusy='1';a
 document.addEventListener('change',e=>{const c=e.target;if(!c.matches('.check,[data-ff-check]')||!c.checked)return;let day,date,boxes;if(c.matches('.check')){const section=c.closest('.day');if(!section)return;day=Number(section.id.replace('day',''));date=dateAt(day);boxes=[...section.querySelectorAll('.check')]}else{const id=c.dataset.ffCheck.split('-');const w=Number(id[0]);day=Number(id[1]);date=dateAt((w-1)*7+day);boxes=[...c.closest('.ff-card').querySelectorAll('[data-ff-check]')]}if(boxes.length&&boxes.every(x=>x.checked)&&!read()[date])setTimeout(()=>open(date,day),550)},true);
 }
 attach();
+})();
+</script>
+<style id="niv-week2-repair-style">
+#niv-future-container.niv-daily-mode #future-fitness>.ff-card{display:none!important}
+#niv-future-container.niv-daily-mode #ff-content>.ff-card:not(.niv-current-day){display:none!important}
+#niv-future-container.niv-daily-mode #ff-content>.ff-card.niv-current-day{display:block!important}
+.niv-day-tools{margin-top:18px}.niv-day-tools .niv-tool-card{background:#fff;border:1px solid #dfe9e2;border-radius:17px;padding:17px;margin:13px 0;box-shadow:0 5px 20px #1232}
+.niv-day-tools h3{margin:0 0 9px}.niv-day-tools .niv-stars{display:flex;direction:ltr;flex-wrap:wrap;gap:2px;justify-content:flex-end}.niv-day-tools .niv-star{background:none;border:0;font-size:29px;color:#c8d1cb;padding:3px}.niv-day-tools .niv-star.on{color:#e0a928}
+.niv-day-tools .niv-action{background:#2b7655;color:white;border:0;border-radius:11px;padding:10px 14px;font-weight:800;margin:5px}.niv-day-tools .niv-muted{color:#68756f;font-size:13px}.niv-day-tools .niv-counter{font-size:21px;font-weight:900;margin:8px}.niv-day-tools .niv-result{font-weight:900;color:#276b4a;margin-top:10px}
+</style>
+<script id="niv-week2-repair">
+(function(){'use strict';
+const root=document.getElementById('ff-content'),wrap=document.getElementById('niv-future-container');
+if(!root||!wrap)return;
+const prefix='nivFitnessDailyV14:';
+const read=(date)=>{try{return JSON.parse(localStorage.getItem(prefix+date)||'{}')||{}}catch(e){return {}}};
+const nutrition={1:-30,2:-20,3:-10,4:-5,5:0,6:5,7:10,8:20,9:30,10:50};
+const points=x=>(nutrition[x.nutrition]||0)+Math.min(4,Math.max(0,x.sleep||0))*10+Math.max(0,x.water||0);
+function allPoints(){let total=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(prefix)){try{total+=points(JSON.parse(localStorage.getItem(k))||{})}catch(e){}}}return total}
+// Extend the existing permanent points bank; never replace or reset prior achievements.
+if(typeof earnedPoints==='function'&&!window.nivDailyPointsHooked){const previous=earnedPoints;earnedPoints=function(){return previous()+allPoints()};window.nivDailyPointsHooked=true;}
+const dayNames=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+function decorate(){
+ const cards=[...root.children].filter(x=>x.classList.contains('ff-card'));
+ const week=Number(document.getElementById('ff-week')?.value||1);
+ const selected=document.getElementById('niv-date-label')?.textContent||'';
+ cards.forEach((card,i)=>{
+  if(i<1||i>7)return;
+  const d=i-1, date=new Date(2026,9,11+(week-1)*7+d,12);
+  const iso=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  card.dataset.nivDay=d;
+  if(card.querySelector('.niv-day-tools'))return;
+  const box=document.createElement('div');box.className='niv-day-tools';box.dataset.date=iso;
+  const kind=card.querySelector('h3')?.textContent||'';
+  const isRest=/מנוחה/.test(kind),isRecovery=/התאוששות/.test(kind),isStrength=/כוח/.test(kind),isSwim=/שחייה/.test(kind);
+  const rating=!isRest&&!isRecovery;
+  box.innerHTML=`${!isRest?`<div class="niv-tool-card"><h3>⚡ אין לי זמן / צריך חלופה</h3><div class="niv-muted">בחר אימון מקוצר (50% קרדיט) או חלופי (70% קרדיט).</div><button type="button" class="niv-action" data-mode="short">⚡ אימון מקוצר</button><button type="button" class="niv-action" data-mode="alternate">🚶 אימון חלופי + כוח</button><div data-mode-text class="niv-muted"></div></div>`:''}${rating?`<div class="niv-tool-card"><h3>⭐ איך היה האימון?</h3><div class="niv-muted">דרג מ־1 עד 10</div><div class="niv-stars" data-stars="rating"></div><div data-rating-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="rating">אפס דירוג</button></div>`:''}<div class="niv-tool-card"><h3>🏆 בונוסים יומיים</h3><b>🍽️ כמה אני מרוצה מהתזונה שלי היום?</b><div class="niv-stars" data-stars="nutrition"></div><div data-nutrition-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="nutrition">אפס דירוג תזונה</button><hr><b>🌙 כמה שעות לא אכלתי לפני השינה?</b><div class="niv-muted">10 נקודות לשעה, עד 4 שעות</div><button type="button" class="niv-action" data-counter="sleep" data-delta="-1">−</button><span class="niv-counter" data-value="sleep"></span><button type="button" class="niv-action" data-counter="sleep" data-delta="1">+</button><hr><b>💧 כוסות מים</b><div class="niv-muted">נקודה אחת לכוס</div><button type="button" class="niv-action" data-counter="water" data-delta="-1">−</button><span class="niv-counter" data-value="water"></span><button type="button" class="niv-action" data-counter="water" data-delta="1">🥤 +</button><div class="niv-result" data-points></div></div><div class="niv-tool-card"><h3>🕒 מתי ביצעתי את הפעילות?</h3><button class="niv-action" data-time="morning">🌅 בוקר</button><button class="niv-action" data-time="noon">☀️ צהריים</button><button class="niv-action" data-time="evening">🌆 ערב</button><div class="niv-muted" data-time-text></div></div>`;
+  card.appendChild(box);
+  const save=x=>{localStorage.setItem(prefix+iso,JSON.stringify(x));paint();if(typeof updateWeeklyScore==='function')updateWeeklyScore()};
+  function paint(){const x=read(iso);for(const field of ['nutrition','rating']){const stars=box.querySelector(`[data-stars="${field}"]`);if(!stars)continue;stars.replaceChildren();for(let n=1;n<=10;n++){const b=document.createElement('button');b.type='button';b.className='niv-star'+(n<=(x[field]||0)?' on':'');b.textContent=n<=(x[field]||0)?'★':'☆';b.setAttribute('aria-label',n+' מתוך 10');b.onclick=()=>{const y=read(iso);y[field]=n;save(y)};stars.appendChild(b)}}
+   for(const field of ['sleep','water']){const v=box.querySelector(`[data-value="${field}"]`);if(v)v.textContent=(x[field]||0)+(field==='sleep'?' שעות':' כוסות')}
+   const n=box.querySelector('[data-nutrition-text]');if(n)n.textContent=x.nutrition?`${x.nutrition}/10 — ${nutrition[x.nutrition]} נק׳`:'טרם דורג';
+   const r=box.querySelector('[data-rating-text]');if(r)r.textContent=x.rating?`${x.rating}/10`:'טרם דורג';
+   box.querySelector('[data-points]').textContent='🏆 בונוסים היום: '+points(x)+' נק׳';
+   const t=box.querySelector('[data-time-text]');if(t)t.textContent=x.time?'נבחר: '+({morning:'בוקר',noon:'צהריים',evening:'ערב'}[x.time]||x.time):'טרם נבחר זמן';
+   const m=box.querySelector('[data-mode-text]');if(m)m.textContent=x.mode==='short'?'נבחר אימון מקוצר — 50% קרדיט':x.mode==='alternate'?'נבחר אימון חלופי — 70% קרדיט':'';
+  }
+  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const x=read(iso);if(b.dataset.counter){const field=b.dataset.counter;x[field]=Math.max(0,Math.min(field==='sleep'?4:100,(x[field]||0)+Number(b.dataset.delta)));save(x)}else if(b.dataset.clear){delete x[b.dataset.clear];save(x)}else if(b.dataset.time){x.time=b.dataset.time;save(x)}else if(b.dataset.mode){x.mode=b.dataset.mode;save(x)}});
+  paint();
+ });
+}
+// The unlimited-week engine regenerates its day cards on each navigation.
+let busy=false;const observer=new MutationObserver(()=>{if(busy)return;busy=true;try{decorate()}finally{busy=false}});
+observer.observe(root,{childList:true});decorate();
+function mode(){const dateLabel=document.getElementById('niv-date-label');const match=dateLabel?.textContent||'';const week=Number(document.getElementById('ff-week')?.value||1);wrap.classList.toggle('niv-daily-mode',week>1&&document.getElementById('future-fitness').classList.contains('niv-daily-future'));}
+new MutationObserver(mode).observe(document.getElementById('future-fitness'),{attributes:true,attributeFilter:['class']});
+document.getElementById('ff-week').addEventListener('change',()=>setTimeout(()=>{decorate();mode()},0));
+mode();if(typeof updateWeeklyScore==='function')updateWeeklyScore();
 })();
 </script>
 </body></html>
