@@ -70,7 +70,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 </style>
 </head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 18.10.2026 • תוכנית דינמית v14 • תיקון שבוע 2</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 18.10.2026 • v17 • בחירת אימון ועריכה אישית</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -707,6 +707,7 @@ const details=document.createElement('details');details.innerHTML='<summary>💾
 // Move the backup after all program content, at the very bottom.
 document.body.appendChild(backup);
 const nav=$('niv-daily-nav');document.querySelector('header').after(nav);
+const extraQuick=document.createElement('button');extraQuick.type='button';extraQuick.id='niv-extra-quick';extraQuick.textContent='➕ הוסף אימון אקראי';extraQuick.style.cssText='display:block;width:calc(100% - 32px);max-width:850px;margin:12px auto;padding:14px;border:0;border-radius:14px;background:#246b4b;color:white;font-size:17px;font-weight:900';extraQuick.onclick=()=>openExtra();nav.after(extraQuick);
 const weekOneTabs=$('tabs').closest('.daynav');
 weekOneTabs.style.display='none';
 const weekOneExtras=$('extra-summary');
@@ -1000,8 +1001,8 @@ function decorate(){
      detail.hidden=true;detail.innerHTML='';
    }
    box.querySelectorAll('[data-mode]').forEach(btn=>{btn.classList.toggle('niv-selected',btn.dataset.mode===(x.mode||'original'));btn.setAttribute('aria-pressed',String(btn.dataset.mode===(x.mode||'original')))});
+   if(typeof window.nivV16Apply==='function')window.nivV16Apply(card,iso,x);
   }
-  if(typeof window.nivV16Apply==='function')window.nivV16Apply(card,iso,x);
   box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const x=read(iso);if(b.dataset.counter){const field=b.dataset.counter;x[field]=Math.max(0,Math.min(field==='sleep'?4:100,(x[field]||0)+Number(b.dataset.delta)));save(x)}else if(b.dataset.clear){delete x[b.dataset.clear];save(x)}else if(b.dataset.time){x.time=b.dataset.time;save(x)}else if(b.dataset.mode){x.mode=b.dataset.mode==='original'?'':b.dataset.mode;save(x)}});
   paint();
  });
@@ -1083,11 +1084,13 @@ function apply(card,iso,x){
  const mode=x.mode==='short'||x.mode==='alternate'?x.mode:'';
  original.forEach(row=>row.classList.toggle('niv-v16-hidden',!!mode));
  holder.replaceChildren();if(!mode)return;
- const list=plans[kind][mode];
+ const list=Array.isArray(x.custom?.[mode])&&x.custom[mode].length?x.custom[mode]:plans[kind][mode];
+ const edit=document.createElement('button');edit.type='button';edit.className='niv-action';edit.textContent='✏️ ערוך את האימון בעצמי';edit.onclick=()=>{const current=(daily(iso).custom?.[mode]||plans[kind][mode]).join('\n');const result=prompt('ערוך את הפעולות, פעולה אחת בכל שורה:',current);if(result===null)return;const items=result.split(/\r?\n/).map(v=>v.trim()).filter(Boolean);if(!items.length){alert('יש להזין לפחות פעולה אחת');return}const y=daily(iso);y.custom??={};y.custom[mode]=items;y.completed??={};y.completed[mode]={};localStorage.setItem(prefix+iso,JSON.stringify(y));apply(card,iso,y);if(typeof updateWeeklyScore==='function')updateWeeklyScore()};holder.append(edit);
  const label=document.createElement('div');label.className='niv-v16-notice';label.textContent=(mode==='short'?'⚡ אימון מקוצר — 50%':'🚶 אימון חלופי — 100%')+' • סמן את הפעולות שביצעת';holder.append(label);
  list.forEach((step,j)=>{const row=document.createElement('div');row.className='ff-row';const lab=document.createElement('label');const input=document.createElement('input');input.type='checkbox';input.className='niv-v16-check';input.checked=!!(x.completed?.[mode]?.[j]);input.disabled=!!original[0]?.querySelector('input')?.disabled;const span=document.createElement('span');span.textContent=step;lab.append(input,span);row.append(lab);holder.append(row);input.addEventListener('change',()=>{const y=daily(iso);y.completed??={};y.completed[mode]??={};y.completed[mode][j]=input.checked;localStorage.setItem(prefix+iso,JSON.stringify(y));if(typeof updateWeeklyScore==='function')updateWeeklyScore();if(input.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(mode==='short'?5:10)})});
 }
 window.nivV16Apply=apply;
+setTimeout(()=>{document.querySelectorAll('#ff-content .ff-card[data-niv-day]').forEach(card=>{const iso=card.querySelector('.niv-day-tools')?.dataset.date;if(iso)apply(card,iso,daily(iso))})},50);
 // v14/v15 count every future checkbox at ten points. Adjust ONLY switched days,
 // so an alternative earns the same full-day maximum as the original, and a short one earns half.
 const oldEarned=earnedPoints;
@@ -1099,7 +1102,7 @@ earnedPoints=function(){let total=oldEarned();const checks=getChecks();for(let i
  const selected=Object.values(x.completed?.[mode]||{}).filter(Boolean).length;
  const title=document.querySelector('#ff-content .ff-card[data-niv-day="'+day+'"] h3')?.textContent||'';
  const kind=/התאוששות/.test(title)?'recovery':/כוח/.test(title)?'strength':/שחייה/.test(title)?'swim':'cardio';
- const max=plans[kind][mode].length;
+ const max=(x.custom?.[mode]?.length||plans[kind][mode].length);
  // If viewing a different week, derive task count from saved plan snapshot when available.
  let baseCount=originalCount;
  if(!baseCount){try{const snap=JSON.parse(localStorage.getItem('nivFitnessPlanSnapshotsV1')||'{}');baseCount=snap[week]?.[day]?.[1]?.length||0}catch(e){}}
