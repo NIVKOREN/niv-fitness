@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — תצוגה יומית אחידה v15</title>
+<title>Niv Fitness — אימון חלופי אמיתי v16</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v15-20261018-unified-daily">
+<meta name="niv-build" content="v16-20261018-real-workout-switch">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -985,7 +985,7 @@ function decorate(){
   const kind=card.querySelector('h3')?.textContent||'';
   const isRest=/מנוחה/.test(kind),isRecovery=/התאוששות/.test(kind),isStrength=/כוח/.test(kind),isSwim=/שחייה/.test(kind);
   const rating=!isRest&&!isRecovery;
-  box.innerHTML=`${!isRest?`<div class="niv-tool-card"><h3>⚡ אין לי זמן / צריך חלופה</h3><div class="niv-muted">בחר אימון מקוצר (50% קרדיט) או חלופי (70% קרדיט).</div><button type="button" class="niv-action" data-mode="short">⚡ אימון מקוצר</button><button type="button" class="niv-action" data-mode="alternate">🚶 אימון חלופי + כוח</button><div data-mode-text class="niv-muted"></div><div data-fallback-plan class="niv-fallback-detail" hidden></div></div>`:''}${rating?`<div class="niv-tool-card"><h3>⭐ איך היה האימון?</h3><div class="niv-muted">דרג מ־1 עד 10</div><div class="niv-stars" data-stars="rating"></div><div data-rating-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="rating">אפס דירוג</button></div>`:''}<div class="niv-tool-card"><h3>🏆 בונוסים יומיים</h3><b>🍽️ כמה אני מרוצה מהתזונה שלי היום?</b><div class="niv-stars" data-stars="nutrition"></div><div data-nutrition-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="nutrition">אפס דירוג תזונה</button><hr><b>🌙 כמה שעות לא אכלתי לפני השינה?</b><div class="niv-muted">10 נקודות לשעה, עד 4 שעות</div><button type="button" class="niv-action" data-counter="sleep" data-delta="-1">−</button><span class="niv-counter" data-value="sleep"></span><button type="button" class="niv-action" data-counter="sleep" data-delta="1">+</button><hr><b>💧 כוסות מים</b><div class="niv-muted">נקודה אחת לכוס</div><button type="button" class="niv-action" data-counter="water" data-delta="-1">−</button><span class="niv-counter" data-value="water"></span><button type="button" class="niv-action" data-counter="water" data-delta="1">🥤 +</button><div class="niv-result" data-points></div></div><div class="niv-tool-card"><h3>🕒 מתי ביצעתי את הפעילות?</h3><button class="niv-action" data-time="morning">🌅 בוקר</button><button class="niv-action" data-time="noon">☀️ צהריים</button><button class="niv-action" data-time="evening">🌆 ערב</button><div class="niv-muted" data-time-text></div></div>`;
+  box.innerHTML=`${!isRest?`<div class="niv-tool-card"><h3>⚡ אין לי זמן / צריך חלופה</h3><div class="niv-muted">בחר אימון מקוצר (50%) או חלופי (100%). האימון הנבחר מחליף את המקורי.</div><button type="button" class="niv-action" data-mode="short">⚡ אימון מקוצר</button><button type="button" class="niv-action" data-mode="alternate">🚶 אימון חלופי</button><button type="button" class="niv-action" data-mode="original">↩ אימון מקורי</button><div data-mode-text class="niv-muted"></div><div data-fallback-plan class="niv-fallback-detail" hidden></div></div>`:''}${rating?`<div class="niv-tool-card"><h3>⭐ איך היה האימון?</h3><div class="niv-muted">דרג מ־1 עד 10</div><div class="niv-stars" data-stars="rating"></div><div data-rating-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="rating">אפס דירוג</button></div>`:''}<div class="niv-tool-card"><h3>🏆 בונוסים יומיים</h3><b>🍽️ כמה אני מרוצה מהתזונה שלי היום?</b><div class="niv-stars" data-stars="nutrition"></div><div data-nutrition-text class="niv-muted"></div><button type="button" class="niv-action" data-clear="nutrition">אפס דירוג תזונה</button><hr><b>🌙 כמה שעות לא אכלתי לפני השינה?</b><div class="niv-muted">10 נקודות לשעה, עד 4 שעות</div><button type="button" class="niv-action" data-counter="sleep" data-delta="-1">−</button><span class="niv-counter" data-value="sleep"></span><button type="button" class="niv-action" data-counter="sleep" data-delta="1">+</button><hr><b>💧 כוסות מים</b><div class="niv-muted">נקודה אחת לכוס</div><button type="button" class="niv-action" data-counter="water" data-delta="-1">−</button><span class="niv-counter" data-value="water"></span><button type="button" class="niv-action" data-counter="water" data-delta="1">🥤 +</button><div class="niv-result" data-points></div></div><div class="niv-tool-card"><h3>🕒 מתי ביצעתי את הפעילות?</h3><button class="niv-action" data-time="morning">🌅 בוקר</button><button class="niv-action" data-time="noon">☀️ צהריים</button><button class="niv-action" data-time="evening">🌆 ערב</button><div class="niv-muted" data-time-text></div></div>`;
   card.appendChild(box);
   const save=x=>{localStorage.setItem(prefix+iso,JSON.stringify(x));paint();if(typeof updateWeeklyScore==='function')updateWeeklyScore()};
   function paint(){const x=read(iso);for(const field of ['nutrition','rating']){const stars=box.querySelector(`[data-stars="${field}"]`);if(!stars)continue;stars.replaceChildren();for(let n=1;n<=10;n++){const b=document.createElement('button');b.type='button';b.className='niv-star'+(n<=(x[field]||0)?' on':'');b.textContent=n<=(x[field]||0)?'★':'☆';b.setAttribute('aria-label',n+' מתוך 10');b.onclick=()=>{const y=read(iso);y[field]=n;save(y)};stars.appendChild(b)}}
@@ -994,14 +994,15 @@ function decorate(){
    const r=box.querySelector('[data-rating-text]');if(r)r.textContent=x.rating?`${x.rating}/10`:'טרם דורג';
    box.querySelector('[data-points]').textContent='🏆 בונוסים היום: '+points(x)+' נק׳';
    const t=box.querySelector('[data-time-text]');if(t)t.textContent=x.time?'נבחר: '+({morning:'בוקר',noon:'צהריים',evening:'ערב'}[x.time]||x.time):'טרם נבחר זמן';
-   const m=box.querySelector('[data-mode-text]');if(m)m.textContent=x.mode==='short'?'נבחר אימון מקוצר — 50% קרדיט':x.mode==='alternate'?'נבחר אימון חלופי — 70% קרדיט':'';
+   const m=box.querySelector('[data-mode-text]');if(m)m.textContent=x.mode==='short'?'נבחר אימון מקוצר — 50% קרדיט':x.mode==='alternate'?'נבחר אימון חלופי — 100% קרדיט':'';
    const detail=box.querySelector('[data-fallback-plan]');
    if(detail){const type=isStrength?'strength':isRecovery?'recovery':'cardio';const plan=typeof fallbackPlans!=='undefined'?fallbackPlans[type]?.[x.mode]:null;
-     detail.hidden=!plan;if(plan)detail.innerHTML='<h4>'+plan.title+'</h4><ul>'+plan.items.map(item=>'<li>'+item+'</li>').join('')+'</ul><b>'+plan.score+'</b>';
+     detail.hidden=true;detail.innerHTML='';
    }
-   box.querySelectorAll('[data-mode]').forEach(btn=>{btn.classList.toggle('niv-selected',btn.dataset.mode===x.mode);btn.setAttribute('aria-pressed',String(btn.dataset.mode===x.mode))});
+   box.querySelectorAll('[data-mode]').forEach(btn=>{btn.classList.toggle('niv-selected',btn.dataset.mode===(x.mode||'original'));btn.setAttribute('aria-pressed',String(btn.dataset.mode===(x.mode||'original')))});
   }
-  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const x=read(iso);if(b.dataset.counter){const field=b.dataset.counter;x[field]=Math.max(0,Math.min(field==='sleep'?4:100,(x[field]||0)+Number(b.dataset.delta)));save(x)}else if(b.dataset.clear){delete x[b.dataset.clear];save(x)}else if(b.dataset.time){x.time=b.dataset.time;save(x)}else if(b.dataset.mode){x.mode=x.mode===b.dataset.mode?'':b.dataset.mode;save(x)}});
+  if(typeof window.nivV16Apply==='function')window.nivV16Apply(card,iso,x);
+  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const x=read(iso);if(b.dataset.counter){const field=b.dataset.counter;x[field]=Math.max(0,Math.min(field==='sleep'?4:100,(x[field]||0)+Number(b.dataset.delta)));save(x)}else if(b.dataset.clear){delete x[b.dataset.clear];save(x)}else if(b.dataset.time){x.time=b.dataset.time;save(x)}else if(b.dataset.mode){x.mode=b.dataset.mode==='original'?'':b.dataset.mode;save(x)}});
   paint();
  });
 }
@@ -1049,6 +1050,65 @@ if(!future||!content)return;
 // Prevent the old weekly header from reappearing after navigation.
 function clean(){const old=document.querySelector('main.wrap>.footer');if(old)old.hidden=true;}
 clean();
+})();
+</script>
+
+<style id="niv-v16-style">
+.niv-v16-hidden{display:none!important}
+.niv-v16-tasks{margin:12px 0 16px}
+.niv-v16-tasks .ff-row{background:#fff;border:1px solid #e4e9e6;border-radius:13px;margin:8px 0;padding:15px 13px}
+.niv-v16-notice{background:#e9f5ed;border-radius:12px;padding:12px;font-weight:750;margin-bottom:10px;color:#185b3b}
+.niv-day-tools [data-fallback-plan]{display:none!important}
+</style>
+<script id="niv-v16-switch-engine">
+(function(){'use strict';
+const prefix='nivFitnessDailyV14:', CHECK='nivFitnessFutureChecksV1';
+// Read the original check-key from the app's own storage without replacing historical records.
+function getChecks(){try{return JSON.parse(localStorage.getItem(CHECK)||'{}')||{}}catch(e){return {}}}
+function saveChecks(v){localStorage.setItem(CHECK,JSON.stringify(v))}
+function daily(iso){try{return JSON.parse(localStorage.getItem(prefix+iso)||'{}')||{}}catch(e){return {}}}
+const plans={
+ strength:{short:['חימום קל 5 דקות','סקוואט / Leg Press — 2×10','Chest Press — 2×10','Lat Pulldown — 2×10','שחרור 3–5 דקות'],alternate:['הליכה נוחה 20–25 דקות','שכיבות סמיכה בשיפוע — 2×6–10','סקוואטים במשקל גוף — 2×10','Dead Bug — 2×6 לכל צד','הכנה למתח בסיוע — 2 סטים קלים','שחרור 5 דקות']},
+ cardio:{short:['חימום 5 דקות','פעילות סיבולת קלה 15–20 דקות','שחרור 5 דקות'],alternate:['חימום קל 5 דקות','הליכה / ריצה קלה 25–35 דקות בהתאם לתוכנית וליכולת','שחרור 5 דקות']},
+ swim:{short:['4×25 מטר חימום קל','4–8×25 מטר חתירה / גב בנוחות עם מנוחות','2×25 מטר שחרור','סאונה רטובה 10–12 דקות, אם מרגישים טוב'],alternate:['הליכה מהירה 35–45 דקות בקצב שיחה','שחרור 5 דקות']},
+ recovery:{short:['הליכה קלה 10–15 דקות','מוביליטי עדין 5 דקות'],alternate:['הליכה נינוחה 15–25 דקות, ללא מאמץ','נשימות ומתיחות עדינות 5 דקות']}
+};
+const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function apply(card,iso,x){
+ const tools=card.querySelector('.niv-day-tools');if(!tools)return;
+ const original=[...card.querySelectorAll(':scope > .ff-row')];
+ const title=card.querySelector('h3')?.textContent||'';
+ const kind=/התאוששות/.test(title)?'recovery':/כוח/.test(title)?'strength':/שחייה/.test(title)?'swim':'cardio';
+ let holder=card.querySelector('.niv-v16-tasks');if(!holder){holder=document.createElement('div');holder.className='niv-v16-tasks';tools.before(holder)}
+ const mode=x.mode==='short'||x.mode==='alternate'?x.mode:'';
+ original.forEach(row=>row.classList.toggle('niv-v16-hidden',!!mode));
+ holder.replaceChildren();if(!mode)return;
+ const list=plans[kind][mode];
+ const label=document.createElement('div');label.className='niv-v16-notice';label.textContent=(mode==='short'?'⚡ אימון מקוצר — 50%':'🚶 אימון חלופי — 100%')+' • סמן את הפעולות שביצעת';holder.append(label);
+ list.forEach((step,j)=>{const row=document.createElement('div');row.className='ff-row';const lab=document.createElement('label');const input=document.createElement('input');input.type='checkbox';input.className='niv-v16-check';input.checked=!!(x.completed?.[mode]?.[j]);input.disabled=!!original[0]?.querySelector('input')?.disabled;const span=document.createElement('span');span.textContent=step;lab.append(input,span);row.append(lab);holder.append(row);input.addEventListener('change',()=>{const y=daily(iso);y.completed??={};y.completed[mode]??={};y.completed[mode][j]=input.checked;localStorage.setItem(prefix+iso,JSON.stringify(y));if(typeof updateWeeklyScore==='function')updateWeeklyScore();if(input.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(mode==='short'?5:10)})});
+}
+window.nivV16Apply=apply;
+// v14/v15 count every future checkbox at ten points. Adjust ONLY switched days,
+// so an alternative earns the same full-day maximum as the original, and a short one earns half.
+const oldEarned=earnedPoints;
+earnedPoints=function(){let total=oldEarned();const checks=getChecks();for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(!key?.startsWith(prefix))continue;const iso=key.slice(prefix.length),x=daily(iso),mode=x.mode;if(mode!=='short'&&mode!=='alternate')continue;
+ const date=new Date(iso+'T12:00:00');if(isNaN(date))continue;
+ const start=new Date(2026,9,11,12),dayIndex=Math.round((date-start)/86400000),week=Math.floor(dayIndex/7)+1,day=((dayIndex%7)+7)%7;
+ if(week<2)continue;
+ const keys=Object.keys(checks).filter(k=>k.startsWith(week+'-'+day+'-'));const originalCount=keys.length;
+ const selected=Object.values(x.completed?.[mode]||{}).filter(Boolean).length;
+ const title=document.querySelector('#ff-content .ff-card[data-niv-day="'+day+'"] h3')?.textContent||'';
+ const kind=/התאוששות/.test(title)?'recovery':/כוח/.test(title)?'strength':/שחייה/.test(title)?'swim':'cardio';
+ const max=plans[kind][mode].length;
+ // If viewing a different week, derive task count from saved plan snapshot when available.
+ let baseCount=originalCount;
+ if(!baseCount){try{const snap=JSON.parse(localStorage.getItem('nivFitnessPlanSnapshotsV1')||'{}');baseCount=snap[week]?.[day]?.[1]?.length||0}catch(e){}}
+ if(!baseCount)baseCount=5;
+ total-=keys.filter(k=>checks[k]).length*10;
+ total+=Math.round(baseCount*10*(mode==='short'?.5:1)*selected/max);
+ }return total};
+// The daily v14 controls save mode changes; refresh points after the mode switches.
+document.addEventListener('click',e=>{if(e.target.closest('.niv-day-tools [data-mode]'))setTimeout(()=>{if(typeof updateWeeklyScore==='function')updateWeeklyScore()},0)});
 })();
 </script>
 </body></html>
