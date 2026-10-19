@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — v21</title>
+<title>Niv Fitness — v22</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v21-20261019-actions-only">
+<meta name="niv-build" content="v22-20261019-repair">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -79,7 +79,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-action-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:11px 13px;margin:9px 0;line-height:1.65;color:#23543c;font-size:14px}.niv-sauna-row{background:#fff8eb;border:1px solid #ecd8b5;border-radius:12px;padding:11px;margin:10px 0}.niv-sauna-row label{display:flex;gap:10px;align-items:flex-start;line-height:1.6}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 19.10.2026 • v21 • סימון פעולות בלבד</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 19.10.2026 • v22 • תיקון משימות וניקוד</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -659,9 +659,10 @@ function render(){
  function nivStepType(step,kind){
   const t=String(step).trim();
   if(/סאונה/.test(t))return 'sauna';
-  if(/^(בסיס סיבולת:|אם יש |לסיים בתחושה|שתייה, שינה|סימון סיכום|שינה טובה|שתייה לאורך היום)/.test(t))return 'info';
+  if(/^(בסיס סיבולת:|אם יש |לסיים בתחושה|שתייה, שינה|סימון סיכום|שינה טובה|שתייה לאורך היום|להישאר |לא לבצע|רק אם |חשוב |המטרה |לפי ההרגשה|אפשר |יש להקפיד)/.test(t))return 'info';
   if(/^(מעבר לריצה|ריצה רק |אין צורך|לא נחשבת|לא להעלות|קצב שיחה)/.test(t))return 'info';
   if(kind==='מנוחה')return 'info';
+  if(/(?:אם |ללא |רשות|להתאושש|לשמור על|לצאת אם|לא נחשבת|לאחר שתייה)/.test(t) && !/סאונה/.test(t))return 'info';
   if(/^(?:הליכה|הליכה–ריצה|שחייה|שחרור|חימום|מוביליטי|מתיחות|ציפה|[0-9]+ דקות|[0-9]+–[0-9]+ דקות|♨️|Leg |Chest |Lat |Seated |Plank|Goblet |Incline |Dead Bug|Face Pull|Side Plank|Dumbbell |Bird Dog|Pec Deck|Hip |Shoulder Press|Biceps |Triceps )/.test(t))return 'action';
   if(/^[^;]+ — [0-9]+[×x]/.test(t))return 'action';
   return 'info'; // New unknown guidance never becomes a scored task automatically.
@@ -674,7 +675,7 @@ function render(){
   const id=`${w}-${d}-${j}`,type=nivStepType(step,kind);
   const safeStep=String(step).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   if(type==='info'){html+=`<div class="niv-action-info" role="note">ℹ️ ${safeStep}</div>`;return;}
-  if(type==='sauna'){html+=`<div class="niv-sauna-row"><label><input type="checkbox" data-niv-sauna="${id}" ${get('nivFitnessSaunaV21',{})[id]?'checked':''} ${locked?'disabled':''}><span>♨️ ${safeStep}</span></label><div class="ff-small">רשות • ללא ניקוד • לא משפיע על השלמת האימון</div></div>`;return;}
+  if(type==='sauna'){html+=`<div class="niv-sauna-row"><label><input type="checkbox" data-niv-sauna="${id}" ${get('nivFitnessSaunaV21',{})[id]?'checked':''} ${locked?'disabled':''}><span>♨️ ${safeStep}</span></label><div class="ff-small">רשות • 10 נקודות בביצוע • לא משפיע על השלמת האימון</div></div>`;return;}
   const guideKey=Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>step.includes(k));
   const guideButton=guideKey?`<button type="button" class="exercise-help niv-future-guide" data-guide-key="${guideKey.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-guide-plan="${safeStep}">📖 הסבר מפורט + תמונת התרגיל</button>`:'';
   html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${safeStep}</span></label>${guideButton}</div>`;
@@ -691,7 +692,7 @@ function render(){
  html+=`<button id="ff-save-metrics" class="ff-btn" ${locked?'disabled':''}>💾 שמור ביצועי ריצה וכוח</button><p class="ff-small">שבועות עתידיים הם תצוגה מקדימה בלבד. שבוע 1 נשמר במערכת הישנה; אפשר להתחיל ביומן המפורט משבוע 2.</p></div>`;
  content.innerHTML=html;
  $('ff-save-metrics').addEventListener('click',()=>saveMetrics(w));
- content.querySelectorAll('[data-niv-sauna]').forEach(box=>box.addEventListener('change',()=>{const all=get('nivFitnessSaunaV21',{});all[box.dataset.nivSauna]=box.checked;set('nivFitnessSaunaV21',all)}));
+ content.querySelectorAll('[data-niv-sauna]').forEach(box=>box.addEventListener('change',()=>{const all=get('nivFitnessSaunaV21',{});all[box.dataset.nivSauna]=box.checked;set('nivFitnessSaunaV21',all);updateWeeklyScore();if(box.checked)praiseThenConfetti(10)}));
  content.querySelectorAll('[data-ff-check]').forEach(box=>box.addEventListener('change',()=>{const all=get(CHECK,{});all[box.dataset.ffCheck]=box.checked;set(CHECK,all);updateWeeklyScore();if(box.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(10)}));
  $('ff-save').addEventListener('click',()=>saveFeedback(w));
 }
@@ -701,7 +702,7 @@ window.nivEnsureWeeks=ensureWeeks;
 ensureWeeks(Math.max(16,currentWeek()+12));sel.value=currentWeek();sel.addEventListener('change',()=>{if(Number(sel.value)>=Number(sel.lastElementChild.value)-4)ensureWeeks(Number(sel.value)+12);render()});
 // Add the new weeks' task points to the existing permanent points bank, without changing week 1.
 const previousEarned=earnedPoints;
-earnedPoints=function(){const savedChecks=get(CHECK,{});const counted=Object.entries(savedChecks).filter(([id,done])=>{if(!done)return false;const match=/^(\d+)-(\d+)-(\d+)$/.exec(id);if(!match)return true;const [,week,day,step]=match;const task=plan(Number(week))?.[Number(day)]?.[1]?.[Number(step)];return typeof task==='string' && nivStepType(task,plan(Number(week))?.[Number(day)]?.[2])==='action';}).length;return previousEarned()+counted*10};
+earnedPoints=function(){const savedChecks=get(CHECK,{});const counted=Object.entries(savedChecks).filter(([id,done])=>{if(!done)return false;const match=/^(\d+)-(\d+)-(\d+)$/.exec(id);if(!match)return true;const [,week,day,step]=match;const task=plan(Number(week))?.[Number(day)]?.[1]?.[Number(step)];return typeof task==='string' && nivStepType(task,plan(Number(week))?.[Number(day)]?.[2])==='action';}).length;const saunas=get('nivFitnessSaunaV21',{});return previousEarned()+counted*10+Object.values(saunas).filter(Boolean).length*10};
 render();updateWeeklyScore();
 window.addEventListener('focus',()=>{const w=currentWeek();freezeWeek(w);ensureWeeks(w+12);if(Number(sel.value)<w){sel.value=w;render()}});
 })();
@@ -754,10 +755,11 @@ const details=document.createElement('details');details.innerHTML='<summary>💾
 // Move the backup after all program content, at the very bottom.
 document.body.appendChild(backup);
 const nav=$('niv-daily-nav');document.querySelector('header').after(nav);
-const extraQuick=document.createElement('button');extraQuick.type='button';extraQuick.id='niv-extra-quick';extraQuick.textContent='➕ הוסף אימון אקראי';extraQuick.style.cssText='display:block;width:calc(100% - 32px);max-width:850px;margin:12px auto;padding:14px;border:0;border-radius:14px;background:#246b4b;color:white;font-size:17px;font-weight:900';extraQuick.onclick=()=>openExtra();nav.after(extraQuick);
+const extraQuick=$('add-workout-btn');extraQuick.textContent='➕ הוסף אימון אקראי';extraQuick.style.cssText='display:block;width:calc(100% - 32px);max-width:850px;margin:12px auto;padding:14px;border:0;border-radius:14px;background:#246b4b;color:white;font-size:17px;font-weight:900';nav.after(extraQuick);
 const weekOneTabs=$('tabs').closest('.daynav');
 weekOneTabs.style.display='none';
 const weekOneExtras=$('extra-summary');
+weekOneExtras.style.margin='14px auto';weekOneExtras.style.maxWidth='850px';
 function updateFutureCards(day){
  const cards=[...document.querySelectorAll('#ff-content > .ff-card')];
  cards.forEach((c,i)=>{c.classList.remove('niv-current-day','niv-week-summary');c.removeAttribute('data-niv-day');
@@ -771,8 +773,12 @@ function draw(){
  const w1=w===1;
  if(w>1 && w<=Math.floor(dayIndex(new Date())/7)+1)window.nivFreezeWeek?.(w);
  $('days').style.display=w1?'':'none';
- if(w1){show(di);futureWrap.hidden=true}
- else {futureWrap.hidden=false;const sel=$('ff-week');if(sel&&Number(sel.value)!==w){window.nivEnsureWeeks?.(w+12);sel.value=w;sel.dispatchEvent(new Event('change'))}future.classList.add('niv-daily-future');updateFutureCards(di)}
+ // Show extra workouts alongside the selected week's schedule, not above the program.
+ const extraList=$('extra-list'),extraBox=$('extra-summary');
+ if(extraBox){const weekExtras=getExtras().filter(x=>{const dd=new Date(x.date+'T12:00:00');return dd>=dateAt((w-1)*7)&&dd<dateAt(w*7)});extraBox.hidden=!weekExtras.length; if(weekExtras.length){extraBox.querySelector('b').textContent='⭐ אימונים נוספים בשבוע '+w;extraBox.querySelector('#extra-summary-text').textContent=weekExtras.length+' אימונים';extraList.innerHTML=weekExtras.map(x=>`<div class="extra-item"><b>${escapeHtml(x.type)}</b> • ${escapeHtml(x.date)} • ${x.minutes} דקות • +${extraPoints(x)} נק׳<div class="extra-actions"><button onclick="viewExtra('${x.id}')">הצג</button><button onclick="editExtra('${x.id}')">ערוך</button><button onclick="deleteExtra('${x.id}')">מחק</button></div></div>`).join('');} }
+
+ if(w1){show(di);futureWrap.hidden=true; if(extraBox) $('days').appendChild(extraBox)}
+ else {futureWrap.hidden=false;if(extraBox)futureWrap.after(extraBox);const sel=$('ff-week');if(sel&&Number(sel.value)!==w){window.nivEnsureWeeks?.(w+12);sel.value=w;sel.dispatchEvent(new Event('change'))}future.classList.add('niv-daily-future');updateFutureCards(di)}
  $('niv-prev').disabled=selected===0;$('niv-next').disabled=false;
  $('niv-prev').style.opacity=selected===0?'.4':'1';$('niv-next').style.opacity='1';
 }
