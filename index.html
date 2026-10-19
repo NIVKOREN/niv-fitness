@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — v22</title>
+<title>Niv Fitness — v23</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v22-20261019-repair">
+<meta name="niv-build" content="v23-20261019-explicit-exercises">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -79,7 +79,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-action-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:11px 13px;margin:9px 0;line-height:1.65;color:#23543c;font-size:14px}.niv-sauna-row{background:#fff8eb;border:1px solid #ecd8b5;border-radius:12px;padding:11px;margin:10px 0}.niv-sauna-row label{display:flex;gap:10px;align-items:flex-start;line-height:1.6}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 19.10.2026 • v22 • תיקון משימות וניקוד</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 19.10.2026 • v23 • תיקון תרגילים וניקוד</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -652,21 +652,22 @@ window.nivFreezeWeek=freezeWeek;
 // Freeze a week when it becomes current. Historical plans are never overwritten by later feedback.
 freezeWeek(currentWeek());
 function saveFeedback(w){if(!feedbackUnlocked(w)){alert('המשוב נפתח בשבת של אותו שבוע בשעה 18:00.');return;}if(!$('ff-completion').value||!$('ff-effort').value||!$('ff-pain').value||!$('ff-energy').value||!$('ff-recovery-pain').value||!$('ff-readiness').value){alert('יש להשלים את שדות המשוב המרכזיים לפני שמירה.');return;}const all=get(STORE,{});all[w]={completion:$('ff-completion').value,effort:$('ff-effort').value,pain:$('ff-pain').value,runReady:$('ff-runready').value,notes:$('ff-notes').value,swimLaps:$('ff-swim-laps').value,swimFeel:$('ff-swim-feel').value,energy:$('ff-energy').value,recoveryPain:$('ff-recovery-pain').value,readiness:$('ff-readiness').value,updated:iso(new Date())};set(STORE,all);freezeWeek(w+1);render();updateWeeklyScore();if(typeof window.nivShowNextWeek==='function')window.nivShowNextWeek(w);alert('✅ המשוב נשמר! תוכנית שבוע '+(w+1)+' מוכנה לצפייה.');}
+ function nivStepType(step,kind){
+  const t=String(step).trim();
+  if(/סאונה/.test(t))return 'sauna';
+  // Exercise identity has priority over advisory words within exercise instructions.
+  if(Object.keys(exerciseGuides).some(name=>t.startsWith(name+' —')||t.startsWith(name+' -')||t.startsWith(name+'  —')))return 'action';
+  if(/^(?:הליכה|הליכה–ריצה|שחייה|שחרור|חימום|מוביליטי|מתיחות|ציפה|[0-9]+ דקות|[0-9]+–[0-9]+ דקות|ריצה|תרגול|סקוואט|שכיבות סמיכה)/.test(t))return 'action';
+  if(/^[^;]+ — [0-9]+[×x]/.test(t))return 'action';
+  if(kind==='מנוחה')return 'info';
+  return 'info';
+ }
+
 function render(){
  const w=Number($('ff-week').value),now=currentWeek(),content=$('ff-content');if(w<=now)freezeWeek(w);$('ff-status').textContent=w>now?'🔒 שבוע עתידי — תצוגה מקדימה':w===now?'🟢 השבוע הנוכחי':'📚 שבוע שהסתיים';
  // Week 1 also has a feedback form; its original daily plan stays untouched.
  // A checklist is reserved for physical actions; guidance is informational.
- function nivStepType(step,kind){
-  const t=String(step).trim();
-  if(/סאונה/.test(t))return 'sauna';
-  if(/^(בסיס סיבולת:|אם יש |לסיים בתחושה|שתייה, שינה|סימון סיכום|שינה טובה|שתייה לאורך היום|להישאר |לא לבצע|רק אם |חשוב |המטרה |לפי ההרגשה|אפשר |יש להקפיד)/.test(t))return 'info';
-  if(/^(מעבר לריצה|ריצה רק |אין צורך|לא נחשבת|לא להעלות|קצב שיחה)/.test(t))return 'info';
-  if(kind==='מנוחה')return 'info';
-  if(/(?:אם |ללא |רשות|להתאושש|לשמור על|לצאת אם|לא נחשבת|לאחר שתייה)/.test(t) && !/סאונה/.test(t))return 'info';
-  if(/^(?:הליכה|הליכה–ריצה|שחייה|שחרור|חימום|מוביליטי|מתיחות|ציפה|[0-9]+ דקות|[0-9]+–[0-9]+ דקות|♨️|Leg |Chest |Lat |Seated |Plank|Goblet |Incline |Dead Bug|Face Pull|Side Plank|Dumbbell |Bird Dog|Pec Deck|Hip |Shoulder Press|Biceps |Triceps )/.test(t))return 'action';
-  if(/^[^;]+ — [0-9]+[×x]/.test(t))return 'action';
-  return 'info'; // New unknown guidance never becomes a scored task automatically.
- }
+
  const tasks=plan(w),checks=get(CHECK,{}),saved=feedback(w),locked=w>now,feedbackLocked=!feedbackUnlocked(w);
  let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">חלוקה דינמית: שני אימוני כוח, שלושה אימוני סיבולת, התאוששות ומנוחה. ימי הפעילות משתנים לפי המשוב; ביום ראשון אין פעילות בקאנטרי לפני 15:00. שבוע רביעי הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, אין העלאה אוטומטית של העומס.'}</div></div>`;
  (w===1?[]:tasks).forEach(([title,steps,kind],d)=>{
