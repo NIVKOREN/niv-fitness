@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — v19</title>
+<title>Niv Fitness — v21</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v20-20261019-strength-variety">
+<meta name="niv-build" content="v21-20261019-actions-only">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -76,9 +76,10 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-custom-add{width:100%;background:#e6f4eb;color:#185b3b;border:1px solid #b6dcc7;padding:14px;border-radius:12px;font-weight:900;font-size:16px}
 .niv-custom-actions{display:flex;gap:10px;margin-top:16px}.niv-custom-actions button{flex:1;padding:14px;border:0;border-radius:12px;font-size:16px;font-weight:900}.niv-custom-save{background:#216b49;color:#fff}.niv-custom-cancel{background:#e8eae9}
 .niv-endurance-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:12px 14px;margin:10px 0;line-height:1.6;color:#23543c}
+.niv-action-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:11px 13px;margin:9px 0;line-height:1.65;color:#23543c;font-size:14px}.niv-sauna-row{background:#fff8eb;border:1px solid #ecd8b5;border-radius:12px;padding:11px;margin:10px 0}.niv-sauna-row label{display:flex;gap:10px;align-items:flex-start;line-height:1.6}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 19.10.2026 • v19 • תיקון הנחיות סיבולת</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 19.10.2026 • v21 • סימון פעולות בלבד</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -197,7 +198,8 @@ data.forEach((x,i)=>{
   let card=document.createElement("div");card.className="card";
   card.innerHTML=`<h3>${c[0]} <span class="tag">${c[1]}</span></h3><div class="meta">${c[2]}</div>`;
   c[3].forEach((txt,j)=>{
-   let id=`w1-${i}-${j}`;let row=document.createElement("div");row.className="item";row.innerHTML=`<input class="check" type="checkbox" id="${id}"><div><div class="ititle">${txt}</div><div class="idesc">${desc(txt)}</div></div>`;
+   let id=`w1-${i}-${j}`;let row=document.createElement("div");row.className="item";
+    if(/^(לשתות כוס מים|שתייה לאורך היום|שינה טובה|סימון סיכום שבועי)/.test(txt)){row.className="niv-action-info";row.textContent="ℹ️ "+txt;card.appendChild(row);return;}row.innerHTML=`<input class="check" type="checkbox" id="${id}"><div><div class="ititle">${txt}</div><div class="idesc">${desc(txt)}</div></div>`;
    const key=Object.keys(exerciseGuides).find(k=>txt.includes(k));
     if(key){const btn=document.createElement("button");btn.type="button";btn.className="exercise-help";btn.textContent="📖 הסבר מפורט + תמונת המכשיר";btn.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openExerciseGuide(key,txt)});row.querySelector(".idesc").after(btn)}
     card.appendChild(row);
@@ -653,11 +655,30 @@ function saveFeedback(w){if(!feedbackUnlocked(w)){alert('המשוב נפתח ב�
 function render(){
  const w=Number($('ff-week').value),now=currentWeek(),content=$('ff-content');if(w<=now)freezeWeek(w);$('ff-status').textContent=w>now?'🔒 שבוע עתידי — תצוגה מקדימה':w===now?'🟢 השבוע הנוכחי':'📚 שבוע שהסתיים';
  // Week 1 also has a feedback form; its original daily plan stays untouched.
+ // A checklist is reserved for physical actions; guidance is informational.
+ function nivStepType(step,kind){
+  const t=String(step).trim();
+  if(/סאונה/.test(t))return 'sauna';
+  if(/^(בסיס סיבולת:|אם יש |לסיים בתחושה|שתייה, שינה|סימון סיכום|שינה טובה|שתייה לאורך היום)/.test(t))return 'info';
+  if(/^(מעבר לריצה|ריצה רק |אין צורך|לא נחשבת|לא להעלות|קצב שיחה)/.test(t))return 'info';
+  if(kind==='מנוחה')return 'info';
+  if(/^(?:הליכה|הליכה–ריצה|שחייה|שחרור|חימום|מוביליטי|מתיחות|ציפה|[0-9]+ דקות|[0-9]+–[0-9]+ דקות|♨️|Leg |Chest |Lat |Seated |Plank|Goblet |Incline |Dead Bug|Face Pull|Side Plank|Dumbbell |Bird Dog|Pec Deck|Hip |Shoulder Press|Biceps |Triceps )/.test(t))return 'action';
+  if(/^[^;]+ — [0-9]+[×x]/.test(t))return 'action';
+  return 'info'; // New unknown guidance never becomes a scored task automatically.
+ }
  const tasks=plan(w),checks=get(CHECK,{}),saved=feedback(w),locked=w>now,feedbackLocked=!feedbackUnlocked(w);
  let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">חלוקה דינמית: שני אימוני כוח, שלושה אימוני סיבולת, התאוששות ומנוחה. ימי הפעילות משתנים לפי המשוב; ביום ראשון אין פעילות בקאנטרי לפני 15:00. שבוע רביעי הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, אין העלאה אוטומטית של העומס.'}</div></div>`;
  (w===1?[]:tasks).forEach(([title,steps,kind],d)=>{
  html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'להישאר בקצב שמאפשר לדבר.':''}</div>`;
- steps.forEach((step,j)=>{if(typeof step==='string'&&step.startsWith('בסיס סיבולת:')){html+=`<div class="ff-small niv-endurance-info" role="note">ℹ️ ${step}</div>`;return;}const id=`${w}-${d}-${j}`;const guideKey=Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>step.includes(k));const guideButton=guideKey?`<button type="button" class="exercise-help niv-future-guide" data-guide-key="${guideKey.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}" data-guide-plan="${String(step).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}">📖 הסבר מפורט + תמונת התרגיל</button>`:"";html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${step}</span></label>${guideButton}</div>`});html+='</div>';
+ steps.forEach((step,j)=>{
+  const id=`${w}-${d}-${j}`,type=nivStepType(step,kind);
+  const safeStep=String(step).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  if(type==='info'){html+=`<div class="niv-action-info" role="note">ℹ️ ${safeStep}</div>`;return;}
+  if(type==='sauna'){html+=`<div class="niv-sauna-row"><label><input type="checkbox" data-niv-sauna="${id}" ${get('nivFitnessSaunaV21',{})[id]?'checked':''} ${locked?'disabled':''}><span>♨️ ${safeStep}</span></label><div class="ff-small">רשות • ללא ניקוד • לא משפיע על השלמת האימון</div></div>`;return;}
+  const guideKey=Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>step.includes(k));
+  const guideButton=guideKey?`<button type="button" class="exercise-help niv-future-guide" data-guide-key="${guideKey.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-guide-plan="${safeStep}">📖 הסבר מפורט + תמונת התרגיל</button>`:'';
+  html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${safeStep}</span></label>${guideButton}</div>`;
+ });html+='</div>';
  });
  const options=(items,v)=>items.map(([key,label])=>`<option value="${key}" ${v===key?'selected':''}>${label}</option>`).join('');
  if(w===1){const boxes=[...document.querySelectorAll('.day .check')];const done=boxes.filter(b=>b.checked).length;const pct=boxes.length?Math.round(done/boxes.length*100):0;html+=`<div class="ff-card"><h3>📋 נתוני שבוע 1 מהאפליקציה</h3><p>סומנו ${done} מתוך ${boxes.length} משימות (${pct}%). הסימון כולל גם פעולות עזר כגון שתייה וסאונה, ולכן אינו מדד מדויק להשלמת האימונים. בחר ידנית את שיעור הביצוע לפי האימונים שביצעת בפועל.</p><p class="ff-small">דיווחי האימונים האישיים והדירוגים נשמרים במקומם. רשום כאן את תחושת העומס הכוללת; אין העלאת עומס בלי משוב חיובי מפורש.</p></div>`;}
@@ -670,6 +691,7 @@ function render(){
  html+=`<button id="ff-save-metrics" class="ff-btn" ${locked?'disabled':''}>💾 שמור ביצועי ריצה וכוח</button><p class="ff-small">שבועות עתידיים הם תצוגה מקדימה בלבד. שבוע 1 נשמר במערכת הישנה; אפשר להתחיל ביומן המפורט משבוע 2.</p></div>`;
  content.innerHTML=html;
  $('ff-save-metrics').addEventListener('click',()=>saveMetrics(w));
+ content.querySelectorAll('[data-niv-sauna]').forEach(box=>box.addEventListener('change',()=>{const all=get('nivFitnessSaunaV21',{});all[box.dataset.nivSauna]=box.checked;set('nivFitnessSaunaV21',all)}));
  content.querySelectorAll('[data-ff-check]').forEach(box=>box.addEventListener('change',()=>{const all=get(CHECK,{});all[box.dataset.ffCheck]=box.checked;set(CHECK,all);updateWeeklyScore();if(box.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(10)}));
  $('ff-save').addEventListener('click',()=>saveFeedback(w));
 }
@@ -679,7 +701,7 @@ window.nivEnsureWeeks=ensureWeeks;
 ensureWeeks(Math.max(16,currentWeek()+12));sel.value=currentWeek();sel.addEventListener('change',()=>{if(Number(sel.value)>=Number(sel.lastElementChild.value)-4)ensureWeeks(Number(sel.value)+12);render()});
 // Add the new weeks' task points to the existing permanent points bank, without changing week 1.
 const previousEarned=earnedPoints;
-earnedPoints=function(){const savedChecks=get(CHECK,{});const counted=Object.entries(savedChecks).filter(([id,done])=>{if(!done)return false;const match=/^(\d+)-(\d+)-(\d+)$/.exec(id);if(!match)return true;const [,week,day,step]=match;const task=plan(Number(week))?.[Number(day)]?.[1]?.[Number(step)];return !(typeof task==='string'&&task.startsWith('בסיס סיבולת:'));}).length;return previousEarned()+counted*10};
+earnedPoints=function(){const savedChecks=get(CHECK,{});const counted=Object.entries(savedChecks).filter(([id,done])=>{if(!done)return false;const match=/^(\d+)-(\d+)-(\d+)$/.exec(id);if(!match)return true;const [,week,day,step]=match;const task=plan(Number(week))?.[Number(day)]?.[1]?.[Number(step)];return typeof task==='string' && nivStepType(task,plan(Number(week))?.[Number(day)]?.[2])==='action';}).length;return previousEarned()+counted*10};
 render();updateWeeklyScore();
 window.addEventListener('focus',()=>{const w=currentWeek();freezeWeek(w);ensureWeeks(w+12);if(Number(sel.value)<w){sel.value=w;render()}});
 })();
