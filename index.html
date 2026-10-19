@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — עורך אימונים v18</title>
+<title>Niv Fitness — v19</title>
 <meta name="theme-color" content="#2b7655">
-<meta name="niv-build" content="v16-20261018-real-workout-switch">
+<meta name="niv-build" content="v20-20261019-strength-variety">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Niv Fitness">
@@ -75,9 +75,10 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-custom-row{display:flex;gap:8px;margin:10px 0;align-items:center}.niv-custom-row textarea{flex:1;min-width:0;font:inherit;padding:12px;border:1px solid #cbd8d0;border-radius:12px;resize:vertical}.niv-custom-row button{border:0;border-radius:10px;background:#fff0ef;padding:12px;font-size:20px}
 .niv-custom-add{width:100%;background:#e6f4eb;color:#185b3b;border:1px solid #b6dcc7;padding:14px;border-radius:12px;font-weight:900;font-size:16px}
 .niv-custom-actions{display:flex;gap:10px;margin-top:16px}.niv-custom-actions button{flex:1;padding:14px;border:0;border-radius:12px;font-size:16px;font-weight:900}.niv-custom-save{background:#216b49;color:#fff}.niv-custom-cancel{background:#e8eae9}
+.niv-endurance-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:12px 14px;margin:10px 0;line-height:1.6;color:#23543c}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 18.10.2026 • v18 • עריכת פעולות מרובות</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 19.10.2026 • v19 • תיקון הנחיות סיבולת</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -115,6 +116,14 @@ Object.assign(exerciseGuides,{
  'Side Plank':['פלאנק צד','Side_Plank','שכב על הצד והנח מרפק מתחת לכתף.','הרם אגן ושמור גוף בקו ישר למשך הזמן שנקבע.','נשום כרגיל; אפשר להתחיל עם ברכיים כפופות.','אל תיתן לאגן לצנוח.'],
  'Dumbbell Shoulder Press':['לחיצת כתפיים במשקולות','Dumbbell_Shoulder_Press','שב עם גב נתמך ומשקולות קלות בגובה האוזניים.','דחוף כלפי מעלה בשליטה וחזור לאט.','הימנע מהקשתת הגב.','אל תבחר משקל שפוגע בשליטה או גורם לכאב.'],
  'Bird Dog':['בירד דוג','Bird_Dog','עמוד על שש, כפות ידיים מתחת לכתפיים וברכיים מתחת לאגן.','יישר יד ורגל נגדיות והחזר לאט.','שמור אגן יציב.','אל תסובב את הגב או תרים רגל גבוה מדי.']
+});
+Object.assign(exerciseGuides,{
+ 'Pec Deck':['פרפר חזה במכונה','Butterfly','כוון את המושב כך שהידיות בגובה החזה. גב צמוד למשענת ומרפקים מעט כפופים.','קרב את הידיות לפני החזה בתנועה מבוקרת והחזר לאט.','עובד בעיקר על שרירי החזה; שמור כתפיים נמוכות.','אל תמשוך את הזרועות אחורה מעבר לטווח נוח ואל תשתמש בתנופה.'],
+ 'Hip Abductor':['הרחקת ירכיים במכונה','Hip_Abduction','שב זקוף כשהרפידות בחלק החיצוני של הירכיים. בחר משקל קל.','פתח את הברכיים לצדדים בשליטה וחזור לאט.','עובד על שרירי הישבן הצידיים ומייצבי האגן.','אל תדחוף בגב או בתנופה.'],
+ 'Hip Adductor':['קירוב ירכיים במכונה','Thigh_Adductor','שב זקוף עם רפידות בחלק הפנימי של הירכיים ובטווח פתיחה נוח.','קרב ברכיים זו לזו בשליטה וחזור לאט.','עובד על מקרבי הירך.','אל תפתח מעבר לטווח נוח ואל תמשוך בתנופה.'],
+ 'Shoulder Press Machine':['לחיצת כתפיים במכונה','Shoulder_Press','כוון מושב כך שהידיות סמוך לגובה הכתפיים. שמור גב נתמך.','לחץ כלפי מעלה בתנועה מבוקרת וחזור לאט.','עובד על כתפיים ויד אחורית.','אל תקשת גב ואל תנעל מרפקים בכוח.'],
+ 'Biceps Curl Machine':['כפיפת מרפקים במכונה','Preacher_Curl','כוון את המושב ואת כרית הזרוע כך שהמרפקים נתמכים.','כופף מרפקים והרם את הידיות לאט; הורד בשליטה.','עובד על השריר הדו־ראשי בזרוע.','אל תרים כתפיים או תנתק מרפקים מהתמיכה.'],
+ 'Triceps Pushdown':['פשיטת מרפקים בפולי','Triceps_Pushdown','עמוד מול פולי עליון ואחוז במוט או בחבל. מרפקים לצד הגוף.','יישר מרפקים כלפי מטה והחזר בשליטה.','עובד על היד האחורית.','אל תניע את הכתפיים ואל תשתמש בתנופת הגוף.']
 });
 function openExerciseGuide(key,plan){
  const x=exerciseGuides[key];if(!x)return;
@@ -476,13 +485,14 @@ const currentWeek=()=>Math.max(1,Math.floor((new Date().setHours(12,0,0,0)-START
 const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 const exercisesA=[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10'],['Plank','3×20–30 שנ׳']];
 const exercisesB=[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Lat Pulldown','3×10'],['Leg Extension','2×12'],['Seated Cable Row','2×10'],['Dead Bug','3×8 לכל צד']];
-// Stable rotation: preserve core lifts for four weeks, rotate accessories by block.
+// Gradual exercise variety: stable main lifts, rotating accessories, conservative volume.
 const strengthBlocks=[
  {a:[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10'],['Plank','3×20–30 שנ׳']],b:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Lat Pulldown','3×10'],['Leg Extension','2×12'],['Seated Cable Row','2×10'],['Dead Bug','3×8 לכל צד']]},
- {a:[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Face Pull','2×12'],['Side Plank','2×20 שנ׳ לכל צד']],b:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Seated Cable Row','3×10'],['Leg Extension','2×12'],['Dumbbell Shoulder Press','2×10'],['Bird Dog','2×8 לכל צד']]},
- {a:[['Leg Press','3×10'],['Chest Press','3×10'],['Seated Cable Row','3×10'],['Seated Leg Curl','2×12'],['Lat Pulldown','2×10'],['Dead Bug','2×10 לכל צד']],b:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Lat Pulldown','3×10'],['Leg Extension','2×12'],['Face Pull','2×12'],['Plank','3×25 שנ׳']]}
+ {a:[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Pec Deck','2×12'],['Hip Abductor','2×12'],['Plank','2×25 שנ׳']],b:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Seated Cable Row','3×10'],['Leg Extension','2×12'],['Shoulder Press Machine','2×10'],['Triceps Pushdown','2×12'],['Dead Bug','2×8 לכל צד']]},
+ {a:[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Hip Adductor','2×12'],['Biceps Curl Machine','2×12'],['Face Pull','2×12'],['Side Plank','2×20 שנ׳ לכל צד']],b:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Seated Cable Row','3×10'],['Leg Extension','2×12'],['Shoulder Press Machine','2×10'],['Hip Abductor','2×12'],['Triceps Pushdown','2×12'],['Bird Dog','2×8 לכל צד']]},
+ {a:[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Pec Deck','2×12'],['Biceps Curl Machine','2×12'],['Face Pull','2×12'],['Plank','2×30 שנ׳']],b:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Seated Cable Row','3×10'],['Leg Extension','2×12'],['Hip Adductor','2×12'],['Shoulder Press Machine','2×10'],['Triceps Pushdown','2×12'],['Dead Bug','2×10 לכל צד']]}
 ];
-function weeklyStrength(w,side){return strengthBlocks[Math.floor((w-2)/4)%strengthBlocks.length][side]}
+function weeklyStrength(w,side){const phase=w<5?0:w<9?1:2+Math.floor((w-9)/4)%2;const list=strengthBlocks[phase][side];return list.map(([name,reps])=>[name,reps]);}
 function feedbackUnlocked(w){const d=dateFor(w,6);d.setHours(18,0,0,0);return new Date()>=d}
 function trainingSignal(w){const f=feedback(w);const energy=Number(f.energy)||0;const ready=f.readiness||'';return f.pain==='no'&&f.recoveryPain==='no'&&energy>=6&&ready==='progress'&&f.completion==='high'&&(f.effort==='easy'||f.effort==='ok')}
 function metrics(w){return get(METRICS,{})[w]||{}}
@@ -604,6 +614,7 @@ function calculatePlan(w){
  return weeklyLayout(w).map(type=>types[type]);
 }
 function plan(w){const saved=get(PLAN_SNAP,{});return saved[w]||calculatePlan(w)}
+window.nivGetPlannedSession=(w,d)=>plan(w)?.[d];
 function freezeWeek(w){if(w<=1)return;const saved=get(PLAN_SNAP,{});if(!saved[w]){saved[w]=calculatePlan(w);set(PLAN_SNAP,saved)}}
 // Migrate only future, untouched plans from earlier fixed-day versions.
 // Never erase historical/current plans or user checkmarks.
@@ -628,6 +639,13 @@ function freezeWeek(w){if(w<=1)return;const saved=get(PLAN_SNAP,{});if(!saved[w]
  }
  set(PLAN_SNAP,saved);localStorage.setItem(key,'1');
 })();
+
+// Upgrade only untouched future frozen schedules to the new strength rotation.
+(function migrateFutureStrengthV20(){const key='nivFitnessStrengthVarietyV20';if(localStorage.getItem(key))return;
+ const saved=get(PLAN_SNAP,{}),checks=get(CHECK,{}),now=currentWeek();let changed=false;
+ for(const keyWeek of Object.keys(saved)){const w=Number(keyWeek);if(w<=now||Object.keys(checks).some(id=>id.startsWith(w+'-')))continue;delete saved[keyWeek];changed=true;}
+ if(changed)set(PLAN_SNAP,saved);localStorage.setItem(key,'1');
+})();
 window.nivFreezeWeek=freezeWeek;
 // Freeze a week when it becomes current. Historical plans are never overwritten by later feedback.
 freezeWeek(currentWeek());
@@ -639,7 +657,7 @@ function render(){
  let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">חלוקה דינמית: שני אימוני כוח, שלושה אימוני סיבולת, התאוששות ומנוחה. ימי הפעילות משתנים לפי המשוב; ביום ראשון אין פעילות בקאנטרי לפני 15:00. שבוע רביעי הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, אין העלאה אוטומטית של העומס.'}</div></div>`;
  (w===1?[]:tasks).forEach(([title,steps,kind],d)=>{
  html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'להישאר בקצב שמאפשר לדבר.':''}</div>`;
- steps.forEach((step,j)=>{const id=`${w}-${d}-${j}`;const guideKey=Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>step.includes(k));const guideButton=guideKey?`<button type="button" class="exercise-help niv-future-guide" data-guide-key="${guideKey.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}" data-guide-plan="${String(step).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}">📖 הסבר מפורט + תמונת התרגיל</button>`:"";html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${step}</span></label>${guideButton}</div>`});html+='</div>';
+ steps.forEach((step,j)=>{if(typeof step==='string'&&step.startsWith('בסיס סיבולת:')){html+=`<div class="ff-small niv-endurance-info" role="note">ℹ️ ${step}</div>`;return;}const id=`${w}-${d}-${j}`;const guideKey=Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>step.includes(k));const guideButton=guideKey?`<button type="button" class="exercise-help niv-future-guide" data-guide-key="${guideKey.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}" data-guide-plan="${String(step).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}">📖 הסבר מפורט + תמונת התרגיל</button>`:"";html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${step}</span></label>${guideButton}</div>`});html+='</div>';
  });
  const options=(items,v)=>items.map(([key,label])=>`<option value="${key}" ${v===key?'selected':''}>${label}</option>`).join('');
  if(w===1){const boxes=[...document.querySelectorAll('.day .check')];const done=boxes.filter(b=>b.checked).length;const pct=boxes.length?Math.round(done/boxes.length*100):0;html+=`<div class="ff-card"><h3>📋 נתוני שבוע 1 מהאפליקציה</h3><p>סומנו ${done} מתוך ${boxes.length} משימות (${pct}%). הסימון כולל גם פעולות עזר כגון שתייה וסאונה, ולכן אינו מדד מדויק להשלמת האימונים. בחר ידנית את שיעור הביצוע לפי האימונים שביצעת בפועל.</p><p class="ff-small">דיווחי האימונים האישיים והדירוגים נשמרים במקומם. רשום כאן את תחושת העומס הכוללת; אין העלאת עומס בלי משוב חיובי מפורש.</p></div>`;}
@@ -661,7 +679,7 @@ window.nivEnsureWeeks=ensureWeeks;
 ensureWeeks(Math.max(16,currentWeek()+12));sel.value=currentWeek();sel.addEventListener('change',()=>{if(Number(sel.value)>=Number(sel.lastElementChild.value)-4)ensureWeeks(Number(sel.value)+12);render()});
 // Add the new weeks' task points to the existing permanent points bank, without changing week 1.
 const previousEarned=earnedPoints;
-earnedPoints=function(){return previousEarned()+Object.values(get(CHECK,{})).filter(Boolean).length*10};
+earnedPoints=function(){const savedChecks=get(CHECK,{});const counted=Object.entries(savedChecks).filter(([id,done])=>{if(!done)return false;const match=/^(\d+)-(\d+)-(\d+)$/.exec(id);if(!match)return true;const [,week,day,step]=match;const task=plan(Number(week))?.[Number(day)]?.[1]?.[Number(step)];return !(typeof task==='string'&&task.startsWith('בסיס סיבולת:'));}).length;return previousEarned()+counted*10};
 render();updateWeeklyScore();
 window.addEventListener('focus',()=>{const w=currentWeek();freezeWeek(w);ensureWeeks(w+12);if(Number(sel.value)<w){sel.value=w;render()}});
 })();
@@ -920,12 +938,17 @@ const modal=document.getElementById('niv-session-modal'),sheet=document.getEleme
 const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const strengthA=['Leg Press','Chest Press','Lat Pulldown','Seated Leg Curl','Seated Cable Row','Plank'];
 const strengthB=['Goblet Squat','Incline Chest Press','Lat Pulldown','Leg Extension','Seated Cable Row','Dead Bug'];
-function strengthBlocksForSession(week,day){const a=[['Leg Press','Chest Press','Lat Pulldown','Seated Leg Curl','Seated Cable Row','Plank'],['Leg Press','Chest Press','Lat Pulldown','Seated Leg Curl','Face Pull','Side Plank'],['Leg Press','Chest Press','Seated Cable Row','Seated Leg Curl','Lat Pulldown','Dead Bug']];const b=[['Goblet Squat','Incline Chest Press','Lat Pulldown','Leg Extension','Seated Cable Row','Dead Bug'],['Goblet Squat','Incline Chest Press','Seated Cable Row','Leg Extension','Dumbbell Shoulder Press','Bird Dog'],['Goblet Squat','Incline Chest Press','Lat Pulldown','Leg Extension','Face Pull','Plank']];return (day===1?a:b)[Math.floor(Math.max(0,week-2)/4)%3]}
-function category(day){if(day===1||day===5)return 'strength';if(day===3)return 'swim';return 'run'}
+function strengthBlocksForSession(week,day){
+ if(week===1)return (day===1?strengthA:strengthB);
+ const task=typeof window.nivGetPlannedSession==='function'?window.nivGetPlannedSession(week,day):null;
+ if(!task||task[2]!=='כוח')return [];
+ return task[1].map(x=>Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(n=>x.startsWith(n+' —'))).filter(Boolean);
+}
+function category(day,week){if(week===1)return day===1||day===5?'strength':day===3?'swim':'run';const p=window.nivGetPlannedSession?.(week,day);return p?.[2]==='כוח'?'strength':p?.[0]?.includes('בריכה')?'swim':'run'}
 function latest(type,name,before){const all=read();return Object.entries(all).filter(([date,x])=>date<before&&x.type===type&&(!name||x.exercises?.[name])).sort((a,b)=>b[0].localeCompare(a[0]))[0]?.[1]||null}
 function field(label,id,type='number',extra=''){return `<label for="${id}">${label}</label><input id="${id}" type="${type}" ${extra}>`}
 function sel(label,id,options){return `<label for="${id}">${label}</label><select id="${id}"><option value="">בחר</option>${options.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select>`}
-function open(date,day){const type=category(day),saved=read()[date]||{};let body='';
+function open(date,day){const week=Math.floor((new Date(date+'T12:00:00')-START)/604800000)+1;const type=category(day,week),saved=read()[date]||{};let body='';
 if(type==='swim')body=field('כמה בריכות של 25 מטר שחית?','ns-laps','number','min="0" max="400"')+field('כמה בריכות שחית ברצף הארוך ביותר?','ns-cont','number','min="0" max="400"')+field('משך האימון בדקות','ns-min','number','min="0" max="240"')+sel('סגנונות ששילבת','ns-style',[['free','חתירה'],['back','גב'],['both','חתירה וגב']]);
 else if(type==='run')body=sel('סוג פעילות','ns-kind',[['walk','הליכה'],['mix','הליכה וריצה'],['run','ריצה']])+field('מרחק בקילומטרים','ns-km','number','min="0" max="100" step="0.01"')+field('משך כולל בדקות','ns-min','number','min="0" max="300"')+field('דקות ריצה רצופה (0 אם רק הלכת)','ns-cont','number','min="0" max="300"');
 else {const week=Math.floor((new Date(date+'T12:00:00')-START)/604800000)+1;const block=strengthBlocksForSession(week,day);const names=block;body='<p>לכל תרגיל רשום משקל עבודה, חזרות בסט האחרון וקושי. בתרגילי ליבה אפשר להשאיר משקל ריק.</p>'+names.map((name,i)=>`<fieldset style="border:1px solid #dce8df;border-radius:12px;margin:10px 0;padding:10px"><legend><b>${escapeHtml(name)}</b></legend>${field('משקל בק״ג',`ns-kg-${i}`,'number','min="0" step="0.5"')}${field('חזרות בסט האחרון / שניות בהחזקה',`ns-reps-${i}`,'number','min="0" max="300"')}${field('קושי התרגיל 1–10',`ns-rpe-${i}`,'number','min="1" max="10"')}</fieldset>`).join('');}
@@ -951,7 +974,7 @@ modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('o
 function attach(){document.querySelectorAll('.day').forEach((box,d)=>{if(d===4||box.querySelector('.niv-session-btn'))return;const btn=document.createElement('button');btn.className='niv-session-btn';btn.type='button';btn.textContent='📝 סיימתי אימון — דווח ביצועים';btn.onclick=()=>open(dateAt(d),d);box.appendChild(btn)});
 // The unlimited-week renderer replaces its cards; install a delegated handler and buttons after each render.
 const future=document.getElementById('ff-content');if(!future)return;
-function addButtons(){future.querySelectorAll('.ff-card').forEach(card=>{const h=card.querySelector('h3');if(!h||card.querySelector('.niv-session-btn'))return;const m=h.textContent.match(/^(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s+(\d{1,2}\.\d{1,2}\.\d{4})/);if(!m)return;const day=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'].indexOf(m[1]);if(day===4)return;const [dd,mm,yy]=m[2].split('.');const date=`${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;const btn=document.createElement('button');btn.className='niv-session-btn';btn.textContent=read()[date]?'✏️ ערוך דיווח אימון':'📝 סיימתי אימון — דווח ביצועים';btn.onclick=()=>open(date,day);card.appendChild(btn)})}
+function addButtons(){future.querySelectorAll('.ff-card').forEach(card=>{const h=card.querySelector('h3');if(!h||card.querySelector('.niv-session-btn'))return;const m=h.textContent.match(/^(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)\s+(\d{1,2}\.\d{1,2}\.\d{4})/);if(!m)return;const day=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'].indexOf(m[1]);const [dd,mm,yy]=m[2].split('.');const date=`${yy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;const week=Math.floor((new Date(date+'T12:00:00')-START)/604800000)+1;if(!['strength','swim','run'].includes(category(day,week))|| (window.nivGetPlannedSession?.(week,day)?.[2]==='התאוששות'))return;const btn=document.createElement('button');btn.className='niv-session-btn';btn.textContent=read()[date]?'✏️ ערוך דיווח אימון':'📝 סיימתי אימון — דווח ביצועים';btn.onclick=()=>open(date,day);card.appendChild(btn)})}
 new MutationObserver(()=>{if(!future.dataset.nsBusy){future.dataset.nsBusy='1';addButtons();delete future.dataset.nsBusy}}).observe(future,{childList:true,subtree:false});addButtons();
 // Open only after the last checkbox of a day's planned tasks is checked, never on an unchecked item.
 document.addEventListener('change',e=>{const c=e.target;if(!c.matches('.check,[data-ff-check]')||!c.checked)return;let day,date,boxes;if(c.matches('.check')){const section=c.closest('.day');if(!section)return;day=Number(section.id.replace('day',''));date=dateAt(day);boxes=[...section.querySelectorAll('.check')]}else{const id=c.dataset.ffCheck.split('-');const w=Number(id[0]);day=Number(id[1]);date=dateAt((w-1)*7+day);boxes=[...c.closest('.ff-card').querySelectorAll('[data-ff-check]')]}if(boxes.length&&boxes.every(x=>x.checked)&&!read()[date])setTimeout(()=>open(date,day),550)},true);
