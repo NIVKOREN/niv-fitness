@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — v25 Nutrition</title>
+<title>Niv Fitness — v28 Swap Days</title>
 <meta name="theme-color" content="#2b7655">
 <meta name="niv-build" content="v25-20261023-nutrition">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -79,7 +79,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-action-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:11px 13px;margin:9px 0;line-height:1.65;color:#23543c;font-size:14px}.niv-sauna-row{background:#fff8eb;border:1px solid #ecd8b5;border-radius:12px;padding:11px;margin:10px 0}.niv-sauna-row label{display:flex;gap:10px;align-items:flex-start;line-height:1.6}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 23.10.2026 • v27 • תיקון ימי מנוחה</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 26.10.2026 • v28 • החלפת אימונים</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -616,6 +616,33 @@ function calculatePlan(w){
  return weeklyLayout(w).map(type=>types[type]);
 }
 function plan(w){const saved=get(PLAN_SNAP,{});return saved[w]||calculatePlan(w)}
+// Swaps are stored as complete sessions inside the existing weekly snapshots.
+// Keep dates, daily nutrition, completion logs and rewards attached to calendar days.
+window.nivSwapSessions=function(a,b){
+ const now=new Date(),start=new Date(2026,9,11,12);
+ const toDate=x=>{const d=new Date(start);d.setDate(d.getDate()+7*(x.w-1)+x.d);return d};
+ if(a.w<2||b.w<2||a.w===b.w&&a.d===b.d)return {error:'בחר שני אימונים שונים משבוע 2 ואילך.'};
+ const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ if(toDate(a)<today||toDate(b)<today)return {error:'אי אפשר להחליף אימון של יום שכבר עבר.'};
+ const first=Math.floor((today-start)/604800000)+1;
+ if(Math.abs(a.w-b.w)>1||a.w<first||b.w>first+1)return {error:'אפשר להחליף רק בתוך השבוע הנוכחי או עם השבוע הבא.'};
+ const hasActivity=x=>{
+  const date=toDate(x),iso=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+  const prefixes=['nivFitnessDailyV14:','nivFitnessSessionLogsV1'];
+  try{const daily=JSON.parse(localStorage.getItem(prefixes[0]+iso)||'{}');if(daily.mode||Object.values(daily.completed||{}).some(v=>Object.values(v||{}).some(Boolean)))return true}catch(e){}
+  try{const logs=JSON.parse(localStorage.getItem(prefixes[1])||'{}');if(logs[iso])return true}catch(e){}
+  for(const key of ['nivFitness52ChecksV1','nivFitnessFutureChecksV1','nivFitnessSaunaV21']){
+   try{const checks=JSON.parse(localStorage.getItem(key)||'{}');if(Object.entries(checks).some(([k,v])=>k.startsWith(x.w+'-'+x.d+'-')&&v))return true}catch(e){}
+  }
+  return false;
+ };
+ if(hasActivity(a)||hasActivity(b))return {error:'אחד האימונים כבר התחיל או דווח. ניתן להחליף רק אימונים שטרם בוצעו.'};
+ const snapshots=get(PLAN_SNAP,{});
+ const pa=structuredClone(snapshots[a.w]||calculatePlan(a.w)),pb=a.w===b.w?pa:structuredClone(snapshots[b.w]||calculatePlan(b.w));
+ const tmp=pa[a.d];pa[a.d]=pb[b.d];pb[b.d]=tmp;
+ snapshots[a.w]=pa;snapshots[b.w]=pb;set(PLAN_SNAP,snapshots);
+ return {ok:true};
+};
 window.nivGetPlannedSession=(w,d)=>plan(w)?.[d];
 function freezeWeek(w){if(w<=1)return;const saved=get(PLAN_SNAP,{});if(!saved[w]){saved[w]=calculatePlan(w);set(PLAN_SNAP,saved)}}
 // Migrate only future, untouched plans from earlier fixed-day versions.
@@ -671,7 +698,7 @@ function render(){
  const tasks=plan(w),checks=get(CHECK,{}),saved=feedback(w),locked=w>now,feedbackLocked=!feedbackUnlocked(w);
  let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">חלוקה דינמית: שני אימוני כוח, שלושה אימוני סיבולת, התאוששות ומנוחה. ימי הפעילות משתנים לפי המשוב; ביום ראשון אין פעילות בקאנטרי לפני 15:00. שבוע רביעי הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, אין העלאה אוטומטית של העומס.'}</div></div>`;
  (w===1?[]:tasks).forEach(([title,steps,kind],d)=>{
- html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'להישאר בקצב שמאפשר לדבר.':''}</div>`;
+ html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><button type="button" class="niv-swap-btn" data-swap-week="${w}" data-swap-day="${d}">🔄 החלף אימון עם יום אחר</button><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'להישאר בקצב שמאפשר לדבר.':''}</div>`;
  steps.forEach((step,j)=>{
   const id=`${w}-${d}-${j}`,type=nivStepType(step,kind);
   const safeStep=String(step).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1271,4 +1298,49 @@ const statsBody=document.getElementById('niv-stats-body');if(statsBody){new Muta
 </script>
 <style id="niv-v27-rest-cleanup-style">.niv-full-rest-day .niv-session-btn,.niv-full-rest-day .timebox,.niv-full-rest-day [data-time-day]{display:none!important}</style>
 <script id="niv-v27-rest-cleanup">(()=>{function clean(){document.querySelectorAll('#ff-content > .ff-card').forEach(card=>{const h=card.querySelector('h3');if(!h)return;const rest=/מנוחה מלאה/.test(h.textContent)||/מנוחה מלאה/.test((card.querySelector('.niv-day-tools')?.previousElementSibling?.textContent||'').slice(0,220));if(!rest)return;card.classList.add('niv-full-rest-day');card.querySelectorAll('.niv-session-btn').forEach(b=>b.remove());card.querySelectorAll('.niv-tool-card').forEach(b=>{if(b.querySelector('h3')?.textContent.includes('מתי ביצעתי את הפעילות'))b.remove()})})}document.addEventListener('DOMContentLoaded',()=>{const root=document.getElementById('ff-content');if(root){new MutationObserver(clean).observe(root,{childList:true,subtree:false});clean()}})})();</script>
+
+<style id="niv-v28-swap-css">
+.niv-swap-btn{background:#e4f3e9;color:#205e40;border:1px solid #b8d8c5;border-radius:12px;padding:10px 13px;font-weight:850;margin:8px 0 12px;font-size:14px}
+.niv-swap-overlay{position:fixed;inset:0;z-index:2147483400;background:#0009;display:flex;align-items:flex-end;justify-content:center;direction:rtl}
+.niv-swap-dialog{width:min(650px,100%);max-height:85dvh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;padding:20px 18px 35px}
+.niv-swap-dialog select,.niv-swap-dialog button{font:inherit;padding:12px;border-radius:12px}.niv-swap-dialog select{width:100%;border:1px solid #bccfc2;background:white;margin:12px 0}.niv-swap-actions{display:flex;gap:10px}.niv-swap-actions button{flex:1;border:0;font-weight:850;background:#e6eae8}.niv-swap-actions .confirm{background:#287650;color:white}
+</style>
+<script id="niv-v28-swap">
+(function(){'use strict';
+const root=document.getElementById('ff-content');if(!root)return;
+const start=new Date(2026,9,11,12),names=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+function date(w,d){const x=new Date(start);x.setDate(x.getDate()+7*(w-1)+d);return x}
+function dayName(w,d){return names[d]+' '+date(w,d).toLocaleDateString('he-IL')}
+function currentWeek(){const today=new Date();today.setHours(12,0,0,0);return Math.max(1,Math.floor((today-start)/604800000)+1)}
+function safe(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+root.addEventListener('click',e=>{
+ const btn=e.target.closest('.niv-swap-btn');if(!btn)return;
+ const a={w:Number(btn.dataset.swapWeek),d:Number(btn.dataset.swapDay)},today=new Date();today.setHours(0,0,0,0);
+ if(date(a.w,a.d)<today){alert('אי אפשר להחליף אימון שכבר עבר.');return}
+ const now=currentWeek();if(a.w<now||a.w>now+1){alert('ניתן להחליף רק בשבוע הנוכחי או בשבוע הבא.');return}
+ const choices=[];
+ for(let w=now;w<=now+1;w++)for(let d=0;d<7;d++){
+  if(w===a.w&&d===a.d||date(w,d)<today||w<2)continue;
+  const session=window.nivGetPlannedSession?.(w,d);if(session)choices.push({w,d,title:session[0]});
+ }
+ if(!choices.length){alert('אין ימים זמינים להחלפה.');return}
+ const overlay=document.createElement('div');overlay.className='niv-swap-overlay';
+ const box=document.createElement('div');box.className='niv-swap-dialog';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');
+ const source=window.nivGetPlannedSession?.(a.w,a.d);
+ box.innerHTML='<h2>🔄 החלפת אימונים</h2><p>האימון של <b>'+safe(dayName(a.w,a.d))+'</b>: '+safe(source?.[0]||'')+'</p><label for="niv-swap-target">בחר יום להחלפה:</label><select id="niv-swap-target">'+choices.map((x,i)=>'<option value="'+i+'">'+safe(dayName(x.w,x.d)+' — '+x.title)+'</option>').join('')+'</select><p class="niv-swap-warning" style="color:#825b20;background:#fff5e4;padding:10px;border-radius:10px"></p><div class="niv-swap-actions"><button class="cancel">ביטול</button><button class="confirm">🔄 החלף אימונים</button></div>';
+ overlay.append(box);document.body.append(overlay);
+ const select=box.querySelector('select'),warning=box.querySelector('.niv-swap-warning');
+ const update=()=>{const b=choices[Number(select.value)];const sequence=[];for(let d=0;d<7;d++){const x=window.nivGetPlannedSession?.(a.w,d);sequence.push(x?.[2]||'')}
+ const first=window.nivGetPlannedSession?.(a.w,a.d),second=window.nivGetPlannedSession?.(b.w,b.d);
+ const hasStrength=first?.[2]==='כוח'||second?.[2]==='כוח';warning.textContent=hasStrength?'⚠️ בדוק מרווחי התאוששות: החלפה יכולה ליצור אימוני כוח סמוכים. ביום ראשון הקאנטרי נפתח רק ב־15:00.':'ℹ️ האימונים יתחלפו בשלמותם. מדדי התזונה, השתייה והדיווחים היומיים יישארו בתאריכים שלהם.'};
+ update();select.addEventListener('change',update);
+ const close=()=>overlay.remove();box.querySelector('.cancel').onclick=close;overlay.addEventListener('click',ev=>{if(ev.target===overlay)close()});
+ box.querySelector('.confirm').onclick=()=>{const b=choices[Number(select.value)],one=window.nivGetPlannedSession(a.w,a.d),two=window.nivGetPlannedSession(b.w,b.d);
+ if(!confirm('להחליף בין '+dayName(a.w,a.d)+' ('+one[0]+') לבין '+dayName(b.w,b.d)+' ('+two[0]+')?'))return;
+ const result=window.nivSwapSessions?.(a,b);if(!result?.ok){alert(result?.error||'לא ניתן לבצע את ההחלפה.');return}
+ close();const sel=document.getElementById('ff-week');if(sel){sel.dispatchEvent(new Event('change'))}if(typeof window.nivRefreshDaily==='function')window.nivRefreshDaily();
+ alert('✅ האימונים הוחלפו ונשמרו!');};
+ });
+})();
+</script>
 </body></html>
