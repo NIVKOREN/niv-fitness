@@ -80,7 +80,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-run-details{border:1px solid #c5e4d1;background:#f6fbf8;border-radius:13px;margin:10px 0;padding:9px}.niv-run-details summary{cursor:pointer;color:#185b3b;font-weight:900;padding:8px}.niv-run-details .ff-row{background:white;border-radius:9px;margin:6px 0;padding:8px}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 06.11.2026 • v30 • ריצה מפורטת</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 06.11.2026 • v32 • ריצה רצופה</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -604,47 +604,15 @@ function nivRecovery(w){const f=feedback(w-1)||{};return f.pain==='yes'||f.recov
 function nivRecentPain(kind){let logs={};try{logs=JSON.parse(localStorage.getItem('nivFitnessSessionLogsV1')||'{}')}catch(e){}return Object.entries(logs).filter(([d,x])=>x.type===kind).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,3).some(([d,x])=>x.pain==='yes')}
 function nivSwimPlan(w){const hard=nivRecovery(w)||nivRecentPain('swim');const recent=latestEnduranceSession(w,'swim');const achieved=Number(recent?.laps)||40;const cycles=hard?2:3;const base=['חימום: 2 בריכות חזה'];const variants=[['2 חזה','15 שנ׳ מנוחה','4 גב','30 שנ׳ מנוחה','6 חתירה','60 שנ׳ מנוחה'],['2 חזה','15 שנ׳ מנוחה','6 גב','30 שנ׳ מנוחה','4 חתירה','60 שנ׳ מנוחה'],['2 חזה','15 שנ׳ מנוחה','4 חתירה','30 שנ׳ מנוחה','6 גב','60 שנ׳ מנוחה']];const v=variants[Math.floor((w-5)/2)%variants.length];base.push(`${cycles} סבבים: ${v.join(' ← ')}`);base.push('שחרור: 2 בריכות חזה');const total=4+12*cycles;base.push(`סה״כ ${total} בריכות × 25 מ׳ (${total*25} מטר).`);if(!hard&&achieved>=40&&w>=7&&w%4!==0)base.push('רשות: 2–4 בריכות גב/חתירה קלות נוספות רק אם ההתאוששות טובה.');base.push('מדוד מרחק רצוף מרבי, זמן שחייה נטו וזמני מנוחה בדיווח. בלי פרפר; לעצור בכאב.');base.push('♨️ סאונה רטובה 10–12 דקות (רשות; אחרי שתייה ובהרגשה טובה).');return base}
 function nivRunPlan(w,longSession){
- // Structured, varied treadmill/outdoor sessions; durations add up exactly.
- // A conservative week reduces intensity rather than removing running automatically.
+ // One continuous run, with user-selected treadmill speeds and gradual progression.
  const total=longSession?65:60, recovery=nivRecovery(w), deload=w%4===0;
  const phase=Math.max(0,Math.floor((w-5)/2));
- const baseWalk=Math.min(6.2,5.3+phase*.1), brisk=Math.min(6.8,5.9+phase*.1);
- const jog=Math.min(9.2,7.8+phase*.15), steady=Math.min(9.6,jog+.4);
- const f=n=>Number(n.toFixed(1));
- const steps=[],segments=[];
- const add=(label,min,speed)=>{segments.push({min,speed});steps.push(`${label} — ${min} דקות • ${f(speed)} קמ״ש`)};
- add('חימום · הליכה קלה',5,baseWalk);
- if(longSession){
-   // Long aerobic session, mostly easy walking with longer run segments over time.
-   const runMinutes=recovery||deload?12:Math.min(27,16+phase*2);
-   const firstWalk=15,remaining=total-10-firstWalk-runMinutes;
-   add('הליכה נמרצת',firstWalk,brisk);
-   add('ריצה רצופה ונוחה',runMinutes,jog);
-   add('הליכה לסיבולת',remaining,brisk);
- }else if(w%3===0){
-   // Five equal intervals, no fractional minutes.
-   const r=recovery||deload?2:Math.min(4,2+Math.floor(phase/2));
-   const walkPer=9-r;
-   for(let i=1;i<=5;i++){add(`סבב ${i}/5 · ריצה`,r,jog);add(`סבב ${i}/5 · הליכה`,walkPer,brisk)}
-   add('הליכה נמרצת מסכמת',5,brisk);
- }else if(w%3===1){
-   const runMinutes=recovery||deload?12:Math.min(28,17+phase*2);
-   add('הליכה נמרצת',15,brisk);
-   add('ריצה רצופה',runMinutes,jog);
-   add('הליכה בקצב יציב',total-10-15-runMinutes,brisk);
- }else{
-   const runMinutes=recovery||deload?12:Math.min(26,16+phase*2);
-   const first=Math.floor(runMinutes/2),second=runMinutes-first;
-   add('הליכה נמרצת',12,brisk);
-   add('ריצה · מקטע ראשון',first,jog);
-   add('הליכה להתאוששות',5,baseWalk);
-   add('ריצה · מקטע שני',second,steady);
-   add('הליכה בקצב יציב',total-10-12-5-runMinutes,brisk);
- }
- add('שחרור · הליכה קלה',5,baseWalk);
- const minutes=segments.reduce((n,x)=>n+x.min,0);
- const distance=segments.reduce((n,x)=>n+x.min*x.speed/60,0);
- return [...steps,`📏 סיכום: ${minutes} דקות • מרחק משוער ${distance.toFixed(2)} ק״מ (לפי המהירויות המוצעות).`,`💡 המהירויות הן נקודת פתיחה וניתן להתאים אותן לתחושה ולביצועים.`];
+ const runMinutes=recovery||deload?15:Math.min(30,15+phase*2);
+ const warm=5, cool=5, lead=longSession?15:10, tail=total-warm-cool-lead-runMinutes;
+ const speed=Number(Math.min(9,8+phase*.1).toFixed(1));
+ const parts=[['חימום · הליכה',warm,5],['הליכה מהירה',lead,7],['ריצה רצופה',runMinutes,speed],['הליכה מהירה לסיבולת',tail,7],['שחרור',cool,4.5]];
+ const distance=parts.reduce((sum,[,minutes,kph])=>sum+minutes*kph/60,0);
+ return [...parts.map(([label,minutes,kph])=>`${label} — ${minutes} דקות • ${kph} קמ״ש`),`📏 סיכום: ${total} דקות • ${runMinutes} דקות ריצה רצופה • כ־${distance.toFixed(2)} ק״מ`,`💡 ההתקדמות מותנית במשוב ובהתאוששות; לא מעלים עומס אוטומטית.`];
 }
 function nivStrengthPlan(w,side){const strained=nivRecovery(w);const pool=side==='a'?[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10'],['Plank','2×25–35 שנ׳']]:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Seated Cable Row','3×10'],['Leg Extension','2×12'],['Lat Pulldown','2×10'],['Dead Bug','2×8 לכל צד']];const extras=side==='a'?[['Pec Deck','2×12'],['Hip Abductor','2×12'],['Biceps Curl Machine','2×12']]:[['Shoulder Press Machine','2×10'],['Triceps Pushdown','2×12'],['Face Pull','2×12']];const rotation=Math.floor((w-5)/2)%extras.length;if(!strained)pool.splice(5,0,extras[rotation]);return ['חימום 8 דקות',...pool.map(([name,reps])=>`${name} — ${reps}; ${strengthAdvice(w,name)}; קושי יעד 6–8/10, להשאיר 2–3 חזרות ברזרבה`),'שחרור 5 דקות','התקדמות: להעלות משקל רק לאחר 2 אימונים נקיים בטווח החזרות ובקושי עד 7/10; בקושי 9/10 להפחית או לשמר. תרגיל חדש: משקל קל וטכניקה תחילה.','♨️ סאונה רטובה 10–12 דקות (רשות; אחרי שתייה ובהרגשה טובה).']}
 function calculatePlan(w){const types={run:['הליכה וריצה • 60 דקות',nivRunPlan(w,false),'סיבולת'],long:['סיבולת ארוכה • 65 דקות',nivRunPlan(w,true),'סיבולת'],swim:['סיבולת בבריכה • חזה, גב וחתירה',nivSwimPlan(w),'סיבולת'],strengthA:['כוח A — גוף מלא',nivStrengthPlan(w,'a'),'כוח'],strengthB:['כוח B — גוף מלא',nivStrengthPlan(w,'b'),'כוח'],recovery:['התאוששות פעילה',['הליכה קלה 15–25 דקות או מנוחה','מוביליטי 5–10 דקות'],'התאוששות'],rest:['מנוחה מלאה',['שתייה, שינה והתאוששות; אין צורך לפצות על מנוחה'],'מנוחה']};return weeklyLayout(w).map(t=>types[t])}
@@ -735,16 +703,17 @@ function render(){
  (w===1?[]:tasks).forEach(([title,steps,kind],d)=>{
  html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><button type="button" class="niv-swap-btn" data-swap-week="${w}" data-swap-day="${d}">🔄 החלף אימון עם יום אחר</button><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'':''}</div>`;
  const isRunSession=kind==='סיבולת'&&!/בריכה/.test(title);
- if(isRunSession)html+='<details class="niv-run-details" open><summary>🏃 פירוט מקטעי האימון · מהירויות ומרחק</summary>';
+ if(isRunSession)html+='<details class="niv-run-details" open><summary>🏃 פירוט האימון · מהירויות ומרחק</summary>';
  steps.forEach((step,j)=>{
   const id=`${w}-${d}-${j}`,type=nivStepType(step,kind);
   const safeStep=String(step).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  if(isRunSession){html+=`<div class="niv-action-info" role="note">${safeStep}</div>`;return;}
   if(type==='info'){html+=`<div class="niv-action-info" role="note">ℹ️ ${safeStep}</div>`;return;}
   if(type==='sauna'){html+=`<div class="niv-sauna-row"><label><input type="checkbox" data-niv-sauna="${id}" ${get('nivFitnessSaunaV21',{})[id]?'checked':''} ${locked?'disabled':''}><span>♨️ ${safeStep}</span></label><div class="ff-small">רשות • 10 נקודות בביצוע • לא משפיע על השלמת האימון</div></div>`;return;}
   const guideKey=Object.keys(exerciseGuides).sort((a,b)=>b.length-a.length).find(k=>step.includes(k));
   const guideButton=guideKey?`<button type="button" class="exercise-help niv-future-guide" data-guide-key="${guideKey.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-guide-plan="${safeStep}">📖 הסבר מפורט + תמונת התרגיל</button>`:'';
   html+=`<div class="ff-row"><label><input type="checkbox" data-ff-check="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>${safeStep}</span></label>${guideButton}</div>`;
- });if(isRunSession)html+='</details>';html+='</div>';
+ });if(isRunSession){const runId=`${w}-${d}-session`;const oldRunDone=steps.some((step,j)=>checks[`${w}-${d}-${j}`]&&nivStepType(step,kind)==='action');html+=`</details><div class="ff-row niv-session-complete"><label><input type="checkbox" data-ff-session="${runId}" ${checks[runId]||oldRunDone?'checked':''} ${locked?'disabled':''}><span>✅ סיימתי את האימון — 10 נקודות לאימון כולו</span></label></div>`;}html+='</div>';
  });
  const options=(items,v)=>items.map(([key,label])=>`<option value="${key}" ${v===key?'selected':''}>${label}</option>`).join('');
  if(w===1){const boxes=[...document.querySelectorAll('.day .check')];const done=boxes.filter(b=>b.checked).length;const pct=boxes.length?Math.round(done/boxes.length*100):0;html+=`<div class="ff-card"><h3>📋 נתוני שבוע 1 מהאפליקציה</h3><p>סומנו ${done} מתוך ${boxes.length} משימות (${pct}%). הסימון כולל גם פעולות עזר כגון שתייה וסאונה, ולכן אינו מדד מדויק להשלמת האימונים. בחר ידנית את שיעור הביצוע לפי האימונים שביצעת בפועל.</p><p class="ff-small">דיווחי האימונים האישיים והדירוגים נשמרים במקומם. רשום כאן את תחושת העומס הכוללת; אין העלאת עומס בלי משוב חיובי מפורש.</p></div>`;}
@@ -758,6 +727,7 @@ function render(){
  content.innerHTML=html;
  $('ff-save-metrics').addEventListener('click',()=>saveMetrics(w));
  content.querySelectorAll('[data-niv-sauna]').forEach(box=>box.addEventListener('change',()=>{const all=get('nivFitnessSaunaV21',{});all[box.dataset.nivSauna]=box.checked;set('nivFitnessSaunaV21',all);updateWeeklyScore();if(box.checked)praiseThenConfetti(10)}));
+ content.querySelectorAll('[data-ff-session]').forEach(box=>box.addEventListener('change',()=>{const all=get(CHECK,{});all[box.dataset.ffSession]=box.checked;set(CHECK,all);updateWeeklyScore();if(box.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(10)}));
  content.querySelectorAll('[data-ff-check]').forEach(box=>box.addEventListener('change',()=>{const all=get(CHECK,{});all[box.dataset.ffCheck]=box.checked;set(CHECK,all);updateWeeklyScore();if(box.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(10)}));
  $('ff-save').addEventListener('click',()=>saveFeedback(w));
 }
@@ -767,7 +737,7 @@ window.nivEnsureWeeks=ensureWeeks;
 ensureWeeks(Math.max(16,currentWeek()+12));sel.value=currentWeek();sel.addEventListener('change',()=>{if(Number(sel.value)>=Number(sel.lastElementChild.value)-4)ensureWeeks(Number(sel.value)+12);render()});
 // Add the new weeks' task points to the existing permanent points bank, without changing week 1.
 const previousEarned=earnedPoints;
-earnedPoints=function(){const savedChecks=get(CHECK,{});const counted=Object.entries(savedChecks).filter(([id,done])=>{if(!done)return false;const match=/^(\d+)-(\d+)-(\d+)$/.exec(id);if(!match)return true;const [,week,day,step]=match;const task=plan(Number(week))?.[Number(day)]?.[1]?.[Number(step)];return typeof task==='string' && nivStepType(task,plan(Number(week))?.[Number(day)]?.[2])==='action';}).length;const saunas=get('nivFitnessSaunaV21',{});return previousEarned()+counted*10+Object.values(saunas).filter(Boolean).length*10};
+earnedPoints=function(){const savedChecks=get(CHECK,{});const credited=new Set();let count=0;for(const [id,done] of Object.entries(savedChecks)){if(!done)continue;const match=/^(\d+)-(\d+)-(\d+|session)$/.exec(id);if(!match)continue;const [,week,day,step]=match;const session=plan(Number(week))?.[Number(day)];if(!session)continue;const run=session[2]==='סיבולת'&&!/בריכה/.test(session[0]);if(run){const key=`${week}-${day}`;if(!credited.has(key)){credited.add(key);count++;}continue;}if(step==='session')continue;const task=session[1]?.[Number(step)];if(typeof task==='string'&&nivStepType(task,session[2])==='action')count++;}const saunas=get('nivFitnessSaunaV21',{});return previousEarned()+count*10+Object.values(saunas).filter(Boolean).length*10};
 render();updateWeeklyScore();
 window.addEventListener('focus',()=>{const w=currentWeek();freezeWeek(w);ensureWeeks(w+12);if(Number(sel.value)<w){sel.value=w;render()}});
 })();
@@ -1383,4 +1353,37 @@ root.addEventListener('click',e=>{
 <style>.niv-v2-mini{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.niv-v2-mini button{border:1px solid #cde1d4;background:#eff8f2;color:#205e41;border-radius:11px;padding:9px 12px;font-weight:850}.niv-v2-overlay{position:fixed;inset:0;background:#f5f7f6;z-index:2147483005;overflow:auto;padding:18px 14px 50px;direction:rtl}.niv-v2-overlay[hidden]{display:none}.niv-v2-inner{max-width:650px;margin:auto}.niv-v2-line{padding:10px;border-bottom:1px solid #e3eae6}.niv-v2-input{width:100%;padding:10px;border:1px solid #d3ded7;border-radius:9px;margin:5px 0}</style>
 <div id="niv-v2-overlay" class="niv-v2-overlay" hidden><div class="niv-v2-inner"><button type="button" class="reset" onclick="nivV2Close()">✕ חזרה לאפליקציה</button><h2 id="niv-v2-title"></h2><div id="niv-v2-body"></div></div></div>
 <script>(function(){'use strict';const j=(key,def)=>{try{return JSON.parse(localStorage.getItem(key)||'null')??def}catch(e){return def}};const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const o=document.getElementById('niv-v2-overlay'),body=document.getElementById('niv-v2-body');window.nivV2Close=()=>{o.hidden=true;document.body.style.overflow=''};function open(title,html){document.getElementById('niv-v2-title').textContent=title;body.innerHTML=html;o.hidden=false;document.body.style.overflow='hidden';o.scrollTop=0}window.nivV2Page=function(page){const logs=j('nivFitnessSessionLogsV1',{}),weights=j('nivFitnessWeighInsV1',[]),days=Object.entries(logs).sort((a,b)=>a[0].localeCompare(b[0]));if(page==='progress'){const kinds={run:[],swim:[],strength:[]};days.forEach(([date,x])=>kinds[x.type]?.push([date,x]));const latest=k=>kinds[k].slice(-1)[0]?.[1];const first=weights[0],last=weights[weights.length-1];let html='<div class="card"><h3>📈 תמונת מצב</h3>'+`<div class="niv-v2-line">אימונים מתועדים: <b>${days.length}</b></div><div class="niv-v2-line">משקל: <b>${last?.weight??'—'} ק״ג</b> ${first?'(שינוי '+(last.weight-first.weight).toFixed(1)+' ק״ג)':''}</div><div class="niv-v2-line">שחייה אחרונה: <b>${latest('swim')?.laps??'—'} בריכות</b></div><div class="niv-v2-line">הליכה/ריצה אחרונה: <b>${latest('run')?.min??'—'} דקות</b></div></div>';html+='<div class="card"><h3>⚖️ שקילות</h3>'+weights.slice(-12).map(x=>`<div class="niv-v2-line">${esc(x.date)} — ${esc(x.weight)} ק״ג</div>`).join('')+'</div>';html+='<div class="card"><h3>💪 התקדמות בתרגילים</h3>';const names={};kinds.strength.forEach(([date,x])=>Object.entries(x.exercises||{}).forEach(([name,v])=>{(names[name]??=[]).push([date,v])}));Object.entries(names).forEach(([name,entries])=>{const first=entries[0][1],last=entries.at(-1)[1];html+=`<div class="niv-v2-line"><b>${esc(name)}</b><br>${esc(first.kg||'—')} → ${esc(last.kg||'—')} ק״ג • קושי אחרון ${esc(last.rpe||'—')}/10</div>`});open('📊 ההתקדמות שלי',html+'</div>');return}if(page==='recovery'){const all=j('nivFitnessRecoveryV2',{}),date=new Date().toLocaleDateString('en-CA'),v=all[date]||{};open('🌙 התאוששות',`<div class="card"><p class="small">דקה ביום • לא משפיע על הנקודות</p>${[['sleep','איכות שינה'],['energy','אנרגיה'],['soreness','כאבי שרירים'],['fatigue','עייפות']].map(([k,t])=>`<label>${t} (1–5)<select class="niv-v2-input" id="niv-v2-${k}"><option value="">לא דורג</option>${[1,2,3,4,5].map(n=>`<option value="${n}" ${String(v[k])===String(n)?'selected':''}>${n}</option>`).join('')}</select></label>`).join('')}<button class="save-extra" onclick="nivV2SaveRecovery()">שמור</button></div>`);return}if(page==='tips'){open('🧭 איך מתקדמים?',`<div class="card"><h3>💪 כוח</h3><p>עולים במשקל רק לאחר שני אימונים נקיים בטווח החזרות, בקושי 7/10 ומטה. בקושי 9–10 לא מעלים. תרגיל חדש מתחילים קל.</p><h3>🏊 שחייה</h3><p>חזה בחימום ובשחרור; מודדים גם רציפות ומנוחות. הגדלה הדרגתית רק ללא כאב.</p><h3>🏃 ריצה</h3><p>אימונים מלאים של 60–65 דקות כולל חימום ושחרור. המהירויות הן המלצה ואפשר להתאים אותן לרמת הכושר. פירוט כל מקטע מופיע בתוכנית האימון.</p><h3>🔒 שמירת מידע</h3><p>הנתונים נשארים במכשיר; יש לייצא גיבוי בקביעות. שבועות קודמים לא משתנים.</p></div>`);return}};window.nivV2SaveRecovery=function(){const date=new Date().toLocaleDateString('en-CA'),all=j('nivFitnessRecoveryV2',{});all[date]={};['sleep','energy','soreness','fatigue'].forEach(k=>all[date][k]=document.getElementById('niv-v2-'+k).value);localStorage.setItem('nivFitnessRecoveryV2',JSON.stringify(all));nivV2Close()};const bar=document.createElement('div');bar.className='niv-v2-mini';bar.innerHTML='<button onclick="nivV2Page(&quot;progress&quot;)">📊 התקדמות</button><button onclick="nivV2Page(&quot;recovery&quot;)">🌙 התאוששות</button><button onclick="nivV2Page(&quot;tips&quot;)">ⓘ כללי התקדמות</button>';const nav=document.querySelector('.daynav');if(nav)nav.before(bar);})();</script>
+<style id="niv-v32-style">.niv-v32-complete{margin:12px 0;padding:14px;border:2px solid #b6dcc7;border-radius:14px;background:#eaf7ee}.niv-v32-complete label{display:flex;gap:12px;align-items:center;font-weight:900}.niv-v32-complete input{width:25px;height:25px;accent-color:#2b7655}.niv-v32-score{font-size:13px;color:#256447;margin-top:6px}.niv-v32-swimsteps{padding:8px 12px;background:#f4f8f5;border-radius:12px;font-size:14px;line-height:1.7}</style>
+<script id="niv-v32-scoring">
+(function(){'use strict';
+// All historical weeks remain on their original scoring system. New system starts 8 Nov 2026 (week 5).
+const FIRST=5, CHECK='nivFitnessFutureChecksV1', SAUNA='nivFitnessSaunaV21';
+const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}};
+const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const classify=(w,d)=>{const x=window.nivGetPlannedSession?.(w,d);if(!x)return 'none';if(x[2]==='כוח')return 'strength';if(x[2]==='התאוששות'||x[2]==='מנוחה'||/מנוחה מלאה/.test(x[0]))return 'recovery';if(/בריכה|שחייה/.test(x[0]))return 'swim';return 'run'};
+const goal=(w,d,type)=>{if(type==='run'){const x=window.nivGetPlannedSession?.(w,d);const t=(x?.[1]||[]).join(' ');return /ארוכה|ארוך|65 דקות|70 דקות/.test(x?.[0]+' '+t)?60:50}if(type==='swim')return 50;return 0};
+function decorate(){const root=document.getElementById('ff-content');if(!root)return;const w=Number(document.getElementById('ff-week')?.value||0);if(w<FIRST)return;root.querySelectorAll('.ff-card').forEach(card=>{const swap=card.querySelector('[data-swap-day]');if(!swap)return;const d=Number(swap.dataset.swapDay),type=classify(w,d);if(type!=='swim'&&type!=='run')return;const id=`${w}-${d}-session`,checks=read(CHECK),locked=card.querySelector('[data-ff-session]')?.disabled||card.querySelector('[data-ff-check]')?.disabled||false;
+if(type==='swim'){
+ const rows=[...card.querySelectorAll('.ff-row')].filter(r=>r.querySelector('[data-ff-check]'));
+ if(!rows.length)return;
+ const steps=document.createElement('details');steps.className='niv-v32-swimsteps';steps.innerHTML='<summary style="font-weight:850;cursor:pointer">🏊 פירוט סטים וסגנונות</summary>';
+ rows.forEach(r=>{const txt=document.createElement('div');txt.style.padding='5px 0';txt.textContent=r.querySelector('span')?.textContent||'';steps.append(txt);r.remove()});
+ const anchor=card.querySelector('.niv-sauna-row');if(anchor)anchor.before(steps);else card.append(steps);
+ }
+ let existing=card.querySelector('.niv-v32-complete');if(!existing){existing=document.createElement('div');existing.className='niv-v32-complete';const old=card.querySelector('[data-ff-session]');if(old)old.closest('.ff-row')?.remove();const total=goal(w,d,type);existing.innerHTML=`<label><input type="checkbox" data-v32-session="${id}" ${checks[id]?'checked':''} ${locked?'disabled':''}><span>✅ סיימתי את האימון</span></label><div class="niv-v32-score">${total} נק׳ לאימון מלא${type==='swim'?' • סאונה בנפרד: 10 נק׳':''} • סימון אחד בלבד</div>`;const sauna=card.querySelector('.niv-sauna-row');if(sauna)sauna.before(existing);else card.append(existing);
+ existing.querySelector('input').addEventListener('change',e=>{const all=read(CHECK);all[id]=e.target.checked;write(CHECK,all);if(typeof updateWeeklyScore==='function')updateWeeklyScore();if(e.target.checked&&typeof praiseThenConfetti==='function')praiseThenConfetti(total)});
+ }
+ });}
+// v31 already gives 10 points per completed run, and 10 per checked swim step.
+// Replace only week 5+ run/swim scores, leaving strength, sauna, bonuses and past weeks unchanged.
+const prior=earnedPoints;
+earnedPoints=function(){let value=prior(),checks=read(CHECK);const groups=new Set();for(const id of Object.keys(checks)){const m=id.match(/^(\d+)-(\d+)-(\d+|session)$/);if(m&&Number(m[1])>=FIRST&&['run','swim'].includes(classify(+m[1],+m[2])))groups.add(m[1]+'-'+m[2]);}
+for(const key of groups){const [w,d]=key.split('-').map(Number),type=classify(w,d),x=window.nivGetPlannedSession?.(w,d);if(!x)continue;const done=!!checks[`${w}-${d}-session`];if(type==='run'){const oldDone=Object.keys(checks).some(id=>id.startsWith(`${w}-${d}-`)&&checks[id]);if(oldDone)value-=10;if(done)value+=goal(w,d,type)}else{
+ // Previous version awards 10 per checked action; preserve legacy entries but avoid double credit.
+ const checked=Object.entries(checks).filter(([id,v])=>v&&id.startsWith(`${w}-${d}-`)&&/^\d+-\d+-\d+$/.test(id));let old=0;for(const [id] of checked){const step=x[1]?.[Number(id.split('-')[2])];if(step&&!/סאונה/.test(step))old+=10}value-=old;if(done)value+=goal(w,d,type);
+ }}return value};
+const observer=new MutationObserver(()=>{if(document.getElementById('ff-content')?.querySelector('.ff-card')){observer.disconnect();decorate();observer.observe(document.getElementById('ff-content'),{childList:true})}});
+const root=document.getElementById('ff-content');if(root)observer.observe(root,{childList:true});decorate();
+})();
+</script>
 </body></html>
