@@ -80,7 +80,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-run-details{border:1px solid #c5e4d1;background:#f6fbf8;border-radius:13px;margin:10px 0;padding:9px}.niv-run-details summary{cursor:pointer;color:#185b3b;font-weight:900;padding:8px}.niv-run-details .ff-row{background:white;border-radius:9px;margin:6px 0;padding:8px}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 06.11.2026 • v32 • ריצה רצופה</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 08.11.2026 • v33 • שובע חכם</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -1384,6 +1384,112 @@ for(const key of groups){const [w,d]=key.split('-').map(Number),type=classify(w,
  }}return value};
 const observer=new MutationObserver(()=>{if(document.getElementById('ff-content')?.querySelector('.ff-card')){observer.disconnect();decorate();observer.observe(document.getElementById('ff-content'),{childList:true})}});
 const root=document.getElementById('ff-content');if(root)observer.observe(root,{childList:true});decorate();
+})();
+</script>
+
+<!-- NIV FITNESS v33: independent, permanent mindful-satiety journal. Existing keys untouched. -->
+<style id="niv-satiety-v33-style">
+#niv-sat-open{border:1px solid #b9dbc6;background:#e5f4eb;color:#205d40;border-radius:11px;padding:10px 14px;font-weight:900;font-size:14px;cursor:pointer}
+#niv-sat-overlay[hidden]{display:none!important}
+#niv-sat-overlay{position:fixed;inset:0;z-index:2147483350;background:#f5f7f6;overflow-y:auto;-webkit-overflow-scrolling:touch;direction:rtl;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 38px)}
+#niv-sat-overlay *{box-sizing:border-box}
+#niv-sat-overlay .sat-wrap{max-width:700px;margin:auto}
+#niv-sat-overlay .sat-top{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#e5f3e9;padding:10px;border-radius:13px;z-index:2}
+#niv-sat-overlay .sat-close{background:#216b49;color:#fff;border:0;border-radius:9px;padding:11px 13px;font-weight:900}
+#niv-sat-overlay .sat-card{background:#fff;border:1px solid #e0e9e3;border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 4px 20px #1733260b}
+#niv-sat-overlay h3{margin:0 0 8px;font-size:18px}
+#niv-sat-overlay .sat-help{color:#52645b;font-size:13px;line-height:1.7}
+#niv-sat-overlay .sat-control{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:10px 0}
+#niv-sat-overlay .sat-control label{font-weight:850;font-size:13px}
+#niv-sat-overlay input[type=date],#niv-sat-overlay select{padding:10px;border:1px solid #cbdad0;border-radius:10px;background:white;font:inherit;max-width:100%}
+#niv-sat-overlay .sat-buttons{display:flex;direction:ltr;gap:4px;flex-wrap:wrap;justify-content:flex-end;margin:8px 0}
+#niv-sat-overlay .sat-buttons button{min-width:35px;min-height:38px;border:1px solid #cbdad0;background:#fff;border-radius:9px;font-weight:900;color:#344c3d}
+#niv-sat-overlay .sat-buttons button.sat-selected{background:#267047;color:#fff;border-color:#267047}
+#niv-sat-overlay .sat-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}
+#niv-sat-overlay .sat-options button{border:1px solid #cbdad0;background:#fff;border-radius:10px;padding:10px 4px;font-weight:800;font-size:12px}
+#niv-sat-overlay .sat-options button.sat-selected{background:#267047;color:#fff;border-color:#267047}
+#niv-sat-overlay .sat-stage{border-top:1px solid #e9eeeb;padding:12px 0}
+#niv-sat-overlay .sat-stage:first-of-type{border-top:0}
+#niv-sat-overlay .sat-stage-title{font-weight:900;margin:0 0 3px}
+#niv-sat-overlay .sat-note{font-size:12px;color:#627469;line-height:1.5}
+#niv-sat-overlay .sat-pill{display:inline-block;background:#e9f6ed;color:#216b49;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:800}
+#niv-sat-overlay .sat-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#niv-sat-overlay .sat-metric{border:1px solid #e0e9e3;border-radius:12px;padding:11px;background:#f8fcf9}
+#niv-sat-overlay .sat-metric b{display:block;font-size:24px;color:#256946;margin:3px 0}
+#niv-sat-overlay .sat-metric small{font-size:12px;color:#506358}
+#niv-sat-overlay .sat-subtle{font-size:12px;color:#5c7165;line-height:1.6}
+#niv-sat-overlay .sat-actions button{background:#f3f7f4;border:1px solid #cbdad0;border-radius:10px;padding:9px 12px;font-weight:850}
+#niv-sat-overlay .sat-progress{height:9px;border-radius:9px;background:#e6eee8;overflow:hidden;margin:9px 0}
+#niv-sat-overlay .sat-progress span{display:block;height:100%;background:#3c8d68}
+#niv-sat-overlay .sat-separator{border-top:1px solid #e4ece5;margin:12px 0}
+</style>
+<div id="niv-sat-overlay" hidden role="dialog" aria-modal="true" aria-label="שובע חכם">
+ <div class="sat-wrap"><div class="sat-top"><strong>🍽️ שובע חכם</strong><button class="sat-close" type="button" id="niv-sat-close">✕ חזרה לאפליקציה</button></div>
+ <div id="niv-sat-content"></div></div>
+</div>
+<script id="niv-satiety-v33">
+(function(){'use strict';
+const KEY='nivFitnessSatietyV33', START='2026-11-09', END='2026-11-22', MEALS=[['breakfast','בוקר'],['lunch','צהריים'],['dinner','ערב']];
+const overlay=document.getElementById('niv-sat-overlay'), content=document.getElementById('niv-sat-content');
+if(!overlay||!content||document.getElementById('niv-sat-open'))return;
+const iso=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const read=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'{}');return x&&typeof x==='object'&&!Array.isArray(x)?x:{}}catch(e){return {}}};
+const save=x=>{try{localStorage.setItem(KEY,JSON.stringify(x));if(typeof updateWeeklyScore==='function')updateWeeklyScore();return true}catch(e){alert('לא ניתן לשמור את הדירוג: '+e.message);return false}};
+let chosenDate=(iso()<START?START:iso()),chosenMeal='lunch',view='journal';
+const getRecord=(all,date,meal)=>all[date]?.[meal]||{};
+const has=(n,lo,hi)=>Number.isInteger(n)&&n>=lo&&n<=hi;
+const complete=r=>has(r.hunger,1,10)&&has(r.fullness,1,10)&&has(r.comfort,1,5)&&['no','little','yes'].includes(r.beyond);
+const allRecords=()=>Object.entries(read()).flatMap(([date,meals])=>MEALS.map(([id,label])=>({date,id,label,r:meals?.[id]||{}})).filter(x=>Object.keys(x.r).length));
+const numAvg=(rows,key)=>{const a=rows.map(x=>x.r[key]).filter(n=>typeof n==='number');return a.length?(a.reduce((x,y)=>x+y,0)/a.length).toFixed(1):'—'};
+const completedRecords=()=>allRecords().filter(x=>complete(x.r));
+function earnedSatPoints(){const all=read();let days=0;for(const [date,meals] of Object.entries(all)){if(date<START)continue;const done=MEALS.filter(([id])=>complete(meals?.[id]||{})).length;if(done>=2)days++}return days*5}
+// Add once to the final cumulative earnedPoints function; no existing award is replaced.
+if(typeof earnedPoints==='function'&&!window.nivSatietyPointsV33){const old=earnedPoints;earnedPoints=function(){return old()+earnedSatPoints()};window.nivSatietyPointsV33=true}
+const openBtn=document.createElement('button');openBtn.type='button';openBtn.id='niv-sat-open';openBtn.textContent='🍽️ שובע חכם';
+const nav=document.querySelector('.daynav');if(nav)nav.before(openBtn);else document.querySelector('main')?.prepend(openBtn);
+const displayDate=x=>{const p=x.split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:x};
+function digits(key,max,now){return `<div class="sat-buttons">${Array.from({length:max},(_,i)=>`<button type="button" data-field="${key}" data-value="${i+1}" class="${now===i+1?'sat-selected':''}" aria-pressed="${now===i+1}">${i+1}</button>`).join('')}</div>`}
+function stage(title,desc,html){return `<section class="sat-stage"><div class="sat-stage-title">${title}</div><div class="sat-note">${desc}</div>${html}</section>`}
+function journal(){const all=read(),r=getRecord(all,chosenDate,chosenMeal);const done=MEALS.filter(([m])=>complete(getRecord(all,chosenDate,m))).length;const elapsed=r.endedAt?Math.floor((Date.now()-new Date(r.endedAt).getTime())/60000):null;
+ const comfortMessage=!r.endedAt?'בסיום הארוחה, דרג קודם שובע ואז חזור כעבור כ־20 דקות לנוחות.':elapsed<20?`עברו ${Math.max(0,elapsed)} דקות מסיום הארוחה; רצוי לדרג נוחות בעוד ${20-Math.max(0,elapsed)} דקות.`:'עברו לפחות 20 דקות מהסיום — אפשר לדרג נוחות עכשיו.';
+ content.innerHTML=`<div class="sat-card"><h3>ניסוי 14 הימים והמשך קבוע</h3><div class="sat-help">9–22.11.2026: לומדים לזהות שובע. מ־23.11 ממשיכים באותו מעקב, וכל הדירוגים נשארים שמורים. אין ניקוד על אכילה פחותה — רק על התמדה.</div><div class="sat-control"><label for="sat-date">תאריך</label><input id="sat-date" type="date" min="2026-11-09" value="${esc(chosenDate)}"><label for="sat-meal">ארוחה</label><select id="sat-meal">${MEALS.map(([id,t])=>`<option value="${id}" ${chosenMeal===id?'selected':''}>${t}</option>`).join('')}</select></div><span class="sat-pill">${done}/3 ארוחות מלאות היום · ${done>=2?'✅ 5 נקודות נצברו':'5 נקודות אחרי 2 ארוחות מלאות'}</span></div>
+ <div class="sat-card"><h3>דירוג הארוחה · ${esc(MEALS.find(x=>x[0]===chosenMeal)?.[1])}</h3>
+ ${stage('① רגע לפני הביס הראשון — רעב (1–10)','1 = רעב קיצוני · 5 = ניטרלי · 10 = מלא מאוד. מדרגים את התחושה הנוכחית.',digits('hunger',10,r.hunger))}
+ ${stage('② באמצע הארוחה — עצירה קצרה','עצור ל־10 שניות: ממשיך מרעב או כי טעים? זו בדיקה בלבד, ללא דירוג או נקודות.',`<label class="sat-help"><input type="checkbox" id="sat-mid" ${r.mid?'checked':''}> עשיתי בדיקת שובע באמצע</label>`)}
+ ${stage('③ מיד כשסיימת לאכול — שובע (1–10)','1 = עדיין רעב מאוד · 5 = ניטרלי · 6–7 = שובע נעים · 8 = שבע מאוד · 9–10 = מלא מדי. אם לקחת תוספת, דרג רק בסיום האמיתי.',digits('fullness',10,r.fullness))}
+ ${stage('④ בסיום הארוחה — המשכתי למרות שכבר שבעתי?','בחר את מה שקרה בפועל, בלי לשפוט את עצמך.',`<div class="sat-options">${[['no','🟢 לא'],['little','🟡 קצת'],['yes','🔴 כן, הרבה']].map(([id,label])=>`<button type="button" data-beyond="${id}" class="${r.beyond===id?'sat-selected':''}">${label}</button>`).join('')}</div>`)}
+ ${stage('⑤ כ־20 דקות לאחר סיום הארוחה — נוחות (1–5)',`1 = אי נוחות רבה · 2 = כבד · 3 = סביר · 4 = טוב · 5 = נעים ומרוצה. ${comfortMessage}`,digits('comfort',5,r.comfort))}
+ <p class="sat-subtle">הדירוגים נשמרים מיד עם הלחיצה. אין צורך ללחוץ על שמירה. אפשר לחזור ולתקן כל דירוג.</p>
+ <div class="sat-actions"><button type="button" id="sat-clear-meal">אפס דירוגי ארוחה זו</button></div></div>
+ <div class="sat-card"><div class="sat-control"><button type="button" id="sat-stats-open" class="sat-close" style="background:#216b49;color:white">📊 התקדמות והיסטוריה</button></div><p class="sat-subtle">5 נקודות ליום מתאריך 9.11 ואילך שבו יש לפחות שתי ארוחות עם דירוג רעב, שובע, אכילה מעבר לשובע ונוחות. לא מקבלים נקודות כפולות בעריכה. הנתונים כלולים בייצוא הגיבוי הרגיל.</p></div>`;
+ document.getElementById('sat-date').addEventListener('change',e=>{chosenDate=e.target.value||iso();journal()});
+ document.getElementById('sat-meal').addEventListener('change',e=>{chosenMeal=e.target.value;journal()});
+ content.querySelectorAll('[data-field]').forEach(b=>b.onclick=()=>change(b.dataset.field,Number(b.dataset.value)));
+ content.querySelectorAll('[data-beyond]').forEach(b=>b.onclick=()=>change('beyond',b.dataset.beyond));
+ document.getElementById('sat-mid').onchange=e=>change('mid',e.target.checked);
+ document.getElementById('sat-stats-open').onclick=()=>{view='stats';render()};
+ document.getElementById('sat-clear-meal').onclick=()=>{if(!confirm('לאפס את דירוגי הארוחה הזו?'))return;const all=read();if(all[chosenDate]){delete all[chosenDate][chosenMeal];if(!Object.keys(all[chosenDate]).length)delete all[chosenDate]}if(save(all))journal()};
+}
+function change(field,value){const all=read();all[chosenDate]??={};const r=all[chosenDate][chosenMeal]??={};r[field]=value;
+ if(field==='fullness')r.endedAt=new Date().toISOString();
+ // Comfort ratings are permitted even if timing was not recorded, to preserve manual entries.
+ if(save(all))journal();
+}
+function metric(label,value){return `<div class="sat-metric"><small>${label}</small><b>${value}</b></div>`}
+function analyze(rows){if(!rows.length)return '<p class="sat-help">עדיין אין ארוחות שהושלמו בתקופה הזו.</p>';const good=rows.filter(x=>x.r.fullness>=6&&x.r.fullness<=7).length,comfortable=rows.filter(x=>x.r.comfort>=4).length,notMuch=rows.filter(x=>x.r.beyond!=='yes').length,pct=n=>Math.round(n/rows.length*100)+'%';return `<div class="sat-summary">${metric('ארוחות מתועדות',rows.length)}${metric('שובע ממוצע',numAvg(rows,'fullness')+'/10')}${metric('שובע 6–7',pct(good))}${metric('נוחות 4–5',pct(comfortable))}${metric('לא המשכתי הרבה מעבר לשובע',pct(notMuch))}${metric('נוחות ממוצעת',numAvg(rows,'comfort')+'/5')}</div>`}
+function stats(){const rows=completedRecords().sort((a,b)=>a.date.localeCompare(b.date));const first=rows.filter(x=>x.date>=START&&x.date<='2026-11-15'),second=rows.filter(x=>x.date>='2026-11-16'&&x.date<=END);const isWeekend=x=>[5,6].includes(new Date(x.date+'T12:00:00').getDay());const later=rows.filter(x=>x.date>END);const pct=(x,fn)=>x.length?Math.round(x.filter(fn).length/x.length*100)+'%':'—';
+ content.innerHTML=`<div class="sat-card"><button type="button" id="sat-back" class="sat-close" style="background:#216b49;color:white;border:0;border-radius:10px;padding:10px 14px">← חזרה לדירוג הארוחה</button><h3 style="margin-top:13px">📊 התקדמות לאורך זמן</h3><p class="sat-help">כל ההיסטוריה נשמרת גם אחרי השבועיים. ציונים נמדדים לפי הדיווח שלך; אין קשר אוטומטי בין רמת השובע לירידה במשקל.</p>${analyze(rows)}</div>
+ <div class="sat-card"><h3>השוואת שבוע 1 ושבוע 2</h3><p class="sat-subtle">9–15.11 לעומת 16–22.11</p><div class="sat-separator"></div><b>שבוע ראשון</b>${analyze(first)}<div class="sat-separator"></div><b>שבוע שני</b>${analyze(second)}</div>
+ <div class="sat-card"><h3>ימי חול מול שישי–שבת</h3><div class="sat-summary">${metric('שובע ממוצע בימי חול',numAvg(rows.filter(x=>!isWeekend(x)),'fullness'))}${metric('שובע ממוצע בסופ״ש',numAvg(rows.filter(isWeekend),'fullness'))}${metric('שובע 6–7 בימי חול',pct(rows.filter(x=>!isWeekend(x)),x=>x.r.fullness>=6&&x.r.fullness<=7))}${metric('שובע 6–7 בסופ״ש',pct(rows.filter(isWeekend),x=>x.r.fullness>=6&&x.r.fullness<=7))}</div></div>
+ ${later.length?`<div class="sat-card"><h3>מעקב קבוע מ־23.11</h3>${analyze(later)}</div>`:''}
+ <div class="sat-card"><h3>📅 היסטוריית ארוחות</h3>${rows.length?rows.slice().reverse().slice(0,60).map(x=>`<div class="sat-separator"></div><div class="sat-help"><b>${displayDate(x.date)} · ${x.label}</b><br>רעב: ${x.r.hunger}/10 · שובע: ${x.r.fullness}/10 · נוחות: ${x.r.comfort}/5 · מעבר לשובע: ${{no:'לא',little:'קצת',yes:'הרבה'}[x.r.beyond]}</div><button type="button" class="sat-jump" data-date="${x.date}" data-meal="${x.id}" style="border:0;background:#eef6f0;border-radius:8px;padding:7px;margin-top:5px">פתח לעריכה</button>`).join(''):'<p class="sat-help">עדיין לא תועדו ארוחות מלאות.</p>'}${rows.length>60?'<p class="sat-subtle">מוצגות 60 הארוחות האחרונות; כל הדירוגים נשמרים במכשיר ובגיבוי.</p>':''}</div>`;
+ document.getElementById('sat-back').onclick=()=>{view='journal';render()};content.querySelectorAll('.sat-jump').forEach(b=>b.onclick=()=>{chosenDate=b.dataset.date;chosenMeal=b.dataset.meal;view='journal';render()});
+}
+function render(){if(view==='stats')stats();else journal();overlay.scrollTop=0}
+openBtn.addEventListener('click',()=>{chosenDate=(iso()<START?START:iso());view='journal';overlay.hidden=false;render()});
+document.getElementById('niv-sat-close').addEventListener('click',()=>overlay.hidden=true);
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)overlay.hidden=true});
 })();
 </script>
 </body></html>
