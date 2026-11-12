@@ -78,6 +78,11 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 .niv-endurance-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:12px 14px;margin:10px 0;line-height:1.6;color:#23543c}
 .niv-action-info{background:#edf8f1;border:1px solid #c5e4d1;border-radius:12px;padding:11px 13px;margin:9px 0;line-height:1.65;color:#23543c;font-size:14px}.niv-sauna-row{background:#fff8eb;border:1px solid #ecd8b5;border-radius:12px;padding:11px;margin:10px 0}.niv-sauna-row label{display:flex;gap:10px;align-items:flex-start;line-height:1.6}
 .niv-run-details{border:1px solid #c5e4d1;background:#f6fbf8;border-radius:13px;margin:10px 0;padding:9px}.niv-run-details summary{cursor:pointer;color:#185b3b;font-weight:900;padding:8px}.niv-run-details .ff-row{background:white;border-radius:9px;margin:6px 0;padding:8px}
+</style><style id="niv-v2-back-accessibility-fix">
+/* Keep navigation reachable below the content and iPhone safe area. */
+#niv-v2-overlay{padding-bottom:calc(112px + env(safe-area-inset-bottom, 0px))!important;overscroll-behavior:contain}
+#niv-v2-back{position:fixed!important;top:auto!important;bottom:calc(18px + env(safe-area-inset-bottom, 0px))!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;z-index:2147483010!important;min-height:54px!important;min-width:190px!important;padding:14px 22px!important;border:0!important;border-radius:16px!important;background:#216b49!important;color:#fff!important;font-size:16px!important;font-weight:900!important;box-shadow:0 6px 22px #0003!important;cursor:pointer!important;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#niv-v2-back:focus-visible{outline:3px solid #f3c74a;outline-offset:3px}
 </style></head>
 <body>
 <div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 06.11.2026 • v32 • ריצה רצופה</div>
@@ -1351,7 +1356,7 @@ root.addEventListener('click',e=>{
 })();
 </script>
 <style>.niv-v2-mini{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.niv-v2-mini button{border:1px solid #cde1d4;background:#eff8f2;color:#205e41;border-radius:11px;padding:9px 12px;font-weight:850}.niv-v2-overlay{position:fixed;inset:0;background:#f5f7f6;z-index:2147483005;overflow:auto;padding:18px 14px 50px;direction:rtl}.niv-v2-overlay[hidden]{display:none}.niv-v2-inner{max-width:650px;margin:auto}.niv-v2-line{padding:10px;border-bottom:1px solid #e3eae6}.niv-v2-input{width:100%;padding:10px;border:1px solid #d3ded7;border-radius:9px;margin:5px 0}</style>
-<div id="niv-v2-overlay" class="niv-v2-overlay" hidden><div class="niv-v2-inner"><button type="button" class="reset" onclick="nivV2Close()">✕ חזרה לאפליקציה</button><h2 id="niv-v2-title"></h2><div id="niv-v2-body"></div></div></div>
+<div id="niv-v2-overlay" class="niv-v2-overlay" hidden><div class="niv-v2-inner"><button type="button" id="niv-v2-back" class="reset" onclick="nivV2Close()" aria-label="חזרה לאפליקציה">✕ חזרה לאפליקציה</button><h2 id="niv-v2-title"></h2><div id="niv-v2-body"></div></div></div>
 <script>(function(){
 'use strict';
 const get=(key,def)=>{try{return JSON.parse(localStorage.getItem(key)||'null')??def}catch{return def}};
