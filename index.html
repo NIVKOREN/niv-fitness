@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — v30 Detailed Run</title>
+<title>Niv Fitness — v34 Progressive Variety</title>
 <meta name="theme-color" content="#2b7655">
 <meta name="niv-build" content="v25-20261023-nutrition">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -85,7 +85,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 #niv-v2-back:focus-visible{outline:3px solid #f3c74a;outline-offset:3px}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 06.11.2026 • v32 • ריצה רצופה</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 21.11.2026 • v34 • גיוון והתקדמות</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -605,25 +605,76 @@ function weeklyLayout(w){
 }
 function nivRecovery(w){const f=feedback(w-1)||{};return f.pain==='yes'||f.recoveryPain==='yes'||f.readiness==='reduce'||f.effort==='hard'||(f.energy&&Number(f.energy)<=4)}
 function nivRecentPain(kind){let logs={};try{logs=JSON.parse(localStorage.getItem('nivFitnessSessionLogsV1')||'{}')}catch(e){}return Object.entries(logs).filter(([d,x])=>x.type===kind).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,3).some(([d,x])=>x.pain==='yes')}
-function nivSwimPlan(w){const hard=nivRecovery(w)||nivRecentPain('swim');const recent=latestEnduranceSession(w,'swim');const achieved=Number(recent?.laps)||40;const cycles=hard?2:3;const base=['חימום: 2 בריכות חזה'];const variants=[['2 חזה','15 שנ׳ מנוחה','4 גב','30 שנ׳ מנוחה','6 חתירה','60 שנ׳ מנוחה'],['2 חזה','15 שנ׳ מנוחה','6 גב','30 שנ׳ מנוחה','4 חתירה','60 שנ׳ מנוחה'],['2 חזה','15 שנ׳ מנוחה','4 חתירה','30 שנ׳ מנוחה','6 גב','60 שנ׳ מנוחה']];const v=variants[Math.floor((w-5)/2)%variants.length];base.push(`${cycles} סבבים: ${v.join(' ← ')}`);base.push('שחרור: 2 בריכות חזה');const total=4+12*cycles;base.push(`סה״כ ${total} בריכות × 25 מ׳ (${total*25} מטר).`);if(!hard&&achieved>=40&&w>=7&&w%4!==0)base.push('רשות: 2–4 בריכות גב/חתירה קלות נוספות רק אם ההתאוששות טובה.');base.push('מדוד מרחק רצוף מרבי, זמן שחייה נטו וזמני מנוחה בדיווח. בלי פרפר; לעצור בכאב.');base.push('♨️ סאונה רטובה 10–12 דקות (רשות; אחרי שתייה ובהרגשה טובה).');return base}
-function nivRunPlan(w,longSession){
- // One continuous run, with user-selected treadmill speeds and gradual progression.
- const total=longSession?65:60, recovery=nivRecovery(w), deload=w%4===0;
- const missed=get('nivFitnessMissedSessionsV1',{});
- const missedRuns=Object.values(missed).filter(x=>x?.missed&&x.week<w&&x.week>=5&&(() => {const old=get(PLAN_SNAP,{})[x.week]?.[x.day];return old?.[2]==='סיבולת'&&!/בריכה/.test(old?.[0]||'');})()).length;
- const phase=Math.max(0,Math.floor((w-5)/2)-missedRuns);
- const runMinutes=recovery||deload?15:Math.min(30,15+phase*2);
- const warm=5, cool=5, lead=longSession?15:10, tail=total-warm-cool-lead-runMinutes;
- const speed=Number(Math.min(9,8+phase*.1).toFixed(1));
- const parts=[['חימום · הליכה',warm,5],['הליכה מהירה',lead,7],['ריצה רצופה',runMinutes,speed],['הליכה מהירה לסיבולת',tail,7],['שחרור',cool,4.5]];
- const distance=parts.reduce((sum,[,minutes,kph])=>sum+minutes*kph/60,0);
- return [...parts.map(([label,minutes,kph])=>`${label} — ${minutes} דקות • ${kph} קמ״ש`),`📏 סיכום: ${total} דקות • ${runMinutes} דקות ריצה רצופה • כ־${distance.toFixed(2)} ק״מ`,`💡 ההתקדמות מותנית במשוב ובהתאוששות; לא מעלים עומס אוטומטית.`];
+function nivSwimPlan(w){
+ const hard=nivRecovery(w)||nivRecentPain('swim');
+ const latest=latestEnduranceSession(w,'swim');
+ const previous=Number(latest?.laps)||40;
+ const block=Math.max(0,w-7);
+ const lighter=block>0 && block%4===3;
+ let target=lighter?Math.max(40,42+2*block-6):Math.min(60,44+2*block);
+ if(hard)target=Math.min(40,previous);
+ if(previous<40)target=Math.min(target,previous+4);
+ target=Math.round(target/2)*2;
+ const variants=[
+  {title:'טכניקה מגוונת • חזה, גב וחתירה',pattern:[['חזה',2],['גב',4],['חתירה',6]]},
+  {title:'דגש גב • שחייה בקצב נוח',pattern:[['חזה',2],['גב',6],['חתירה',4]]},
+  {title:'דגש חתירה • סיבולת',pattern:[['חזה',2],['חתירה',6],['גב',4]]},
+  {title:'פירמידה קלה • החלפת סגנונות',pattern:[['גב',4],['חתירה',4],['חזה',4]]}
+ ];
+ const v=variants[block%variants.length];
+ const training=target-4,cycles=Math.floor(training/12),extra=training%12;
+ const steps=['🎯 '+v.title,'חימום: 2 בריכות חזה'];
+ for(let i=0;i<cycles;i++)steps.push('סט '+(i+1)+': '+v.pattern.map(([style,laps])=>`${laps} בריכות ${style}`).join(' ← 20–40 שנ׳ מנוחה ← ')+' • 45–60 שנ׳ מנוחה בסיום');
+ if(extra)steps.push('תוספת נפח: '+extra+' בריכות '+(block%2?'גב':'חתירה')+' בקצב קל');
+ steps.push('שחרור: 2 בריכות חזה');
+ steps.push(`סה״כ ${target} בריכות × 25 מ׳ (${target*25} מטר), כולל חימום ושחרור.`);
+ steps.push(lighter?'🔄 שבוע קל יחסי: שומרים טכניקה ונותנים לגוף להתאושש.':'💡 תוספת יעד של 2 בריכות לשבוע, רק כשהאימון הקודם הושלם היטב וללא כאב.');
+ steps.push('אין חובה לשחות מהר. תעד מאמץ, מספר בריכות וזמני מנוחה. בלי פרפר; לעצור בכאב.');
+ steps.push('♨️ סאונה רטובה 10–12 דקות (רשות; אחרי שתייה ובהרגשה טובה).');
+ return steps;
 }
-function nivStrengthPlan(w,side){const strained=nivRecovery(w);const pool=side==='a'?[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10'],['Plank','2×25–35 שנ׳']]:[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Seated Cable Row','3×10'],['Leg Extension','2×12'],['Lat Pulldown','2×10'],['Dead Bug','2×8 לכל צד']];const extras=side==='a'?[['Pec Deck','2×12'],['Hip Abductor','2×12'],['Biceps Curl Machine','2×12']]:[['Shoulder Press Machine','2×10'],['Triceps Pushdown','2×12'],['Face Pull','2×12']];const rotation=Math.floor((w-5)/2)%extras.length;if(!strained)pool.splice(5,0,extras[rotation]);return ['חימום 8 דקות',...pool.map(([name,reps])=>`${name} — ${reps}; ${strengthAdvice(w,name)}; קושי יעד 6–8/10, להשאיר 2–3 חזרות ברזרבה`),'שחרור 5 דקות','התקדמות: להעלות משקל רק לאחר 2 אימונים נקיים בטווח החזרות ובקושי עד 7/10; בקושי 9/10 להפחית או לשמר. תרגיל חדש: משקל קל וטכניקה תחילה.','♨️ סאונה רטובה 10–12 דקות (רשות; אחרי שתייה ובהרגשה טובה).']}
+function nivRunPlan(w,longSession){
+ // Two distinct continuous-run sessions per week; no forced catch-up for missed sessions.
+ const total=longSession?65:60,recovery=nivRecovery(w)||nivRecentPain('run');
+ const weekIndex=Math.max(0,w-7), lighter=weekIndex>0&&weekIndex%4===3;
+ const missed=get('nivFitnessMissedSessionsV1',{});
+ const missedPrior=Object.values(missed).some(x=>x?.missed&&x.week===w-1&&[0,6].includes(x.day));
+ let runMinutes=Math.min(35,18+weekIndex*2+(longSession?2:0));
+ if(lighter)runMinutes=Math.max(15,runMinutes-5);
+ if(recovery||missedPrior)runMinutes=Math.min(runMinutes,15);
+ const warm=5,cool=5,lead=longSession?15:10,tail=total-warm-cool-lead-runMinutes;
+ const baseSpeed=8.0;
+ const blocks=[['חימום · הליכה',warm,5],['הליכה מהירה',lead,7]];
+ if(longSession&&runMinutes>=20&&!recovery){
+  // Continuous run, two pace levels without walking breaks.
+  const first=Math.ceil(runMinutes/2),second=runMinutes-first;
+  blocks.push(['ריצה רצופה – קצב קל',first,baseSpeed],['המשך ריצה רצופה – קצב מעט מהיר יותר',second,8.5]);
+ }else blocks.push(['ריצה רצופה · קצב אחיד',runMinutes,baseSpeed]);
+ blocks.push(['הליכה מהירה לסיבולת',tail,7],['שחרור',cool,4.5]);
+ const dist=blocks.reduce((sum,[,m,v])=>sum+m*v/60,0);
+ return [longSession?'🎯 אימון ריצה מדורג: מחצית שנייה קצת מהירה יותר, בלי הפסקת הליכה.':'🎯 אימון ריצה רצופה בקצב אחיד: מתמקדים במשך הריצה ולא במהירות.',
+ ...blocks.map(([name,m,v])=>`${name} — ${m} דקות • ${v} קמ״ש`),
+ `📏 סיכום: ${total} דקות • ${runMinutes} דקות ריצה רצופה • כ־${dist.toFixed(2)} ק״מ`,
+ lighter?'🔄 שבוע קל יחסי לתמיכה בהסתגלות.':'💡 היעד עולה בכ־2 דקות בשבוע, ובאימון השבת עוד 2 דקות, כאשר אין כאב וההתאוששות טובה.',
+ '🛑 אם הופיע כאב, קושי חריג או חוסר התאוששות — לא מעלים עומס. אפשר לחזור ל־15 דקות ריצה או לעבור להליכה.'];
+}
+function nivStrengthPlan(w,side){
+ const strained=nivRecovery(w),rotation=Math.max(0,w-7)%3;
+ const a=[['Leg Press','3×10'],['Chest Press','3×10'],['Lat Pulldown','3×10'],['Seated Leg Curl','2×12'],['Seated Cable Row','2×10']];
+ const b=[['Goblet Squat','3×10'],['Incline Chest Press','3×10'],['Seated Cable Row','3×10'],['Leg Extension','2×12'],['Lat Pulldown','2×10']];
+ const extrasA=[[['Pec Deck','2×12'],['Hip Abductor','2×12'],['Biceps Curl Machine','2×12']], [['Hip Adductor','2×12'],['Face Pull','2×12'],['Biceps Curl Machine','2×12']], [['Pec Deck','2×12'],['Hip Abductor','2×12'],['Face Pull','2×12']]];
+ const extrasB=[[['Shoulder Press Machine','2×10'],['Triceps Pushdown','2×12'],['Dead Bug','2×8 לכל צד']], [['Shoulder Press Machine','2×10'],['Biceps Curl Machine','2×12'],['Side Plank','2×20 שנ׳ לכל צד']], [['Triceps Pushdown','2×12'],['Face Pull','2×12'],['Dead Bug','2×8 לכל צד']]];
+ const pool=(side==='a'?a:b).concat((side==='a'?extrasA:extrasB)[rotation]);
+ if(strained)pool.splice(6,2); // Reduce optional volume when recovery is poor.
+ return ['חימום 8 דקות',...pool.map(([name,reps])=>`${name} — ${reps}; ${strengthAdvice(w,name)}; קושי יעד 6–8/10, להשאיר 2–3 חזרות ברזרבה`),
+ 'שחרור 5 דקות','💪 5 תרגילי בסיס + 3 תרגילי עזר מתחלפים לשרירים נוספים. מנוחה 60–90 שניות בין סטים; לקצר אם חורגים מ־90 דקות.',
+ 'התקדמות במשקלים רק לאחר 2 אימונים נקיים; בתרגיל שהגיע לקושי 9–10/10 לא להעלות משקל.','♨️ סאונה רטובה 10–12 דקות (רשות; אחרי שתייה ובהרגשה טובה).'];
+}
 function calculatePlan(w){const types={run:['הליכה וריצה • 60 דקות',nivRunPlan(w,false),'סיבולת'],long:['סיבולת ארוכה • 65 דקות',nivRunPlan(w,true),'סיבולת'],swim:['סיבולת בבריכה • חזה, גב וחתירה',nivSwimPlan(w),'סיבולת'],strengthA:['כוח A — גוף מלא',nivStrengthPlan(w,'a'),'כוח'],strengthB:['כוח B — גוף מלא',nivStrengthPlan(w,'b'),'כוח'],recovery:['התאוששות פעילה',['הליכה קלה 15–25 דקות או מנוחה','מוביליטי 5–10 דקות'],'התאוששות'],rest:['מנוחה מלאה',['שתייה, שינה והתאוששות; אין צורך לפצות על מנוחה'],'מנוחה']};return weeklyLayout(w).map(t=>types[t])}
 function nivUpgradeSession(session,w){if(w<5||!session)return session;const [title,steps,kind]=session;if(kind==='כוח'){const side=/כוח B/.test(title)?'b':'a';return [title,nivStrengthPlan(w,side),kind]};if(kind==='סיבולת'){return /בריכה/.test(title)?['סיבולת בבריכה • חזה, גב וחתירה',nivSwimPlan(w),'סיבולת']:[/ארוך/.test(title)?'סיבולת ארוכה • 65 דקות':'הליכה וריצה • 60 דקות',nivRunPlan(w,/ארוך/.test(title)),'סיבולת']};return session}
 function plan(w){const saved=get(PLAN_SNAP,{});const sessions=saved[w]||calculatePlan(w);return w>=5?sessions.map(x=>nivUpgradeSession(x,w)):sessions}
 // One-time transition to the fixed five-workout schedule: untouched future snapshots only.
+// v34: plan() regenerates exercise steps for future weeks while preserving checkmarks and logs.
 (function migrateFiveWorkoutSchedule(){
  const flag='nivFitnessFiveWorkoutScheduleV1';if(localStorage.getItem(flag))return;
  const snaps=get(PLAN_SNAP,{}),checks=get(CHECK,{}),now=currentWeek();
