@@ -478,7 +478,7 @@ $('weight-date').value='2026-10-16';$('weight-save').onclick=()=>{let date=$('we
 .ff-small{font-size:13px;color:#5b7064;line-height:1.6}.ff-warning{background:#fff5e2;border-radius:12px;padding:12px;line-height:1.7}
 @media(max-width:500px){.ff-grid{grid-template-columns:1fr}}
 </style>
-<div id="future-fitness"><div class="ff-card"><h2>📅 תוכנית מתפתחת — ללא הגבלת זמן</h2><p class="ff-small">השבועות נוצרים לפי המשוב וההתאוששות שלך. גם ימי הכוח, הסיבולת והמנוחה עשויים להתחלף בין שבועות, תוך שמירה על מרווחי התאוששות. שבוע 1 נשאר ללא שינוי.</p><div class="ff-grid"><div><label for="ff-week">בחר שבוע</label><select id="ff-week" class="ff-input"></select></div><div><label for="ff-status">מצב התוכנית</label><div id="ff-status" style="font-weight:850;margin-top:10px"></div></div></div><div class="ff-warning" style="margin-top:12px">⚠️ יעד המרתון הוא ארוך טווח, לא התחייבות לרוץ מרתון בתוך שנה. לפני התחלת ריצה או הגדלת עומס, ובמיוחד אם עדיין יש כאב בחזה/בטן בנשימה עמוקה, יש להיבדק רפואית. כאב חדש, סחרחורת או קוצר נשימה חריג = מפסיקים ולא מתקדמים.</div></div><div id="ff-content"></div></div>
+<div id="future-fitness"><div class="ff-card"><h2>📅 תוכנית מתפתחת — ללא הגבלת זמן</h2><p class="ff-small">משבוע 7 בכל שבוע: שתי הליכות/ריצות, שני אימוני כוח, שחייה אחת ושני ימי מנוחה. דרגת הקושי מותאמת למשוב ולהתאוששות. שבועות עבר נשמרים ללא שינוי.</p><div class="ff-grid"><div><label for="ff-week">בחר שבוע</label><select id="ff-week" class="ff-input"></select></div><div><label for="ff-status">מצב התוכנית</label><div id="ff-status" style="font-weight:850;margin-top:10px"></div></div></div><div class="ff-warning" style="margin-top:12px">⚠️ יעד המרתון הוא ארוך טווח, לא התחייבות לרוץ מרתון בתוך שנה. לפני התחלת ריצה או הגדלת עומס, ובמיוחד אם עדיין יש כאב בחזה/בטן בנשימה עמוקה, יש להיבדק רפואית. כאב חדש, סחרחורת או קוצר נשימה חריג = מפסיקים ולא מתקדמים.</div></div><div id="ff-content"></div></div>
 <script>
 (function(){
 'use strict';
@@ -586,9 +586,9 @@ function enduranceMinutes(w,longSession){
  return Math.min(longSession?105:75,Math.round(target/5)*5);
 }
 function weeklyLayout(w){
- // All layouts contain 2 strength, 3 endurance (including swimming), 1 recovery and 1 full rest.
- // Sunday is ALWAYS outdoors/recovery/rest (country club opens at 15:00).
- // Strength sessions are never on adjacent days. The weekly feedback controls a cautious rotation.
+ // From week 7 onward: exactly 2 runs, 2 strength sessions, 1 swim, 2 full rests.
+ // Existing historical weeks are kept in their original frozen snapshots.
+ if(w>=7)return ['run','strengthA','rest','swim','strengthB','rest','long'];
  const layouts=[
   ['run','strengthA','recovery','swim','rest','strengthB','long'],
   ['recovery','strengthA','swim','run','strengthB','rest','long'],
@@ -598,9 +598,7 @@ function weeklyLayout(w){
  ];
  const prior=feedback(w-1);
  const strained=prior.pain==='yes'||prior.recoveryPain==='yes'||prior.effort==='hard'||prior.readiness==='reduce'||(prior.energy&&Number(prior.energy)<=4);
- // When recovery is poor, choose the conservative layout with Sunday rest.
  if(strained)return layouts[4];
- // Without completed feedback, retain the familiar layout; never infer readiness.
  if(!prior.readiness||!prior.completion)return layouts[0];
  if(prior.readiness==='maintain')return layouts[1];
  return layouts[(Math.floor((w-2)/2)%3)+1];
@@ -611,7 +609,9 @@ function nivSwimPlan(w){const hard=nivRecovery(w)||nivRecentPain('swim');const r
 function nivRunPlan(w,longSession){
  // One continuous run, with user-selected treadmill speeds and gradual progression.
  const total=longSession?65:60, recovery=nivRecovery(w), deload=w%4===0;
- const phase=Math.max(0,Math.floor((w-5)/2));
+ const missed=get('nivFitnessMissedSessionsV1',{});
+ const missedRuns=Object.values(missed).filter(x=>x?.missed&&x.week<w&&x.week>=5&&(() => {const old=get(PLAN_SNAP,{})[x.week]?.[x.day];return old?.[2]==='סיבולת'&&!/בריכה/.test(old?.[0]||'');})()).length;
+ const phase=Math.max(0,Math.floor((w-5)/2)-missedRuns);
  const runMinutes=recovery||deload?15:Math.min(30,15+phase*2);
  const warm=5, cool=5, lead=longSession?15:10, tail=total-warm-cool-lead-runMinutes;
  const speed=Number(Math.min(9,8+phase*.1).toFixed(1));
@@ -623,12 +623,26 @@ function nivStrengthPlan(w,side){const strained=nivRecovery(w);const pool=side==
 function calculatePlan(w){const types={run:['הליכה וריצה • 60 דקות',nivRunPlan(w,false),'סיבולת'],long:['סיבולת ארוכה • 65 דקות',nivRunPlan(w,true),'סיבולת'],swim:['סיבולת בבריכה • חזה, גב וחתירה',nivSwimPlan(w),'סיבולת'],strengthA:['כוח A — גוף מלא',nivStrengthPlan(w,'a'),'כוח'],strengthB:['כוח B — גוף מלא',nivStrengthPlan(w,'b'),'כוח'],recovery:['התאוששות פעילה',['הליכה קלה 15–25 דקות או מנוחה','מוביליטי 5–10 דקות'],'התאוששות'],rest:['מנוחה מלאה',['שתייה, שינה והתאוששות; אין צורך לפצות על מנוחה'],'מנוחה']};return weeklyLayout(w).map(t=>types[t])}
 function nivUpgradeSession(session,w){if(w<5||!session)return session;const [title,steps,kind]=session;if(kind==='כוח'){const side=/כוח B/.test(title)?'b':'a';return [title,nivStrengthPlan(w,side),kind]};if(kind==='סיבולת'){return /בריכה/.test(title)?['סיבולת בבריכה • חזה, גב וחתירה',nivSwimPlan(w),'סיבולת']:[/ארוך/.test(title)?'סיבולת ארוכה • 65 דקות':'הליכה וריצה • 60 דקות',nivRunPlan(w,/ארוך/.test(title)),'סיבולת']};return session}
 function plan(w){const saved=get(PLAN_SNAP,{});const sessions=saved[w]||calculatePlan(w);return w>=5?sessions.map(x=>nivUpgradeSession(x,w)):sessions}
+// One-time transition to the fixed five-workout schedule: untouched future snapshots only.
+(function migrateFiveWorkoutSchedule(){
+ const flag='nivFitnessFiveWorkoutScheduleV1';if(localStorage.getItem(flag))return;
+ const snaps=get(PLAN_SNAP,{}),checks=get(CHECK,{}),now=currentWeek();
+ let changed=false;
+ for(const key of Object.keys(snaps)){
+  const w=Number(key);if(w<7||w<=now)continue;
+  if(Object.keys(checks).some(id=>id.startsWith(w+'-')&&checks[id]))continue;
+  delete snaps[key];changed=true;
+ }
+ if(changed)set(PLAN_SNAP,snaps);
+ localStorage.setItem(flag,'1');
+})();
 // Swaps are stored as complete sessions inside the existing weekly snapshots.
 // Keep dates, daily nutrition, completion logs and rewards attached to calendar days.
 window.nivSwapSessions=function(a,b){
  const now=new Date(),start=new Date(2026,9,11,12);
  const toDate=x=>{const d=new Date(start);d.setDate(d.getDate()+7*(x.w-1)+x.d);return d};
  if(a.w<2||b.w<2||a.w===b.w&&a.d===b.d)return {error:'בחר שני אימונים שונים משבוע 2 ואילך.'};
+ if((a.w>=7||b.w>=7)&&a.w!==b.w)return {error:'משבוע 7 אפשר להחליף ימים רק בתוך אותו שבוע, כדי לשמור על חמישה אימונים ושני ימי מנוחה.'};
  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
  if(toDate(a)<today||toDate(b)<today)return {error:'אי אפשר להחליף אימון של יום שכבר עבר.'};
  const first=Math.floor((today-start)/604800000)+1;
@@ -704,7 +718,7 @@ function render(){
  // A checklist is reserved for physical actions; guidance is informational.
 
  const tasks=plan(w),checks=get(CHECK,{}),saved=feedback(w),locked=w>now,feedbackLocked=!feedbackUnlocked(w);
- let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">חלוקה דינמית: שני אימוני כוח, שלושה אימוני סיבולת, התאוששות ומנוחה. ימי הפעילות משתנים לפי המשוב; ביום ראשון אין פעילות בקאנטרי לפני 15:00. שבוע רביעי הוא שבוע הורדת עומס.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, התקדמות מותאמת למשוב ולביצועים.'}</div></div>`;
+ let html=`<div class="ff-card"><h2>שבוע ${w} • ${fmt(dateFor(w))}–${fmt(dateFor(w,6))}</h2><p class="ff-small">משבוע 7: 2 אימוני הליכה/ריצה, 2 אימוני כוח, שחייה אחת ו-2 ימי מנוחה. ימי ההתאוששות הפעילה בוטלו. ביום ראשון הקאנטרי נפתח ב-15:00. העומס ממשיך להיות מותאם לביצועים ולמשוב.</p><div class="ff-warning">${locked?'זהו שבוע עתידי לתכנון בלבד; לא ניתן לסמן ביצוע מראש.':'העומס מחושב ממשוב השבועות הקודמים. ללא משוב חיובי מפורש, התקדמות מותאמת למשוב ולביצועים.'}</div></div>`;
  (w===1?[]:tasks).forEach(([title,steps,kind],d)=>{
  html+=`<div class="ff-card"><h3>${days[d]} ${fmt(dateFor(w,d))} — ${title}</h3><button type="button" class="niv-swap-btn" data-swap-week="${w}" data-swap-day="${d}">🔄 החלף אימון עם יום אחר</button><div class="ff-small">${kind==='כוח'?'מנוחה 60–90 שניות בין סטים; לא להעלות משקל לפני ביצוע נקי.':kind==='סיבולת'?'':''}</div>`;
  const isRunSession=kind==='סיבולת'&&!/בריכה/.test(title);
@@ -1515,6 +1529,60 @@ function decorate(){
 const root=document.getElementById('ff-content');if(root){const obs=new MutationObserver(()=>decorate());obs.observe(root,{childList:true,subtree:true})}
 const select=document.getElementById('ff-week');select?.addEventListener('change',()=>setTimeout(decorate,100));
 decorate();
+})();
+</script>
+<style id="niv-missed-v1-style">
+.niv-missed-box{margin:11px 0 3px;padding:9px 12px;border:1px solid #e2e3e2;border-radius:12px;background:#fafafa;color:#656b69;font-size:12px}
+.niv-missed-btn{background:transparent;border:1px solid #d8d9d9;border-radius:9px;color:#69706d;padding:7px 10px;font:inherit;font-size:12px;font-weight:750;cursor:pointer}
+.niv-missed-box.is-missed{background:#fff2f0;border-color:#f1d3ce;color:#8d4135}.niv-missed-box.is-missed .niv-missed-btn{background:white;color:#8d4135;border-color:#e8c5be}
+.niv-missed-status{margin-inline-start:7px}.niv-adherence{margin:12px 0;padding:13px;border-radius:13px;background:#eef6f0;border:1px solid #cfe7d7;line-height:1.7;font-size:14px}
+</style>
+<script id="niv-missed-v1">
+(()=>{'use strict';
+const KEY='nivFitnessMissedSessionsV1',DAY='nivFitnessDailyV14:',CHECKS=['nivFitness52ChecksV1','nivFitnessFutureChecksV1'];
+const get=(key,def={})=>{try{return JSON.parse(localStorage.getItem(key)||'null')??def}catch(e){return def}};
+const set=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+const weekDate=(w,d)=>{const dt=new Date(2026,9,11,12);dt.setDate(dt.getDate()+7*(w-1)+d);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')};
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const kind=(w,d)=>window.nivGetPlannedSession?.(w,d)?.[2]||'';
+const completed=(w,d)=>{
+ const date=weekDate(w,d),logs=get('nivFitnessSessionLogsV1');if(logs[date])return true;
+ const prefix=w+'-'+d+'-';
+ for(const key of CHECKS){const checks=get(key);if(Object.entries(checks).some(([id,done])=>id.startsWith(prefix)&&done&& !/sauna/.test(id)))return true}
+ const daily=get(DAY+date);return Object.values(daily.completed||{}).some(x=>x&&Object.values(x).some(Boolean));
+};
+const getMissed=()=>get(KEY);
+function mark(w,d,value){
+ const date=weekDate(w,d),all=getMissed();
+ if(value){if(completed(w,d)){alert('כבר קיים דיווח על אימון שבוצע ביום הזה. כדי למנוע סתירה, בטל קודם את סימון הביצוע אם הוא שגוי.');return}
+  if(!confirm('לסמן את האימון של '+date+' כלא בוצע? ניתן לבטל את הסימון בהמשך.'))return;
+  all[date]={week:w,day:d,missed:true,recordedAt:new Date().toISOString()};
+  const daily=get(DAY+date);daily.missedWorkout=true;set(DAY+date,daily);
+ }else{delete all[date];const daily=get(DAY+date);delete daily.missedWorkout;set(DAY+date,daily)}
+ set(KEY,all);decorate();
+}
+function decorate(){
+ const root=document.getElementById('ff-content'),sel=document.getElementById('ff-week');if(!root||!sel)return;
+ const w=Number(sel.value||0),all=getMissed(),cards=[...root.querySelectorAll('.ff-card')];
+ for(const card of cards){const swap=card.querySelector('[data-swap-day]');if(!swap)continue;
+ const d=Number(swap.dataset.swapDay),date=weekDate(w,d),type=kind(w,d);
+ let box=card.querySelector('.niv-missed-box');
+ if(type==='מנוחה'||type==='התאוששות'||date>today()||w===1){box?.remove();continue}
+ if(!box){box=document.createElement('div');box.className='niv-missed-box';const btn=document.createElement('button');btn.type='button';btn.className='niv-missed-btn';const label=document.createElement('span');label.className='niv-missed-status';box.append(btn,label);swap.after(box);btn.addEventListener('click',()=>mark(w,d,!getMissed()[date]));}
+ const missed=!!all[date],btn=box.querySelector('button'),label=box.querySelector('.niv-missed-status');box.classList.toggle('is-missed',missed);
+ const buttonText=missed?'↩️ בטל סימון החמצה':'😞 לא ביצעתי אימון',statusText=missed?'האימון הוחמץ • ללא נקודות':'רק אם ברור שלא יתקיים אימון היום';if(btn.textContent!==buttonText)btn.textContent=buttonText;if(label.textContent!==statusText)label.textContent=statusText;
+ }
+ let summary=root.querySelector('.niv-adherence');if(!summary){summary=document.createElement('div');summary.className='niv-adherence';root.querySelector('.ff-card')?.after(summary)}
+ let scheduled=0,done=0,missedCount=0,open=0,rest=0;
+ for(let d=0;d<7;d++){const type=kind(w,d),date=weekDate(w,d);if(!type)continue;if(type==='מנוחה'||type==='התאוששות'){rest++;continue}scheduled++;
+  if(completed(w,d))done++;else if(all[date])missedCount++;else if(date<=today())open++;
+ }
+ const rate=scheduled?Math.round(done/scheduled*100):0;
+ const summaryHTML='<b>📊 מעקב אימונים שבועי</b><br>'+done+' בוצעו • '+missedCount+' הוחמצו • '+open+' טרם דווחו • '+rest+' ימי מנוחה<br><b>התמדה: '+rate+'% ('+done+' מתוך '+scheduled+' אימונים מתוכננים)</b><div style="font-size:12px;color:#66766a">יום מנוחה אינו החמצה. אימון מזדמן נרשם בנפרד. החמצה לא מקדמת את רמת הקושי.</div>';if(summary.innerHTML!==summaryHTML)summary.innerHTML=summaryHTML;
+}
+let busy=false;const observer=new MutationObserver(()=>{if(busy)return;busy=true;try{decorate()}finally{busy=false}});
+document.addEventListener('DOMContentLoaded',()=>{const root=document.getElementById('ff-content');if(root){observer.observe(root,{childList:true,subtree:true});decorate();}document.getElementById('ff-week')?.addEventListener('change',()=>setTimeout(decorate,0));});
+window.nivMissedWorkoutSummary=()=>getMissed();
 })();
 </script>
 </body></html>
