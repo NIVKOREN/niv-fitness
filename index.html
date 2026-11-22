@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Niv Fitness — v34 Progressive Variety</title>
+<title>Niv Fitness — v35 Missed Workout Fix</title>
 <meta name="theme-color" content="#2b7655">
 <meta name="niv-build" content="v25-20261023-nutrition">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -85,7 +85,7 @@ canvas{position:fixed;inset:0;pointer-events:none;z-index:30}
 #niv-v2-back:focus-visible{outline:3px solid #f3c74a;outline-offset:3px}
 </style></head>
 <body>
-<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 21.11.2026 • v34 • גיוון והתקדמות</div>
+<div style="position:fixed;left:8px;bottom:8px;z-index:9998;font-size:10px;color:#6b7771;background:#ffffffd9;border:1px solid #dfe6e2;border-radius:8px;padding:4px 7px">גרסה 22.11.2026 • v35 • כפתור אימון שלא בוצע</div>
 <header><div class="wrap">
 <div class="eyebrow">NIV FITNESS • WEEK 1</div>
 <div class="title">שבוע 1 — מתחילים חזק, אבל חכם</div>
@@ -1582,13 +1582,13 @@ const select=document.getElementById('ff-week');select?.addEventListener('change
 decorate();
 })();
 </script>
-<style id="niv-missed-v1-style">
-.niv-missed-box{margin:11px 0 3px;padding:9px 12px;border:1px solid #e2e3e2;border-radius:12px;background:#fafafa;color:#656b69;font-size:12px}
+<style id="niv-missed-v2-style">
+.niv-missed-box{margin:12px 0 0;padding:9px 12px;border:1px solid #e2e3e2;border-radius:12px;background:#fafafa;color:#656b69;font-size:12px}
 .niv-missed-btn{background:transparent;border:1px solid #d8d9d9;border-radius:9px;color:#69706d;padding:7px 10px;font:inherit;font-size:12px;font-weight:750;cursor:pointer}
 .niv-missed-box.is-missed{background:#fff2f0;border-color:#f1d3ce;color:#8d4135}.niv-missed-box.is-missed .niv-missed-btn{background:white;color:#8d4135;border-color:#e8c5be}
 .niv-missed-status{margin-inline-start:7px}.niv-adherence{margin:12px 0;padding:13px;border-radius:13px;background:#eef6f0;border:1px solid #cfe7d7;line-height:1.7;font-size:14px}
 </style>
-<script id="niv-missed-v1">
+<script id="niv-missed-v2">
 (()=>{'use strict';
 const KEY='nivFitnessMissedSessionsV1',DAY='nivFitnessDailyV14:',CHECKS=['nivFitness52ChecksV1','nivFitnessFutureChecksV1'];
 const get=(key,def={})=>{try{return JSON.parse(localStorage.getItem(key)||'null')??def}catch(e){return def}};
@@ -1618,10 +1618,14 @@ function decorate(){
  for(const card of cards){const swap=card.querySelector('[data-swap-day]');if(!swap)continue;
  const d=Number(swap.dataset.swapDay),date=weekDate(w,d),type=kind(w,d);
  let box=card.querySelector('.niv-missed-box');
- if(type==='מנוחה'||type==='התאוששות'||date>today()||w===1){box?.remove();continue}
- if(!box){box=document.createElement('div');box.className='niv-missed-box';const btn=document.createElement('button');btn.type='button';btn.className='niv-missed-btn';const label=document.createElement('span');label.className='niv-missed-status';box.append(btn,label);swap.after(box);btn.addEventListener('click',()=>mark(w,d,!getMissed()[date]));}
+ if(type==='מנוחה'||type==='התאוששות'){box?.remove();continue}
+ const tools=card.querySelector('.niv-day-tools');
+ const fallback=tools&&[...tools.querySelectorAll('.niv-tool-card')].find(x=>x.querySelector('[data-mode="short"]'));
+ if(!fallback){box?.remove();continue}
+ if(!box){box=document.createElement('div');box.className='niv-missed-box';const btn=document.createElement('button');btn.type='button';btn.className='niv-missed-btn';const label=document.createElement('span');label.className='niv-missed-status';box.append(btn,label);btn.addEventListener('click',()=>{const week=Number(document.getElementById('ff-week')?.value||1),day=Number(box.closest('.ff-card')?.querySelector('[data-swap-day]')?.dataset.swapDay);if(!Number.isInteger(day))return;const target=weekDate(week,day);if(target>today()){alert('אפשר לסמן אימון כלא בוצע רק בתאריך האימון או לאחריו.');return}mark(week,day,!getMissed()[target]);});}
+ if(box.parentElement!==fallback)fallback.appendChild(box);
  const missed=!!all[date],btn=box.querySelector('button'),label=box.querySelector('.niv-missed-status');box.classList.toggle('is-missed',missed);
- const buttonText=missed?'↩️ בטל סימון החמצה':'😞 לא ביצעתי אימון',statusText=missed?'האימון הוחמץ • ללא נקודות':'רק אם ברור שלא יתקיים אימון היום';if(btn.textContent!==buttonText)btn.textContent=buttonText;if(label.textContent!==statusText)label.textContent=statusText;
+ const buttonText=missed?'↩️ בטל סימון החמצה':'😞 לא ביצעתי אימון',statusText=missed?'האימון הוחמץ • ללא נקודות':date>today()?'ניתן לסמן ביום האימון או אחריו':'סימון אם לא ביצעתי את האימון';if(btn.textContent!==buttonText)btn.textContent=buttonText;if(label.textContent!==statusText)label.textContent=statusText;
  }
  let summary=root.querySelector('.niv-adherence');if(!summary){summary=document.createElement('div');summary.className='niv-adherence';root.querySelector('.ff-card')?.after(summary)}
  let scheduled=0,done=0,missedCount=0,open=0,rest=0;
